@@ -134,25 +134,30 @@ export async function POST(req: NextRequest) {
 
         const fullMarkdown = assemble(sections, theme, facts);
 
+        const doc = {
+          ownerId,
+          login: facts.login,
+          tone,
+          theme,
+          sections,
+          promptVersion: APP_CONFIG.promptVersion,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
         // Save to MongoDB readmes collection
         let readmeId = `draft_${crypto.randomUUID().replace(/-/g, "")}`;
         try {
           const col = await getReadmesCollection();
-          const doc = {
-            ownerId,
-            login: facts.login,
-            tone,
-            theme,
-            sections,
-            promptVersion: APP_CONFIG.promptVersion,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          };
           const res = await col.insertOne(doc);
           readmeId = res.insertedId.toString();
         } catch (dbErr: unknown) {
           console.warn("Could not save README to MongoDB:", (dbErr as Error).message);
         }
+
+        // Always cache in memoryDrafts so dev mode runs even if MongoDB is offline
+        const { memoryDrafts } = await import("@/lib/db/draftStore");
+        memoryDrafts.set(readmeId, { ...doc, _id: readmeId });
 
         // --- STAGE 4: DONE ---
         sendEvent("done", {
