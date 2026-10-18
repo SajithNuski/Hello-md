@@ -10,9 +10,9 @@ const envSchema = z.object({
   GITHUB_SERVER_TOKEN: z.string().optional().default(""),
   TOKEN_ENC_KEY: z.string().optional().default(""),
   GROQ_API_KEY: z.string().optional().default(""),
-  GROQ_MODELS: z.string().default("llama-3.3-70b-versatile,llama-3.1-8b-instant"),
+  GROQ_MODELS: z.string().default("openai/gpt-oss-120b,openai/gpt-oss-20b,qwen/qwen3.8-27b"),
   GEMINI_API_KEY: z.string().optional().default(""),
-  GEMINI_MODEL: z.string().default("gemini-1.5-flash"),
+  GEMINI_MODEL: z.string().default("gemini-3.8-flash"),
   DAILY_GENERATIONS: z.coerce.number().default(3),
   AI_TIMEOUT_MS: z.coerce.number().default(20000),
 });

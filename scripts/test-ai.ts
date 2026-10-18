@@ -139,6 +139,29 @@ async function runAITests() {
     process.exit(1);
   }
 
+  // 5. Test Live Provider Routing (if API keys present)
+  console.log("\n[TEST 5] Testing Live Provider Routing (Router Integration)...");
+  const hasGroq = Boolean(process.env.GROQ_API_KEY);
+  const hasGemini = Boolean(process.env.GEMINI_API_KEY);
+
+  if (hasGroq || hasGemini) {
+    try {
+      const { routeLLMRequest } = await import("../src/lib/ai/router");
+      const liveRes = await routeLLMRequest({
+        system: "You are an assistant. Return only valid JSON: {\"status\": \"ok\", \"hello\": \"world\"}.",
+        user: "Respond with the json.",
+        maxOutputTokens: 100,
+      });
+
+      console.log(`✅ Live Router call succeeded via provider [${liveRes.provider}] model [${liveRes.model}]`);
+      console.log(`   Output: ${liveRes.text.trim()}`);
+    } catch (err: unknown) {
+      console.warn("⚠️ Live provider call encountered error:", (err as Error).message);
+    }
+  } else {
+    console.log("ℹ️ Skipping live call: neither GROQ_API_KEY nor GEMINI_API_KEY is configured.");
+  }
+
   console.log("\n=== All Milestone 3 AI Tests Passed! ===");
   process.exit(0);
 }

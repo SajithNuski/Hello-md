@@ -82,8 +82,10 @@ function buildProviderPool(): PoolEntry[] {
   const pool: PoolEntry[] = [];
 
   // 1. Groq models
-  if (env.GROQ_API_KEY) {
-    const groqModels = env.GROQ_MODELS.split(",")
+  const groqKey = process.env.GROQ_API_KEY || env.GROQ_API_KEY;
+  if (groqKey) {
+    const groqModels = (process.env.GROQ_MODELS || env.GROQ_MODELS)
+      .split(",")
       .map((m) => m.trim())
       .filter(Boolean);
 
@@ -91,18 +93,19 @@ function buildProviderPool(): PoolEntry[] {
       pool.push({
         provider: "groq",
         model,
-        createInstance: () => new GroqProvider(model),
+        createInstance: () => new GroqProvider(model, groqKey),
       });
     }
   }
 
   // 2. Gemini fallback
-  if (env.GEMINI_API_KEY) {
-    const geminiModel = env.GEMINI_MODEL || "gemini-1.5-flash";
+  const geminiKey = process.env.GEMINI_API_KEY || env.GEMINI_API_KEY;
+  if (geminiKey) {
+    const geminiModel = process.env.GEMINI_MODEL || env.GEMINI_MODEL || "gemini-1.5-flash";
     pool.push({
       provider: "gemini",
       model: geminiModel,
-      createInstance: () => new GeminiProvider(geminiModel),
+      createInstance: () => new GeminiProvider(geminiModel, geminiKey),
     });
   }
 
