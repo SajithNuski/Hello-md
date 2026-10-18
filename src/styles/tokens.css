@@ -1,0 +1,20 @@
+:root {
+  --bg-page: #FAFAF8;
+  --surface: #F0F0EC;
+  --border: #DEDFD8;
+  --text-primary: #171815;
+  --text-secondary: #65665F;
+  --text-muted: #91928A;
+  --accent: #C5F467;
+  --accent-hover: #A8D94E;
+  --focus-ring: #789A36;
+  --status-success: #16A34A;
+  --status-warning: #B45309;
+  --status-error: #DC2626;
+
+  --radius-control: 6px;
+  --radius-panel: 8px;
+
+  --font-ui: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
