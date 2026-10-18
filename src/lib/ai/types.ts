@@ -19,7 +19,7 @@ export type LLMResult = {
 };
 
 export class AIError extends Error {
-  code: "AI_BUSY" | "RATE_LIMIT" | "INVALID_OUTPUT" | "TIMEOUT" | "AUTH_ERROR" | "PROVIDER_ERROR";
+  code: "AI_BUSY" | "RATE_LIMIT" | "INVALID_OUTPUT" | "INVALID_AI_OUTPUT" | "TIMEOUT" | "AUTH_ERROR" | "PROVIDER_ERROR";
   status: number;
   retryAfter?: number;
   provider?: string;
