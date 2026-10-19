@@ -1,10 +1,11 @@
 import { Header } from "@/components/ui/Header";
+import { Footer } from "@/components/ui/Footer";
 import { GeneratorForm } from "@/components/landing/GeneratorForm";
 import { Methodology } from "@/components/landing/Methodology";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#FAFAF8] text-[#171815] flex flex-col">
+    <div className="min-h-screen bg-[#FAFAF8] text-[#171815] flex flex-col justify-between">
       <Header />
 
       <main className="w-full pt-16 flex-1 flex flex-col items-center">
@@ -33,6 +34,8 @@ export default function Home() {
           <Methodology />
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }
