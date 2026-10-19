@@ -1,19 +1,37 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LuSparkles, LuLayoutTemplate } from "react-icons/lu";
 import { SiGithub } from "react-icons/si";
+import { gsap, useGSAP } from "@/lib/animations/gsap";
 
 export function Header() {
   const pathname = usePathname();
+  const headerRef = useRef<HTMLElement>(null);
 
   const isEditor = pathname.startsWith("/editor");
   const isGenerator = pathname === "/";
   const isTemplates = pathname === "/templates";
 
+  useGSAP(
+    () => {
+      gsap.from(headerRef.current, {
+        y: -24,
+        opacity: 0,
+        duration: 0.65,
+        ease: "power3.out",
+      });
+    },
+    { scope: headerRef }
+  );
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-14 bg-[#0D0E0C]/95 backdrop-blur-md border-b border-[#21231D] shadow-[0_1px_0_0_rgba(255,255,255,0.05),0_4px_12px_rgba(0,0,0,0.25)] select-none">
+    <header
+      ref={headerRef}
+      className="fixed top-0 left-0 right-0 z-50 h-14 bg-[#0D0E0C]/95 backdrop-blur-md border-b border-[#21231D] shadow-[0_1px_0_0_rgba(255,255,255,0.05),0_4px_12px_rgba(0,0,0,0.25)] select-none"
+    >
       <div className="h-full w-full px-4 sm:px-6 flex items-center justify-between max-w-7xl mx-auto">
         {/* Brand */}
         <div className="flex items-center gap-3">

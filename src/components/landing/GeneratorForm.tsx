@@ -121,8 +121,9 @@ export function GeneratorForm() {
     <div className="flex flex-col gap-6 w-full max-w-[720px]">
       {/* Form Card */}
       <form
+        id="generator-card"
         onSubmit={handleGenerate}
-        className="flex flex-col gap-6 bg-surface p-6 sm:p-7 rounded-xl border border-border shadow-sm"
+        className="flex flex-col gap-6 bg-surface p-6 sm:p-7 rounded-xl border border-border shadow-sm transition-all duration-300"
       >
         {/* Username Input */}
         <div className="flex flex-col gap-2">

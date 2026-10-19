@@ -1,17 +1,42 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { SiGithub } from "react-icons/si";
 import { FiArrowUp, FiExternalLink, FiTerminal, FiCheckCircle } from "react-icons/fi";
 import { LuSparkles } from "react-icons/lu";
+import { gsap, useGSAP } from "@/lib/animations/gsap";
 
 export function Footer() {
+  const footerRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      if (footerRef.current) {
+        gsap.from(footerRef.current, {
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 95%",
+          },
+          opacity: 0,
+          y: 20,
+          duration: 0.8,
+          ease: "power2.out",
+        });
+      }
+    },
+    { scope: footerRef }
+  );
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <footer className="w-full bg-[#0D0E0C] text-[#FAFAF8] border-t border-[#21231D] shadow-[0_-1px_0_0_rgba(255,255,255,0.05)] select-none">
+    <footer
+      ref={footerRef}
+      className="w-full bg-[#0D0E0C] text-[#FAFAF8] border-t border-[#21231D] shadow-[0_-1px_0_0_rgba(255,255,255,0.05)] select-none"
+    >
       <div className="max-w-7xl mx-auto px-6 pt-16 pb-12 flex flex-col gap-12">
         {/* Top Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">

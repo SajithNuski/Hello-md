@@ -1,51 +1,170 @@
+"use client";
+
+import { useRef } from "react";
 import { FiDatabase, FiFeather, FiArrowUpRight } from "react-icons/fi";
+import { gsap, useGSAP } from "@/lib/animations/gsap";
 
 export function Methodology() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useGSAP(
+    () => {
+      // Reveal Heading on Scroll
+      if (headingRef.current) {
+        gsap.from(headingRef.current, {
+          scrollTrigger: {
+            trigger: headingRef.current,
+            start: "top 85%",
+          },
+          y: 30,
+          opacity: 0,
+          duration: 0.75,
+          ease: "power3.out",
+        });
+      }
+
+      // Staggered Cards Reveal on Scroll
+      const validCards = cardsRef.current.filter(Boolean);
+      if (validCards.length > 0) {
+        gsap.from(validCards, {
+          scrollTrigger: {
+            trigger: validCards[0],
+            start: "top 85%",
+          },
+          y: 45,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.16,
+          ease: "power3.out",
+        });
+      }
+    },
+    { scope: sectionRef }
+  );
+
+  const handleCardMouseEnter = (index: number) => {
+    const card = cardsRef.current[index];
+    if (!card) return;
+
+    const icon = card.querySelector(".icon-box");
+    gsap.to(card, {
+      y: -5,
+      borderColor: "rgba(23, 24, 21, 0.4)",
+      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.08)",
+      duration: 0.3,
+      ease: "power2.out",
+    });
+
+    if (icon) {
+      gsap.to(icon, {
+        scale: 1.1,
+        backgroundColor: "#0D0E0C",
+        duration: 0.3,
+        ease: "back.out(2)",
+      });
+    }
+  };
+
+  const handleCardMouseLeave = (index: number) => {
+    const card = cardsRef.current[index];
+    if (!card) return;
+
+    const icon = card.querySelector(".icon-box");
+    gsap.to(card, {
+      y: 0,
+      borderColor: "",
+      boxShadow: "",
+      duration: 0.4,
+      ease: "power2.out",
+    });
+
+    if (icon) {
+      gsap.to(icon, {
+        scale: 1,
+        backgroundColor: "#171815",
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    }
+  };
+
   return (
-    <section className="flex flex-col gap-8 border-t border-border pt-12">
+    <section
+      ref={sectionRef}
+      className="flex flex-col gap-8 border-t border-border pt-12"
+    >
       <div className="flex flex-col gap-2">
-        <h2 className="text-2xl sm:text-section font-semibold tracking-[-0.03em] leading-[1.15] text-text-primary">
+        <h2
+          ref={headingRef}
+          className="text-2xl sm:text-section font-semibold tracking-[-0.03em] leading-[1.15] text-text-primary"
+        >
           Engineered for accuracy, built for GitHub.
         </h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Step 1 */}
-        <div className="flex flex-col gap-4 p-7 bg-surface rounded-xl border border-border shadow-sm hover:shadow-md hover:border-text-primary/40 transition-all duration-200">
-          <div className="w-10 h-10 rounded-lg bg-[#171815] text-accent flex items-center justify-center shadow-xs">
+        <div
+          ref={(el) => {
+            cardsRef.current[0] = el;
+          }}
+          onMouseEnter={() => handleCardMouseEnter(0)}
+          onMouseLeave={() => handleCardMouseLeave(0)}
+          className="flex flex-col gap-4 p-7 bg-surface rounded-xl border border-border shadow-sm cursor-pointer select-none"
+        >
+          <div className="icon-box w-10 h-10 rounded-lg bg-[#171815] text-accent flex items-center justify-center shadow-xs">
             <FiDatabase className="w-5 h-5 text-accent" />
           </div>
           <h3 className="text-lg font-semibold tracking-[-0.02em] text-text-primary">
             Fetch Real Data
           </h3>
           <p className="text-[15px] leading-relaxed text-text-secondary">
-            Inspects public repos, pinned projects, contribution activity, and top languages directly via GitHub GraphQL API.
+            Inspects public repos, pinned projects, contribution activity, and top
+            languages directly via GitHub GraphQL API.
           </p>
         </div>
 
         {/* Step 2 */}
-        <div className="flex flex-col gap-4 p-7 bg-surface rounded-xl border border-border shadow-sm hover:shadow-md hover:border-text-primary/40 transition-all duration-200">
-          <div className="w-10 h-10 rounded-lg bg-[#171815] text-accent flex items-center justify-center shadow-xs">
+        <div
+          ref={(el) => {
+            cardsRef.current[1] = el;
+          }}
+          onMouseEnter={() => handleCardMouseEnter(1)}
+          onMouseLeave={() => handleCardMouseLeave(1)}
+          className="flex flex-col gap-4 p-7 bg-surface rounded-xl border border-border shadow-sm cursor-pointer select-none"
+        >
+          <div className="icon-box w-10 h-10 rounded-lg bg-[#171815] text-accent flex items-center justify-center shadow-xs">
             <FiFeather className="w-5 h-5 text-accent" />
           </div>
           <h3 className="text-lg font-semibold tracking-[-0.02em] text-text-primary">
             Grounded Sections
           </h3>
           <p className="text-[15px] leading-relaxed text-text-secondary">
-            AI crafts grounded prose with zero hallucinated facts. Shields.io badges and stats cards are generated by deterministic code.
+            AI crafts grounded prose with zero hallucinated facts. Shields.io badges
+            and stats cards are generated by deterministic code.
           </p>
         </div>
 
         {/* Step 3 */}
-        <div className="flex flex-col gap-4 p-7 bg-surface rounded-xl border border-border shadow-sm hover:shadow-md hover:border-text-primary/40 transition-all duration-200">
-          <div className="w-10 h-10 rounded-lg bg-[#171815] text-accent flex items-center justify-center shadow-xs">
+        <div
+          ref={(el) => {
+            cardsRef.current[2] = el;
+          }}
+          onMouseEnter={() => handleCardMouseEnter(2)}
+          onMouseLeave={() => handleCardMouseLeave(2)}
+          className="flex flex-col gap-4 p-7 bg-surface rounded-xl border border-border shadow-sm cursor-pointer select-none"
+        >
+          <div className="icon-box w-10 h-10 rounded-lg bg-[#171815] text-accent flex items-center justify-center shadow-xs">
             <FiArrowUpRight className="w-5 h-5 text-accent" />
           </div>
           <h3 className="text-lg font-semibold tracking-[-0.02em] text-text-primary">
             Edit &amp; Export
           </h3>
           <p className="text-[15px] leading-relaxed text-text-secondary">
-            Fine-tune markdown with real-time GitHub preview, reorder sections, regenerate individual blocks, then copy, download, or commit.
+            Fine-tune markdown with real-time GitHub preview, reorder sections,
+            regenerate individual blocks, then copy, download, or commit.
           </p>
         </div>
       </div>
