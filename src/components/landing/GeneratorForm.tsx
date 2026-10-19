@@ -122,20 +122,19 @@ export function GeneratorForm() {
       {/* Form Card */}
       <form
         onSubmit={handleGenerate}
-        className="flex flex-col gap-5 bg-surface p-6 rounded-md border border-border shadow-xs"
+        className="flex flex-col gap-6 bg-surface p-6 sm:p-7 rounded-xl border border-border shadow-sm"
       >
         {/* Username Input */}
         <div className="flex flex-col gap-2">
           <label
             htmlFor="gh-username"
-            className="text-nav font-medium text-text-primary flex items-center justify-between"
+            className="text-nav font-medium text-text-primary"
           >
-            <span>GitHub Profile Handle</span>
-            <span className="font-mono text-eyebrow text-text-muted tracking-[0.04em]">REQUIRED</span>
+            GitHub Profile Handle
           </label>
-          <div className="flex h-10 w-full bg-surface-raised rounded-sm border border-border overflow-hidden focus-within:border-text-primary focus-within:ring-2 focus-within:ring-accent/40 transition-all shadow-xs">
-            <span className="inline-flex items-center justify-center px-3 bg-surface border-r border-border font-mono text-meta text-text-secondary select-none gap-1.5">
-              <SiGithub className="w-3.5 h-3.5 text-text-secondary" />
+          <div className="flex h-11 w-full bg-surface-raised rounded-md border border-border overflow-hidden focus-within:border-text-primary focus-within:ring-2 focus-within:ring-accent/40 transition-all shadow-xs">
+            <span className="inline-flex items-center justify-center px-3.5 bg-surface border-r border-border font-mono text-meta text-text-secondary select-none gap-1.5">
+              <SiGithub className="w-4 h-4 text-text-secondary" />
               <span>@</span>
             </span>
             <input
@@ -164,12 +163,12 @@ export function GeneratorForm() {
               disabled={isGenerating}
               value={tone}
               onChange={(e) => setTone(e.target.value as Tone)}
-              className="w-full h-10 px-3 bg-surface-raised rounded-sm border border-border text-nav text-text-primary focus:outline-none focus:border-text-primary cursor-pointer shadow-xs"
+              className="w-full h-11 px-3 bg-surface-raised rounded-md border border-border text-nav text-text-primary focus:outline-none focus:border-text-primary cursor-pointer shadow-xs"
             >
-              <option value="professional">Professional (Confident & clean)</option>
-              <option value="playful">Playful (Light humor, concise)</option>
-              <option value="minimal">Minimal (Terse & focused)</option>
-              <option value="hacker">Hacker (Terminal-flavored)</option>
+              <option value="professional">Professional</option>
+              <option value="playful">Playful</option>
+              <option value="minimal">Minimal</option>
+              <option value="hacker">Hacker</option>
             </select>
           </div>
 
@@ -184,18 +183,18 @@ export function GeneratorForm() {
               disabled={isGenerating}
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
-              className="w-full h-10 px-3 bg-surface-raised rounded-sm border border-border text-nav text-text-primary focus:outline-none focus:border-text-primary cursor-pointer shadow-xs"
+              className="w-full h-11 px-3 bg-surface-raised rounded-md border border-border text-nav text-text-primary focus:outline-none focus:border-text-primary cursor-pointer shadow-xs"
             >
               <option value="minimal">Minimal Developer</option>
-              <option value="featured">Featured Projects Showcase</option>
-              <option value="compact">Compact Stack & Stats</option>
+              <option value="featured">Featured Showcase</option>
+              <option value="compact">Compact Stats</option>
             </select>
           </div>
         </div>
 
         {/* Error Banner */}
         {errorMessage && (
-          <div className="p-3 bg-red-50 border border-status-error/30 rounded-sm flex items-center gap-2 text-nav text-status-error">
+          <div className="p-3 bg-red-50 border border-status-error/30 rounded-md flex items-center gap-2 text-nav text-status-error">
             <FiAlertCircle className="w-4 h-4 shrink-0 stroke-[1.5]" />
             <span>{errorMessage}</span>
           </div>
@@ -205,7 +204,7 @@ export function GeneratorForm() {
         <button
           type="submit"
           disabled={isGenerating}
-          className="h-10 w-full mt-2 bg-accent hover:bg-accent-hover text-text-primary font-medium text-nav rounded-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed select-none"
+          className="h-11 w-full mt-1 bg-accent hover:bg-accent-hover text-text-primary font-semibold text-nav rounded-md transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed select-none"
         >
           {isGenerating ? (
             <>
@@ -214,21 +213,12 @@ export function GeneratorForm() {
             </>
           ) : (
             <>
-              <LuSparkles className="w-4 h-4 text-text-primary stroke-[1.5]" />
+              <LuSparkles className="w-4 h-4 text-text-primary stroke-[1.8]" />
               <span>Generate README</span>
             </>
           )}
         </button>
       </form>
-
-      {/* Meta Availability Line */}
-      <div className="flex items-center justify-between px-1 text-meta text-text-secondary font-mono">
-        <div className="flex items-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-status-success animate-pulse"></span>
-          <span>3 of 3 generations left today</span>
-        </div>
-        <span className="text-text-muted text-eyebrow tracking-[0.04em]">FREE TIER RESETS DAILY</span>
-      </div>
 
       {/* Live Stepper & Terminal Log Console */}
       {isGenerating && (
