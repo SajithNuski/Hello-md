@@ -219,47 +219,44 @@ export function Hero() {
 
       {/* Main 2-Column Hero Grid */}
       <section className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-14">
-        {/* Left Column: Eyebrow, High-Contrast Typography, CTAs, and Trust Pillars */}
-        <div className="w-full lg:w-[49%] flex flex-col gap-6">
-          {/* Release Eyebrow Pill */}
+        {/* Left Column: High-Impact Typography, CTAs, and High-Contrast Indicators */}
+        <div className="w-full lg:w-[50%] flex flex-col gap-6">
+          {/* Release Eyebrow Capsule (High-contrast Obsidian & Acid Lime) */}
           <div
             ref={badgeRef}
-            className="inline-flex items-center gap-2.5 px-3 py-1 rounded-full bg-surface/90 border border-border shadow-xs backdrop-blur-sm w-fit select-none"
+            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#0D0E0C] border border-[#2B2E24] shadow-xs select-none w-fit"
           >
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
             </span>
-            <span className="font-mono text-eyebrow uppercase text-text-primary tracking-[0.05em] font-medium">
-              GitHub GraphQL Ingestion
+            <span className="font-mono text-xs uppercase tracking-wider font-semibold text-white">
+              GitHub GraphQL Engine
             </span>
-            <span className="text-border">|</span>
-            <span className="font-mono text-[11px] text-text-secondary">
+            <span className="text-[#3A3D33]">|</span>
+            <span className="font-mono text-xs text-accent font-semibold">
               Zero Hallucinations
             </span>
           </div>
 
-          {/* High-Impact Headline */}
+          {/* Short & Big Font Headline */}
           <h1
             ref={headlineRef}
-            className="text-4xl sm:text-5xl lg:text-[54px] font-bold tracking-[-0.035em] leading-[1.08] text-text-primary"
+            className="text-5xl sm:text-6xl lg:text-[68px] xl:text-[74px] font-extrabold tracking-[-0.04em] leading-[1.02] text-[#0D0E0C]"
           >
-            Generate an elite GitHub profile README from your{" "}
-            <span className="relative inline-block whitespace-nowrap">
-              <span className="relative z-10 text-text-primary">real data</span>
-              <span className="absolute bottom-1 sm:bottom-1.5 left-0 right-0 h-3 bg-accent/70 -rotate-1 -z-0 rounded-sm"></span>
+            Turn your GitHub into an{" "}
+            <span className="relative inline-block text-[#0D0E0C] bg-accent px-3 py-0.5 rounded-lg -rotate-1 shadow-xs">
+              elite README
             </span>
             .
           </h1>
 
-          {/* Value Prop Lead Description */}
+          {/* Value Prop Lead Description (High-contrast, Crisp Black) */}
           <p
             ref={descRef}
-            className="text-body leading-[1.65] text-text-secondary text-base sm:text-lg max-w-xl"
+            className="text-lg sm:text-xl font-normal leading-[1.55] text-[#171815] max-w-xl"
           >
-            Connect your GitHub username to parse public repositories, contribution
-            cadence, and language analytics into a precision-crafted profile README.
-            Deterministic badges, live stats, and pure verified facts.
+            Connect your username. We parse verified repos, contributions, and language metrics into a structured, ready-to-commit profile README.
           </p>
 
           {/* Action CTAs */}
@@ -267,40 +264,40 @@ export function Hero() {
             <a
               href="#generator"
               onClick={handleScrollToGenerator}
-              className="h-11 px-6 bg-[#171815] hover:bg-[#31322E] text-white font-medium text-nav rounded-md transition-all flex items-center justify-center gap-2 shadow-xs group cursor-pointer hover:shadow-[0_4px_16px_rgba(0,0,0,0.18)]"
+              className="h-12 px-7 bg-[#0D0E0C] hover:bg-[#23251E] text-white font-semibold text-base rounded-lg transition-all flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg group cursor-pointer"
             >
               <LuSparkles className="w-4 h-4 text-accent" />
               <span>Synthesize Profile</span>
-              <FiArrowDown className="w-3.5 h-3.5 text-[#95988D] group-hover:translate-y-0.5 transition-transform" />
+              <FiArrowDown className="w-4 h-4 text-white group-hover:translate-y-0.5 transition-transform" />
             </a>
 
             <a
               href="https://github.com/SajithNuski/Hello-md"
               target="_blank"
               rel="noopener noreferrer"
-              className="h-11 px-5 bg-surface hover:bg-surface-raised border border-border text-text-primary font-medium text-nav rounded-md transition-all flex items-center justify-center gap-2 shadow-xs"
+              className="h-12 px-6 bg-white hover:bg-[#F5F6F0] border-2 border-[#0D0E0C] text-[#0D0E0C] font-semibold text-base rounded-lg transition-all flex items-center justify-center gap-2 shadow-xs"
             >
-              <SiGithub className="w-4 h-4" />
+              <SiGithub className="w-4 h-4 text-[#0D0E0C]" />
               <span>Star on GitHub</span>
             </a>
           </div>
 
-          {/* Micro Trust Pillars */}
+          {/* High-Contrast Obsidian Feature Badges */}
           <div
             ref={featuresRef}
-            className="flex flex-wrap items-center gap-y-2 gap-x-5 pt-2 text-meta text-text-secondary font-mono select-none"
+            className="flex flex-wrap items-center gap-2.5 pt-2 select-none"
           >
-            <div className="flex items-center gap-1.5">
-              <FiCheck className="w-3.5 h-3.5 text-accent" />
-              <span>GraphQL API Verified</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0D0E0C] text-white text-xs font-mono font-medium shadow-xs">
+              <FiCheck className="w-4 h-4 text-accent stroke-[2.5]" />
+              <span>GraphQL Verified</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <FiCheck className="w-3.5 h-3.5 text-accent" />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0D0E0C] text-white text-xs font-mono font-medium shadow-xs">
+              <FiCheck className="w-4 h-4 text-accent stroke-[2.5]" />
               <span>Shields.io Badges</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <FiCheck className="w-3.5 h-3.5 text-accent" />
-              <span>1-Click Git Commit</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0D0E0C] text-white text-xs font-mono font-medium shadow-xs">
+              <FiCheck className="w-4 h-4 text-accent stroke-[2.5]" />
+              <span>1-Click Git Push</span>
             </div>
           </div>
         </div>
@@ -328,10 +325,10 @@ export function Hero() {
               <FiCheckCircle className="w-3.5 h-3.5 text-accent" />
             </div>
             <div className="flex flex-col">
-              <span className="font-sans font-semibold text-xs text-white leading-tight">
+              <span className="font-sans font-bold text-xs text-white leading-tight">
                 100% Grounded
               </span>
-              <span className="font-mono text-[10px] text-[#95988D] leading-tight">
+              <span className="font-mono text-[10px] text-accent font-medium leading-tight">
                 Zero AI Hallucinations
               </span>
             </div>
@@ -346,11 +343,11 @@ export function Hero() {
               <FiGitCommit className="w-3.5 h-3.5 text-accent" />
             </div>
             <div className="flex flex-col">
-              <span className="font-sans font-semibold text-xs text-white leading-tight">
+              <span className="font-sans font-bold text-xs text-white leading-tight">
                 Direct Sync
               </span>
-              <span className="font-mono text-[10px] text-[#95988D] leading-tight">
-                Push to user/user repo
+              <span className="font-mono text-[10px] text-white/85 leading-tight">
+                Push to profile repo
               </span>
             </div>
           </div>
@@ -376,7 +373,7 @@ export function Hero() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-mono text-[#787B70] hidden sm:inline">
+                <span className="text-[11px] font-mono text-white/70 hidden sm:inline">
                   git:(main)
                 </span>
                 <span className="text-xs font-mono font-medium text-accent bg-[#181A14] px-2 py-0.5 rounded border border-[#2A2E22]">
@@ -401,52 +398,52 @@ export function Hero() {
       {/* Tech Pipeline Feature Ribbon */}
       <div
         ref={ribbonRef}
-        className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-border/70 select-none"
+        className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-[#0D0E0C]/15 select-none"
       >
-        <div className="flex flex-col gap-1 p-3.5 rounded-lg bg-surface border border-border shadow-xs">
-          <span className="font-mono text-eyebrow uppercase text-[#787B70] tracking-[0.04em]">
+        <div className="flex flex-col gap-1.5 p-4 rounded-xl bg-white border border-[#0D0E0C]/10 shadow-xs hover:border-[#0D0E0C]/40 transition-colors">
+          <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 w-fit px-2 py-0.5 rounded">
             01 / ROUTER
           </span>
-          <span className="font-semibold text-sm text-text-primary">
+          <span className="font-bold text-sm text-[#0D0E0C]">
             Llama 3.3 + Gemini
           </span>
-          <span className="text-meta text-text-secondary">
+          <span className="text-xs text-[#2B2D26] font-medium">
             Multi-model fallback
           </span>
         </div>
 
-        <div className="flex flex-col gap-1 p-3.5 rounded-lg bg-surface border border-border shadow-xs">
-          <span className="font-mono text-eyebrow uppercase text-[#787B70] tracking-[0.04em]">
+        <div className="flex flex-col gap-1.5 p-4 rounded-xl bg-white border border-[#0D0E0C]/10 shadow-xs hover:border-[#0D0E0C]/40 transition-colors">
+          <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 w-fit px-2 py-0.5 rounded">
             02 / DATA
           </span>
-          <span className="font-semibold text-sm text-text-primary">
+          <span className="font-bold text-sm text-[#0D0E0C]">
             GitHub GraphQL API
           </span>
-          <span className="text-meta text-text-secondary">
+          <span className="text-xs text-[#2B2D26] font-medium">
             Repos, stats, languages
           </span>
         </div>
 
-        <div className="flex flex-col gap-1 p-3.5 rounded-lg bg-surface border border-border shadow-xs">
-          <span className="font-mono text-eyebrow uppercase text-[#787B70] tracking-[0.04em]">
+        <div className="flex flex-col gap-1.5 p-4 rounded-xl bg-white border border-[#0D0E0C]/10 shadow-xs hover:border-[#0D0E0C]/40 transition-colors">
+          <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 w-fit px-2 py-0.5 rounded">
             03 / EDITOR
           </span>
-          <span className="font-semibold text-sm text-text-primary">
+          <span className="font-bold text-sm text-[#0D0E0C]">
             CodeMirror 6 Suite
           </span>
-          <span className="text-meta text-text-secondary">
+          <span className="text-xs text-[#2B2D26] font-medium">
             Live split markdown
           </span>
         </div>
 
-        <div className="flex flex-col gap-1 p-3.5 rounded-lg bg-surface border border-border shadow-xs">
-          <span className="font-mono text-eyebrow uppercase text-[#787B70] tracking-[0.04em]">
+        <div className="flex flex-col gap-1.5 p-4 rounded-xl bg-white border border-[#0D0E0C]/10 shadow-xs hover:border-[#0D0E0C]/40 transition-colors">
+          <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 w-fit px-2 py-0.5 rounded">
             04 / EXPORT
           </span>
-          <span className="font-semibold text-sm text-text-primary">
+          <span className="font-bold text-sm text-[#0D0E0C]">
             Direct GitHub Push
           </span>
-          <span className="text-meta text-text-secondary">
+          <span className="text-xs text-[#2B2D26] font-medium">
             Copy, download, or sync
           </span>
         </div>
