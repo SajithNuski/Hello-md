@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SiGithub, SiMarkdown } from "react-icons/si";
+import { SiGithub } from "react-icons/si";
 import { FiArrowUp, FiExternalLink, FiTerminal, FiCheckCircle } from "react-icons/fi";
 import { LuSparkles } from "react-icons/lu";
 
@@ -19,8 +19,13 @@ export function Footer() {
           <div className="lg:col-span-2 flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-2.5 group">
-                <div className="w-7 h-7 rounded-md bg-[#181A14] border border-[#2A2D23] text-accent flex items-center justify-center shadow-xs group-hover:border-accent/60 group-hover:shadow-[0_0_12px_rgba(197,244,103,0.3)] transition-all duration-200">
-                  <SiMarkdown className="w-4 h-4 text-accent" />
+                <div className="w-7 h-7 rounded-md overflow-hidden bg-black border border-[#2A2D23] flex items-center justify-center shadow-xs group-hover:border-accent/60 group-hover:shadow-[0_0_12px_rgba(197,244,103,0.3)] transition-all duration-200">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/logo.svg"
+                    alt="Hello-md Logo"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <span className="font-semibold text-nav tracking-[-0.02em] text-white">
                   Hello-md

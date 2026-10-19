@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LuSparkles, LuLayoutTemplate } from "react-icons/lu";
-import { SiGithub, SiMarkdown } from "react-icons/si";
+import { SiGithub } from "react-icons/si";
 
 export function Header() {
   const pathname = usePathname();
@@ -18,8 +18,13 @@ export function Header() {
         {/* Brand */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-7 h-7 rounded-md bg-[#181A14] border border-[#2A2D23] text-accent flex items-center justify-center shadow-xs group-hover:border-accent/60 group-hover:shadow-[0_0_12px_rgba(197,244,103,0.3)] transition-all duration-200">
-              <SiMarkdown className="w-4 h-4 text-accent" />
+            <div className="w-7 h-7 rounded-md overflow-hidden bg-black border border-[#2A2D23] flex items-center justify-center shadow-xs group-hover:border-accent/60 group-hover:shadow-[0_0_12px_rgba(197,244,103,0.3)] transition-all duration-200">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo.svg"
+                alt="Hello-md Logo"
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="font-semibold text-nav tracking-[-0.02em] text-white group-hover:text-white transition-colors">
               Hello-md
@@ -28,7 +33,14 @@ export function Header() {
 
           <span className="text-[#32352B] font-mono text-meta">/</span>
 
-          
+          <span className="font-mono text-eyebrow uppercase text-[#A0A298] bg-[#161813] px-2 py-0.5 rounded-sm border border-[#262820] tracking-[0.04em]">
+            ReadmeKit
+          </span>
+
+          <span className="hidden sm:inline-flex items-center gap-1.5 font-mono text-[11px] text-[#787B70] bg-[#12140F] px-2 py-0.5 rounded-full border border-[#20221B]">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+            v1.0
+          </span>
         </div>
 
         {/* Center Nav: Capsule Switcher */}
