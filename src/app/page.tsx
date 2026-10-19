@@ -3,6 +3,7 @@ import { Footer } from "@/components/ui/Footer";
 import { Hero } from "@/components/landing/Hero";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { FeaturesBento } from "@/components/landing/FeaturesBento";
+import { TechMarquee } from "@/components/landing/TechMarquee";
 import { Comparison } from "@/components/landing/Comparison";
 import { GeneratorSection } from "@/components/landing/GeneratorSection";
 import { Faq } from "@/components/landing/Faq";
@@ -24,7 +25,10 @@ export default function Home() {
           {/* 3. Features Bento Grid: Core Technical Capabilities */}
           <FeaturesBento />
 
-          {/* 4. Comparison Section: Hello-md vs Generic LLMs */}
+          {/* 4. Tech Ecosystem Infinite Marquee */}
+          <TechMarquee />
+
+          {/* 5. Comparison Section: Hello-md vs Generic LLMs */}
           <Comparison />
 
           {/* 5. Dedicated Generator Section (ScrollTrigger & Highlight) */}
