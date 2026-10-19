@@ -11,7 +11,7 @@ import { ExportDialog } from "@/components/export/ExportDialog";
 import { SectionItem } from "@/lib/db/collections";
 import { SectionKey, Tone } from "@/lib/config";
 import { assemble } from "@/lib/assemble";
-import { Loader2, AlertCircle } from "lucide-react";
+import { FiLoader, FiAlertCircle } from "react-icons/fi";
 
 export default function EditorPage() {
   const params = useParams();
@@ -186,7 +186,7 @@ export default function EditorPage() {
       <div className="min-h-screen bg-[#FAFAF8] flex flex-col">
         <Header />
         <div className="flex-1 flex flex-col items-center justify-center gap-3 pt-12">
-          <Loader2 className="w-6 h-6 animate-spin text-[#171815]" />
+          <FiLoader className="w-6 h-6 animate-spin text-[#171815]" />
           <span className="font-mono text-xs text-[#65665F]">
             Loading workspace draft...
           </span>
@@ -201,7 +201,7 @@ export default function EditorPage() {
         <Header />
         <div className="flex-1 flex flex-col items-center justify-center gap-4 pt-12 px-6">
           <div className="p-4 bg-[#FEE2E2] border border-[#DC2626]/30 rounded-[8px] flex items-center gap-3 text-xs text-[#DC2626] max-w-md">
-            <AlertCircle className="w-5 h-5 shrink-0" />
+            <FiAlertCircle className="w-5 h-5 shrink-0" />
             <span>{error || "Draft not found"}</span>
           </div>
           <button

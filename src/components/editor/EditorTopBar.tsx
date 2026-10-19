@@ -1,6 +1,8 @@
 "use client";
 
-import { Download, Check, Copy } from "lucide-react";
+import { FiDownload, FiCheck, FiCopy, FiEye } from "react-icons/fi";
+import { SiGithub } from "react-icons/si";
+import { VscSplitHorizontal, VscCode } from "react-icons/vsc";
 
 interface EditorTopBarProps {
   login: string;
@@ -28,6 +30,7 @@ export function EditorTopBar({
       {/* User Metadata & Sync Status */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 bg-surface-raised px-2.5 py-1 rounded-sm border border-border shadow-xs">
+          <SiGithub className="w-3.5 h-3.5 text-text-secondary" />
           <span className="font-mono text-meta font-medium text-text-primary">
             @{login}
           </span>
@@ -56,33 +59,36 @@ export function EditorTopBar({
       <div className="hidden md:flex items-center bg-surface p-0.5 rounded-sm border border-border shadow-xs">
         <button
           onClick={() => onViewChange("split")}
-          className={`px-3 py-1 rounded-sm text-nav font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-sm text-nav font-medium transition-colors ${
             activeView === "split"
               ? "bg-surface-raised text-text-primary shadow-xs"
               : "text-text-secondary hover:text-text-primary"
           }`}
         >
-          Split View
+          <VscSplitHorizontal className="w-3.5 h-3.5" />
+          <span>Split View</span>
         </button>
         <button
           onClick={() => onViewChange("editor")}
-          className={`px-3 py-1 rounded-sm text-nav font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-sm text-nav font-medium transition-colors ${
             activeView === "editor"
               ? "bg-surface-raised text-text-primary shadow-xs"
               : "text-text-secondary hover:text-text-primary"
           }`}
         >
-          Editor Only
+          <VscCode className="w-3.5 h-3.5" />
+          <span>Editor Only</span>
         </button>
         <button
           onClick={() => onViewChange("preview")}
-          className={`px-3 py-1 rounded-sm text-nav font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-sm text-nav font-medium transition-colors ${
             activeView === "preview"
               ? "bg-surface-raised text-text-primary shadow-xs"
               : "text-text-secondary hover:text-text-primary"
           }`}
         >
-          Preview Only
+          <FiEye className="w-3.5 h-3.5" />
+          <span>Preview Only</span>
         </button>
       </div>
 
@@ -95,12 +101,12 @@ export function EditorTopBar({
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 text-status-success" />
+              <FiCheck className="w-3.5 h-3.5 text-status-success" />
               <span>Copied</span>
             </>
           ) : (
             <>
-              <Copy className="w-3.5 h-3.5 text-text-secondary" />
+              <FiCopy className="w-3.5 h-3.5 text-text-secondary" />
               <span>Copy</span>
             </>
           )}
@@ -110,7 +116,7 @@ export function EditorTopBar({
           onClick={onExport}
           className="h-8 px-4 bg-accent hover:bg-accent-hover text-text-primary font-medium text-nav rounded-sm transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
         >
-          <Download className="w-3.5 h-3.5 stroke-[2]" />
+          <FiDownload className="w-3.5 h-3.5 stroke-[2]" />
           <span>Export README</span>
         </button>
       </div>

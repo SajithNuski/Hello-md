@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { GripVertical, Sparkles, Loader2 } from "lucide-react";
+import { FiRefreshCw, FiUser, FiInfo, FiCpu, FiFolder, FiShare2 } from "react-icons/fi";
+import { LuGripVertical, LuSparkles } from "react-icons/lu";
 import { SectionItem } from "@/lib/db/collections";
 import { SectionKey, Tone } from "@/lib/config";
 
@@ -20,6 +21,14 @@ const SECTION_LABELS: Record<SectionKey, string> = {
   skills: "Tech Stack & Badges",
   projects: "Featured Projects",
   contact: "Connect & Socials",
+};
+
+const SECTION_ICONS: Record<SectionKey, React.ComponentType<{ className?: string }>> = {
+  intro: FiUser,
+  about: FiInfo,
+  skills: FiCpu,
+  projects: FiFolder,
+  contact: FiShare2,
 };
 
 export function SectionsManager({
@@ -52,6 +61,7 @@ export function SectionsManager({
           {sections.map((section) => {
             const isSelected = section.key === selectedKey;
             const label = SECTION_LABELS[section.key as SectionKey] || section.key;
+            const SectionIcon = SECTION_ICONS[section.key as SectionKey] || FiFolder;
 
             return (
               <div
@@ -72,8 +82,13 @@ export function SectionsManager({
                     <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-accent rounded-r"></div>
                   )}
 
-                  <div className="flex items-center gap-2.5 pl-1.5 overflow-hidden">
-                    <GripVertical className="w-3.5 h-3.5 text-text-muted cursor-grab shrink-0" />
+                  <div className="flex items-center gap-2 pl-1 overflow-hidden">
+                    <LuGripVertical className="w-3.5 h-3.5 text-text-muted cursor-grab shrink-0" />
+                    <SectionIcon
+                      className={`w-3.5 h-3.5 shrink-0 ${
+                        isSelected ? "text-text-primary" : "text-text-secondary"
+                      }`}
+                    />
                     <span
                       className={`text-nav truncate ${
                         isSelected
@@ -116,9 +131,9 @@ export function SectionsManager({
                       className="flex items-center gap-1.5 text-meta font-medium text-text-primary hover:text-[#4A6700] transition-colors disabled:opacity-50 cursor-pointer"
                     >
                       {isRegenerating ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-text-primary" />
+                        <FiRefreshCw className="w-3.5 h-3.5 animate-spin text-text-primary" />
                       ) : (
-                        <Sparkles className="w-3.5 h-3.5 text-text-primary stroke-[1.5]" />
+                        <LuSparkles className="w-3.5 h-3.5 text-text-primary stroke-[1.5]" />
                       )}
                       <span>Regenerate</span>
                     </button>

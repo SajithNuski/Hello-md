@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { X, Copy, Download, GitCommit, Check } from "lucide-react";
+import { FiX, FiCopy, FiDownload, FiCheck, FiGitCommit } from "react-icons/fi";
+import { SiGithub } from "react-icons/si";
 
 interface ExportDialogProps {
   isOpen: boolean;
@@ -54,7 +55,7 @@ export function ExportDialog({
             onClick={onClose}
             className="p-1.5 text-text-secondary hover:text-text-primary rounded-sm hover:bg-surface-raised transition-colors cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <FiX className="w-4 h-4" />
           </button>
         </div>
 
@@ -67,7 +68,7 @@ export function ExportDialog({
               className="h-14 p-3.5 bg-surface hover:bg-surface-raised border border-border rounded-sm transition-colors flex items-center gap-3.5 text-left cursor-pointer shadow-xs"
             >
               <div className="w-8 h-8 rounded-sm bg-surface-raised border border-border flex items-center justify-center shrink-0 shadow-xs">
-                {copied ? <Check className="w-4 h-4 text-status-success" /> : <Copy className="w-4 h-4 text-text-primary" />}
+                {copied ? <FiCheck className="w-4 h-4 text-status-success" /> : <FiCopy className="w-4 h-4 text-text-primary" />}
               </div>
               <div className="flex flex-col">
                 <span className="text-nav font-medium text-text-primary">{copied ? "Copied!" : "Copy Markdown"}</span>
@@ -80,7 +81,7 @@ export function ExportDialog({
               className="h-14 p-3.5 bg-surface hover:bg-surface-raised border border-border rounded-sm transition-colors flex items-center gap-3.5 text-left cursor-pointer shadow-xs"
             >
               <div className="w-8 h-8 rounded-sm bg-surface-raised border border-border flex items-center justify-center shrink-0 shadow-xs">
-                <Download className="w-4 h-4 text-text-primary" />
+                <FiDownload className="w-4 h-4 text-text-primary" />
               </div>
               <div className="flex flex-col">
                 <span className="text-nav font-medium text-text-primary">Download File</span>
@@ -92,7 +93,7 @@ export function ExportDialog({
           {/* Option 2: Push to GitHub */}
           <div className="flex flex-col gap-3.5 p-5 bg-surface rounded-sm border border-border shadow-xs">
             <div className="flex items-center gap-2">
-              <GitCommit className="w-4 h-4 text-text-primary" />
+              <SiGithub className="w-4 h-4 text-text-primary" />
               <span className="text-nav font-medium text-text-primary">Push directly to GitHub repo</span>
             </div>
 
@@ -123,7 +124,7 @@ export function ExportDialog({
               }}
               className="h-10 w-full mt-1.5 bg-accent hover:bg-accent-hover text-text-primary font-medium text-nav rounded-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
             >
-              <GitCommit className="w-4 h-4 stroke-[2]" />
+              <FiGitCommit className="w-4 h-4 stroke-[2]" />
               <span>Commit &amp; Push to {login}/{login}</span>
             </button>
           </div>

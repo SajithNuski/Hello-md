@@ -2,7 +2,7 @@
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Eye } from "lucide-react";
+import { FiEye } from "react-icons/fi";
 
 interface MarkdownPreviewProps {
   markdown: string;
@@ -14,7 +14,7 @@ export function MarkdownPreview({ markdown }: MarkdownPreviewProps) {
       {/* Header Tab */}
       <div className="h-10 px-4 flex items-center justify-between border-b border-border bg-surface select-none">
         <div className="flex items-center gap-2 text-text-secondary">
-          <Eye className="w-4 h-4 stroke-[1.5]" />
+          <FiEye className="w-4 h-4 stroke-[1.5]" />
           <span className="text-nav font-medium text-text-primary">Rendered Output</span>
           <span className="font-mono text-eyebrow bg-surface-raised px-1.5 py-0.2 rounded-sm border border-border text-text-secondary uppercase tracking-[0.04em]">
             README.md

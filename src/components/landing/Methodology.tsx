@@ -1,4 +1,4 @@
-import { Database, PenTool, ArrowUpRight } from "lucide-react";
+import { FiDatabase, FiFeather, FiArrowUpRight } from "react-icons/fi";
 
 export function Methodology() {
   return (
@@ -19,7 +19,7 @@ export function Methodology() {
             <span className="font-mono text-eyebrow font-semibold text-text-secondary bg-surface-raised px-2 py-0.5 rounded-sm border border-border tracking-[0.04em]">
               01
             </span>
-            <Database className="w-4 h-4 text-text-secondary stroke-[1.5]" />
+            <FiDatabase className="w-4 h-4 text-text-secondary stroke-[1.5]" />
           </div>
           <h3 className="text-card font-medium tracking-[-0.03em] text-text-primary">
             Fetch Data
@@ -35,7 +35,7 @@ export function Methodology() {
             <span className="font-mono text-eyebrow font-semibold text-text-secondary bg-surface-raised px-2 py-0.5 rounded-sm border border-border tracking-[0.04em]">
               02
             </span>
-            <PenTool className="w-4 h-4 text-text-secondary stroke-[1.5]" />
+            <FiFeather className="w-4 h-4 text-text-secondary stroke-[1.5]" />
           </div>
           <h3 className="text-card font-medium tracking-[-0.03em] text-text-primary">
             Write Sections
@@ -51,7 +51,7 @@ export function Methodology() {
             <span className="font-mono text-eyebrow font-semibold text-text-secondary bg-surface-raised px-2 py-0.5 rounded-sm border border-border tracking-[0.04em]">
               03
             </span>
-            <ArrowUpRight className="w-4 h-4 text-text-secondary stroke-[1.5]" />
+            <FiArrowUpRight className="w-4 h-4 text-text-secondary stroke-[1.5]" />
           </div>
           <h3 className="text-card font-medium tracking-[-0.03em] text-text-primary">
             Edit & Export

@@ -3,15 +3,8 @@
 import { useMemo, useCallback } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown } from "@codemirror/lang-markdown";
-import {
-  Bold,
-  Italic,
-  Code,
-  Heading1,
-  Heading2,
-  Link as LinkIcon,
-  List,
-} from "lucide-react";
+import { FiBold, FiItalic, FiCode, FiLink, FiList } from "react-icons/fi";
+import { LuHeading1, LuHeading2 } from "react-icons/lu";
 
 interface MarkdownEditorProps {
   value: string;
@@ -44,7 +37,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
             className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Bold"
           >
-            <Bold className="w-3.5 h-3.5" />
+            <FiBold className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
@@ -52,7 +45,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
             className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Italic"
           >
-            <Italic className="w-3.5 h-3.5" />
+            <FiItalic className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
@@ -60,7 +53,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
             className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Inline Code"
           >
-            <Code className="w-3.5 h-3.5" />
+            <FiCode className="w-3.5 h-3.5" />
           </button>
 
           <div className="h-4 w-[1px] bg-border mx-1"></div>
@@ -71,7 +64,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
             className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Heading 1"
           >
-            <Heading1 className="w-3.5 h-3.5" />
+            <LuHeading1 className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
@@ -79,7 +72,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
             className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Heading 2"
           >
-            <Heading2 className="w-3.5 h-3.5" />
+            <LuHeading2 className="w-3.5 h-3.5" />
           </button>
 
           <div className="h-4 w-[1px] bg-border mx-1"></div>
@@ -90,7 +83,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
             className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Link"
           >
-            <LinkIcon className="w-3.5 h-3.5" />
+            <FiLink className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
@@ -98,7 +91,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
             className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Bullet List"
           >
-            <List className="w-3.5 h-3.5" />
+            <FiList className="w-3.5 h-3.5" />
           </button>
         </div>
 

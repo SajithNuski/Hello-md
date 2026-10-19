@@ -2,7 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, Terminal, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import {
+  FiTerminal,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiLoader,
+  FiSliders,
+  FiLayout,
+  FiDatabase,
+  FiEdit3,
+  FiPackage,
+} from "react-icons/fi";
+import { SiGithub } from "react-icons/si";
+import { LuSparkles } from "react-icons/lu";
 import { Tone } from "@/lib/config";
 
 interface LogEntry {
@@ -122,8 +134,9 @@ export function GeneratorForm() {
             <span className="font-mono text-eyebrow text-text-muted tracking-[0.04em]">REQUIRED</span>
           </label>
           <div className="flex h-10 w-full bg-surface-raised rounded-sm border border-border overflow-hidden focus-within:border-text-primary focus-within:ring-2 focus-within:ring-accent/40 transition-all shadow-xs">
-            <span className="inline-flex items-center justify-center px-3.5 bg-surface border-r border-border font-mono text-meta text-text-secondary select-none">
-              @
+            <span className="inline-flex items-center justify-center px-3 bg-surface border-r border-border font-mono text-meta text-text-secondary select-none gap-1.5">
+              <SiGithub className="w-3.5 h-3.5 text-text-secondary" />
+              <span>@</span>
             </span>
             <input
               id="gh-username"
@@ -142,8 +155,9 @@ export function GeneratorForm() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Tone Select */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="tone-select" className="text-nav font-medium text-text-primary">
-              Editorial Tone
+            <label htmlFor="tone-select" className="text-nav font-medium text-text-primary flex items-center gap-1.5">
+              <FiSliders className="w-3.5 h-3.5 text-text-secondary" />
+              <span>Editorial Tone</span>
             </label>
             <select
               id="tone-select"
@@ -161,8 +175,9 @@ export function GeneratorForm() {
 
           {/* Template Select */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="template-select" className="text-nav font-medium text-text-primary">
-              Structural Template
+            <label htmlFor="template-select" className="text-nav font-medium text-text-primary flex items-center gap-1.5">
+              <FiLayout className="w-3.5 h-3.5 text-text-secondary" />
+              <span>Structural Template</span>
             </label>
             <select
               id="template-select"
@@ -181,7 +196,7 @@ export function GeneratorForm() {
         {/* Error Banner */}
         {errorMessage && (
           <div className="p-3 bg-red-50 border border-status-error/30 rounded-sm flex items-center gap-2 text-nav text-status-error">
-            <AlertCircle className="w-4 h-4 shrink-0 stroke-[1.5]" />
+            <FiAlertCircle className="w-4 h-4 shrink-0 stroke-[1.5]" />
             <span>{errorMessage}</span>
           </div>
         )}
@@ -194,12 +209,12 @@ export function GeneratorForm() {
         >
           {isGenerating ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-text-primary" />
+              <FiLoader className="w-4 h-4 animate-spin text-text-primary" />
               <span>Synthesizing Profile...</span>
             </>
           ) : (
             <>
-              <Sparkles className="w-4 h-4 text-text-primary stroke-[1.5]" />
+              <LuSparkles className="w-4 h-4 text-text-primary stroke-[1.5]" />
               <span>Generate README</span>
             </>
           )}
@@ -227,13 +242,11 @@ export function GeneratorForm() {
               }`}
             >
               {currentStage === "fetching" ? (
-                <Loader2 className="w-4 h-4 text-text-primary animate-spin shrink-0" />
+                <FiLoader className="w-4 h-4 text-text-primary animate-spin shrink-0" />
               ) : currentStage !== "idle" ? (
-                <CheckCircle2 className="w-4 h-4 text-status-success shrink-0" />
+                <FiCheckCircle className="w-4 h-4 text-status-success shrink-0" />
               ) : (
-                <span className="w-4 h-4 rounded-full border border-text-muted flex items-center justify-center text-[10px] font-mono shrink-0">
-                  1
-                </span>
+                <FiDatabase className="w-4 h-4 text-text-muted shrink-0" />
               )}
               <div className="flex flex-col">
                 <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
@@ -250,13 +263,11 @@ export function GeneratorForm() {
               }`}
             >
               {currentStage === "writing" ? (
-                <Loader2 className="w-4 h-4 text-text-primary animate-spin shrink-0" />
+                <FiLoader className="w-4 h-4 text-text-primary animate-spin shrink-0" />
               ) : currentStage === "assembling" || currentStage === "done" ? (
-                <CheckCircle2 className="w-4 h-4 text-status-success shrink-0" />
+                <FiCheckCircle className="w-4 h-4 text-status-success shrink-0" />
               ) : (
-                <span className="w-4 h-4 rounded-full border border-text-muted flex items-center justify-center text-[10px] font-mono shrink-0">
-                  2
-                </span>
+                <FiEdit3 className="w-4 h-4 text-text-muted shrink-0" />
               )}
               <div className="flex flex-col">
                 <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
@@ -273,13 +284,11 @@ export function GeneratorForm() {
               }`}
             >
               {currentStage === "assembling" ? (
-                <Loader2 className="w-4 h-4 text-text-primary animate-spin shrink-0" />
+                <FiLoader className="w-4 h-4 text-text-primary animate-spin shrink-0" />
               ) : currentStage === "done" ? (
-                <CheckCircle2 className="w-4 h-4 text-status-success shrink-0" />
+                <FiCheckCircle className="w-4 h-4 text-status-success shrink-0" />
               ) : (
-                <span className="w-4 h-4 rounded-full border border-text-muted flex items-center justify-center text-[10px] font-mono shrink-0">
-                  3
-                </span>
+                <FiPackage className="w-4 h-4 text-text-muted shrink-0" />
               )}
               <div className="flex flex-col">
                 <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
@@ -294,7 +303,7 @@ export function GeneratorForm() {
           <div className="p-4 flex flex-col gap-1.5 font-mono text-meta bg-[#171815] text-[#FAFAF8] min-h-[120px] max-h-[180px] overflow-y-auto">
             <div className="flex items-center justify-between text-text-muted border-b border-[#31322E] pb-1.5 mb-1 text-eyebrow">
               <span className="flex items-center gap-1.5">
-                <Terminal className="w-3.5 h-3.5 text-accent" />
+                <FiTerminal className="w-3.5 h-3.5 text-accent" />
                 <span className="tracking-[0.04em] uppercase">STDOUT STREAM</span>
               </span>
               <span className="text-accent uppercase tracking-wider text-[10px]">LIVE</span>
