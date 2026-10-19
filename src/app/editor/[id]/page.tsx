@@ -185,7 +185,7 @@ export default function EditorPage() {
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex flex-col">
         <Header />
-        <div className="flex-1 flex flex-col items-center justify-center gap-3 pt-14">
+        <div className="flex-1 flex flex-col items-center justify-center gap-3 pt-16">
           <FiLoader className="w-6 h-6 animate-spin text-[#171815]" />
           <span className="font-mono text-xs text-[#65665F]">
             Loading workspace draft...
@@ -199,7 +199,7 @@ export default function EditorPage() {
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex flex-col">
         <Header />
-        <div className="flex-1 flex flex-col items-center justify-center gap-4 pt-14 px-6">
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 pt-16 px-6">
           <div className="p-4 bg-[#FEE2E2] border border-[#DC2626]/30 rounded-[8px] flex items-center gap-3 text-xs text-[#DC2626] max-w-md">
             <FiAlertCircle className="w-5 h-5 shrink-0" />
             <span>{error || "Draft not found"}</span>
@@ -219,7 +219,7 @@ export default function EditorPage() {
     <div className="min-h-screen bg-[#FAFAF8] flex flex-col">
       <Header />
 
-      <main className="w-full pt-14 flex-1 flex flex-col overflow-hidden h-[calc(100vh)]">
+      <main className="w-full pt-16 flex-1 flex flex-col overflow-hidden h-[calc(100vh)]">
         {/* Top 48px Sub-Header */}
         <EditorTopBar
           login={login}
