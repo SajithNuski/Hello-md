@@ -17,12 +17,19 @@ export function Header() {
 
   useGSAP(
     () => {
-      gsap.from(headerRef.current, {
-        y: -24,
-        opacity: 0,
-        duration: 0.65,
-        ease: "power3.out",
-      });
+      if (headerRef.current) {
+        gsap.fromTo(
+          headerRef.current,
+          { y: -24, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.65,
+            ease: "power3.out",
+            clearProps: "all",
+          }
+        );
+      }
     },
     { scope: headerRef }
   );
@@ -53,8 +60,22 @@ export function Header() {
         {/* Center Nav: Capsule Switcher */}
         <nav className="hidden md:flex items-center bg-[#151712] p-1 rounded-full border border-[#24271F] shadow-inner">
           <Link
-            href="/"
-            className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium transition-all ${
+            href="/#how-it-works"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-[#95988D] hover:text-white hover:bg-white/[0.04] transition-all"
+          >
+            <span>How It Works</span>
+          </Link>
+
+          <Link
+            href="/#features"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-[#95988D] hover:text-white hover:bg-white/[0.04] transition-all"
+          >
+            <span>Features</span>
+          </Link>
+
+          <Link
+            href="/#generator"
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
               isGenerator
                 ? "bg-[#24271F] text-accent shadow-xs"
                 : "text-[#95988D] hover:text-white hover:bg-white/[0.04]"
@@ -65,8 +86,15 @@ export function Header() {
           </Link>
 
           <Link
+            href="/#faq"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-[#95988D] hover:text-white hover:bg-white/[0.04] transition-all"
+          >
+            <span>FAQ</span>
+          </Link>
+
+          <Link
             href="/templates"
-            className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
               isTemplates
                 ? "bg-[#24271F] text-accent shadow-xs"
                 : "text-[#95988D] hover:text-white hover:bg-white/[0.04]"

@@ -2,7 +2,11 @@ import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
 import { Hero } from "@/components/landing/Hero";
 import { HowItWorks } from "@/components/landing/HowItWorks";
+import { FeaturesBento } from "@/components/landing/FeaturesBento";
+import { Comparison } from "@/components/landing/Comparison";
 import { GeneratorSection } from "@/components/landing/GeneratorSection";
+import { Faq } from "@/components/landing/Faq";
+import { CtaBanner } from "@/components/landing/CtaBanner";
 
 export default function Home() {
   return (
@@ -17,8 +21,20 @@ export default function Home() {
           {/* 2. How It Works Section: 3-Step Workflow Architecture */}
           <HowItWorks />
 
-          {/* 3. Dedicated Generator Section (ScrollTrigger & Highlight) */}
+          {/* 3. Features Bento Grid: Core Technical Capabilities */}
+          <FeaturesBento />
+
+          {/* 4. Comparison Section: Hello-md vs Generic LLMs */}
+          <Comparison />
+
+          {/* 5. Dedicated Generator Section (ScrollTrigger & Highlight) */}
           <GeneratorSection />
+
+          {/* 6. FAQ Section: Developer Questions & Answers */}
+          <Faq />
+
+          {/* 7. Pre-Footer Call to Action Banner */}
+          <CtaBanner />
         </div>
       </main>
 

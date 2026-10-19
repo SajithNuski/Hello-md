@@ -13,31 +13,42 @@ export function GeneratorSection() {
     () => {
       // ScrollTrigger entrance for Header
       if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: "top 85%",
-          },
-          y: 30,
-          opacity: 0,
-          duration: 0.75,
-          ease: "power3.out",
-        });
+        gsap.fromTo(
+          headerRef.current,
+          { opacity: 0, y: 25 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power3.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: "top 90%",
+              once: true,
+            },
+          }
+        );
       }
 
       // ScrollTrigger entrance for Form Card
       if (formWrapperRef.current) {
-        gsap.from(formWrapperRef.current, {
-          scrollTrigger: {
-            trigger: formWrapperRef.current,
-            start: "top 85%",
-          },
-          y: 40,
-          opacity: 0,
-          duration: 0.85,
-          ease: "power3.out",
-          delay: 0.1,
-        });
+        gsap.fromTo(
+          formWrapperRef.current,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.75,
+            ease: "power3.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: formWrapperRef.current,
+              start: "top 90%",
+              once: true,
+            },
+          }
+        );
       }
     },
     { scope: sectionRef }

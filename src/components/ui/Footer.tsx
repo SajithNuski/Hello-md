@@ -13,16 +13,22 @@ export function Footer() {
   useGSAP(
     () => {
       if (footerRef.current) {
-        gsap.from(footerRef.current, {
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: "top 95%",
-          },
-          opacity: 0,
-          y: 20,
-          duration: 0.8,
-          ease: "power2.out",
-        });
+        gsap.fromTo(
+          footerRef.current,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.75,
+            ease: "power2.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: footerRef.current,
+              start: "top 95%",
+              once: true,
+            },
+          }
+        );
       }
     },
     { scope: footerRef }

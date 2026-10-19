@@ -15,32 +15,44 @@ export function HowItWorks() {
     () => {
       // Reveal Header on Scroll
       if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: "top 85%",
-          },
-          y: 30,
-          opacity: 0,
-          duration: 0.75,
-          ease: "power3.out",
-        });
+        gsap.fromTo(
+          headerRef.current,
+          { opacity: 0, y: 25 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power3.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: "top 90%",
+              once: true,
+            },
+          }
+        );
       }
 
       // Staggered Cards Reveal on Scroll
       const validCards = cardsRef.current.filter(Boolean);
       if (validCards.length > 0) {
-        gsap.from(validCards, {
-          scrollTrigger: {
-            trigger: validCards[0],
-            start: "top 85%",
-          },
-          y: 45,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power3.out",
-        });
+        gsap.fromTo(
+          validCards,
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.75,
+            stagger: 0.12,
+            ease: "power3.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: validCards[0],
+              start: "top 90%",
+              once: true,
+            },
+          }
+        );
       }
     },
     { scope: sectionRef }
