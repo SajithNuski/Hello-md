@@ -65,9 +65,7 @@ export function Footer() {
 
               <span className="text-[#32352B] font-mono text-meta">/</span>
 
-              <span className="font-mono text-eyebrow uppercase text-[#A0A298] bg-[#161813] px-2 py-0.5 rounded-sm border border-[#262820] tracking-[0.04em]">
-                ReadmeKit
-              </span>
+              
             </div>
 
             <p className="text-body text-[#95988D] leading-[1.65] max-w-sm">
@@ -203,12 +201,12 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-meta text-[#787B70] font-mono">
           <div className="flex items-center gap-2">
-            <span>&copy; {new Date().getFullYear()} Hello-md. Built for GitHub developers.</span>
+            <span>&copy; {new Date().getFullYear()} Hello-md | developed by SajithNuski.</span>
           </div>
 
           <div className="flex items-center gap-6">
             <span className="text-[#95988D]">
-              Engineered with <span className="text-accent font-sans font-semibold">Geist</span> &amp; <span className="text-accent font-sans font-semibold">React Icons</span>
+              Engineered with <span className="text-accent font-sans font-semibold">Nextjs</span> &amp; <span className="text-accent font-sans font-semibold">React Icons</span>
             </span>
 
             <button
