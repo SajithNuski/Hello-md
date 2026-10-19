@@ -1,9 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { LuSparkles } from "react-icons/lu";
-import { FiArrowDown, FiCheck, FiCheckCircle, FiGitCommit } from "react-icons/fi";
-import { SiGithub } from "react-icons/si";
+import { LuZap } from "react-icons/lu";
+import { FiArrowDown, FiCheck } from "react-icons/fi";
 import { gsap, useGSAP } from "@/lib/animations/gsap";
 
 export function Hero() {
@@ -16,21 +15,23 @@ export function Hero() {
   const cardContainerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
-  const floatingBadge1Ref = useRef<HTMLDivElement>(null);
-  const floatingBadge2Ref = useRef<HTMLDivElement>(null);
   const ribbonRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      // 1. Coordinated Entrance Timeline
+      // 1. Coordinated Entrance Timeline (Safe guarded)
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      tl.from(badgeRef.current, {
-        y: 20,
-        opacity: 0,
-        duration: 0.6,
-      })
-        .from(
+      if (badgeRef.current) {
+        tl.from(badgeRef.current, {
+          y: 20,
+          opacity: 0,
+          duration: 0.6,
+        });
+      }
+
+      if (headlineRef.current) {
+        tl.from(
           headlineRef.current,
           {
             y: 35,
@@ -38,8 +39,11 @@ export function Hero() {
             duration: 0.85,
           },
           "-=0.4"
-        )
-        .from(
+        );
+      }
+
+      if (descRef.current) {
+        tl.from(
           descRef.current,
           {
             y: 20,
@@ -47,20 +51,34 @@ export function Hero() {
             duration: 0.75,
           },
           "-=0.6"
-        )
-        .from(
-          actionsRef.current ? actionsRef.current.children : [],
+        );
+      }
+
+      const actionButtons = actionsRef.current
+        ? Array.from(actionsRef.current.children).filter(Boolean)
+        : [];
+      if (actionButtons.length > 0) {
+        tl.fromTo(
+          actionButtons,
+          { y: 18, opacity: 0 },
           {
-            y: 18,
-            opacity: 0,
+            y: 0,
+            opacity: 1,
             stagger: 0.1,
             duration: 0.6,
             ease: "back.out(1.4)",
+            clearProps: "all",
           },
           "-=0.5"
-        )
-        .from(
-          featuresRef.current ? featuresRef.current.children : [],
+        );
+      }
+
+      const featureItems = featuresRef.current
+        ? Array.from(featuresRef.current.children).filter(Boolean)
+        : [];
+      if (featureItems.length > 0) {
+        tl.from(
+          featureItems,
           {
             y: 12,
             opacity: 0,
@@ -68,8 +86,11 @@ export function Hero() {
             duration: 0.5,
           },
           "-=0.4"
-        )
-        .from(
+        );
+      }
+
+      if (cardRef.current) {
+        tl.from(
           cardRef.current,
           {
             y: 45,
@@ -79,19 +100,11 @@ export function Hero() {
             ease: "power3.out",
           },
           "-=0.7"
-        )
-        .from(
-          [floatingBadge1Ref.current, floatingBadge2Ref.current],
-          {
-            scale: 0.8,
-            opacity: 0,
-            duration: 0.6,
-            stagger: 0.15,
-            ease: "back.out(1.8)",
-          },
-          "-=0.4"
-        )
-        .from(
+        );
+      }
+
+      if (ribbonRef.current) {
+        tl.from(
           ribbonRef.current,
           {
             opacity: 0,
@@ -100,6 +113,7 @@ export function Hero() {
           },
           "-=0.3"
         );
+      }
 
       // 2. Ambient Subtle Glow Pulsation
       if (glowRef.current) {
@@ -121,30 +135,6 @@ export function Hero() {
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
-        });
-      }
-
-      // 4. Parallax Floating on Badge 1 (Top-Right)
-      if (floatingBadge1Ref.current) {
-        gsap.to(floatingBadge1Ref.current, {
-          y: "-=8",
-          duration: 3.2,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: 0.3,
-        });
-      }
-
-      // 5. Parallax Floating on Badge 2 (Bottom-Left)
-      if (floatingBadge2Ref.current) {
-        gsap.to(floatingBadge2Ref.current, {
-          y: "+=7",
-          duration: 3.8,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: 0.6,
         });
       }
     },
@@ -186,27 +176,39 @@ export function Hero() {
     });
   };
 
-  // Smooth scroll & generator highlight trigger
-  const handleScrollToGenerator = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  // Quick Access: Instant smooth scroll + focus input
+  const handleQuickAccess = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.preventDefault();
     const target = document.getElementById("generator");
     if (target) {
       target.scrollIntoView({ behavior: "smooth" });
-
-      // Highlight the generator card when scrolled
+      const input = document.getElementById("gh-username") as HTMLInputElement | null;
       const formCard = document.getElementById("generator-card");
       if (formCard) {
         gsap.fromTo(
           formCard,
-          { scale: 0.99, borderColor: "rgba(197, 244, 103, 0.8)" },
+          {
+            scale: 0.98,
+            borderColor: "rgba(197, 244, 103, 1)",
+            boxShadow: "0 0 25px rgba(197, 244, 103, 0.4)",
+          },
           {
             scale: 1,
             borderColor: "",
-            duration: 1.2,
+            boxShadow: "",
+            duration: 1,
             ease: "elastic.out(1, 0.4)",
             delay: 0.35,
+            onComplete: () => {
+              input?.focus();
+              input?.select();
+            },
           }
         );
+      } else {
+        setTimeout(() => {
+          input?.focus();
+        }, 400);
       }
     }
   };
@@ -221,15 +223,11 @@ export function Hero() {
       <section className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-14">
         {/* Left Column: High-Impact Typography, CTAs, and High-Contrast Indicators */}
         <div className="w-full lg:w-[50%] flex flex-col gap-6">
-          {/* Release Eyebrow Capsule (High-contrast Obsidian & Acid Lime) */}
+          {/* Release Eyebrow Capsule */}
           <div
             ref={badgeRef}
-            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#0D0E0C] border border-[#2B2E24] shadow-xs select-none w-fit"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0D0E0C] border border-[#2B2E24] shadow-xs select-none w-fit"
           >
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-            </span>
             <span className="font-mono text-xs uppercase tracking-wider font-semibold text-white">
               GitHub GraphQL Engine
             </span>
@@ -261,25 +259,17 @@ export function Hero() {
 
           {/* Action CTAs */}
           <div ref={actionsRef} className="flex flex-wrap items-center gap-3.5 pt-1">
-            <a
-              href="#generator"
-              onClick={handleScrollToGenerator}
-              className="h-12 px-7 bg-[#0D0E0C] hover:bg-[#23251E] text-white font-semibold text-base rounded-lg transition-all flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg group cursor-pointer"
+            {/* Primary Action Button: Generate Readme.md */}
+            <button
+              type="button"
+              id="hero-generate-btn"
+              onClick={handleQuickAccess}
+              className="h-12 px-6 bg-accent hover:bg-accent-hover text-[#0D0E0C] font-bold text-base rounded-lg transition-all flex items-center justify-center gap-2.5 shadow-md hover:shadow-[0_0_22px_rgba(197,244,103,0.5)] hover:scale-[1.01] cursor-pointer group select-none"
             >
-              <LuSparkles className="w-4 h-4 text-accent" />
-              <span>Synthesize Profile</span>
-              <FiArrowDown className="w-4 h-4 text-white group-hover:translate-y-0.5 transition-transform" />
-            </a>
-
-            <a
-              href="https://github.com/SajithNuski/Hello-md"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="h-12 px-6 bg-white hover:bg-[#F5F6F0] border-2 border-[#0D0E0C] text-[#0D0E0C] font-semibold text-base rounded-lg transition-all flex items-center justify-center gap-2 shadow-xs"
-            >
-              <SiGithub className="w-4 h-4 text-[#0D0E0C]" />
-              <span>Star on GitHub</span>
-            </a>
+              <LuZap className="w-4 h-4 text-[#0D0E0C] fill-[#0D0E0C] group-hover:scale-110 transition-transform" />
+              <span>Generate Readme.md</span>
+              <FiArrowDown className="w-4 h-4 text-[#0D0E0C] group-hover:translate-y-0.5 transition-transform" />
+            </button>
           </div>
 
           {/* High-Contrast Obsidian Feature Badges */}
@@ -302,7 +292,7 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Right Column: Hero Preview Showcase with 3D Tilt and Floating Badges */}
+        {/* Right Column: Hero Preview Showcase with 3D Tilt */}
         <div
           ref={cardContainerRef}
           onMouseMove={handleMouseMove}
@@ -315,42 +305,6 @@ export function Hero() {
             ref={glowRef}
             className="absolute -inset-2 bg-gradient-to-tr from-accent/35 via-accent/10 to-transparent rounded-2xl blur-2xl opacity-65 group-hover:opacity-100 transition-opacity duration-500 -z-10"
           />
-
-          {/* Floating Glass Badge 1 (Top-Right) */}
-          <div
-            ref={floatingBadge1Ref}
-            className="absolute -top-2 -right-2 sm:-right-4 z-20 bg-[#0D0E0C]/95 backdrop-blur-md border border-[#2D3025] rounded-lg px-3 py-2 shadow-[0_12px_28px_rgba(0,0,0,0.45)] flex items-center gap-2.5 select-none"
-          >
-            <div className="w-6 h-6 rounded bg-[#1C1E18] text-accent flex items-center justify-center border border-[#313528]">
-              <FiCheckCircle className="w-3.5 h-3.5 text-accent" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-sans font-bold text-xs text-white leading-tight">
-                Real GitHub Data
-              </span>
-              <span className="font-mono text-[10px] text-accent font-medium leading-tight">
-                Accurate &amp; verified
-              </span>
-            </div>
-          </div>
-
-          {/* Floating Glass Badge 2 (Bottom-Left) */}
-          <div
-            ref={floatingBadge2Ref}
-            className="absolute -bottom-3 -left-2 sm:-left-4 z-20 bg-[#0D0E0C]/95 backdrop-blur-md border border-[#2D3025] rounded-lg px-3 py-2 shadow-[0_12px_28px_rgba(0,0,0,0.45)] flex items-center gap-2.5 select-none"
-          >
-            <div className="w-6 h-6 rounded bg-[#1C1E18] text-accent flex items-center justify-center border border-[#313528]">
-              <FiGitCommit className="w-3.5 h-3.5 text-accent" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-sans font-bold text-xs text-white leading-tight">
-                Ready to Publish
-              </span>
-              <span className="font-mono text-[10px] text-white/85 leading-tight">
-                Copy or save to GitHub
-              </span>
-            </div>
-          </div>
 
           {/* Professional Mockup Window Card with GSAP 3D Transform */}
           <div
@@ -368,7 +322,6 @@ export function Hero() {
 
               {/* IDE Tab */}
               <div className="flex items-center gap-2 bg-[#0D0E0C] px-3.5 py-1 rounded-md border border-[#262822] text-xs font-mono text-white/90">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
                 <span>github.com/profile</span>
               </div>
 
