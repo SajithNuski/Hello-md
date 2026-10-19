@@ -13,66 +13,70 @@ export function Header() {
   const isTemplates = pathname === "/templates";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-12 bg-surface/90 backdrop-blur-md border-b border-border select-none">
-      <div className="h-12 w-full px-6 flex items-center justify-between max-w-7xl mx-auto">
+    <header className="fixed top-0 left-0 right-0 z-50 h-14 bg-[#0D0E0C]/95 backdrop-blur-md border-b border-[#21231D] shadow-[0_1px_0_0_rgba(255,255,255,0.05),0_4px_12px_rgba(0,0,0,0.25)] select-none">
+      <div className="h-full w-full px-4 sm:px-6 flex items-center justify-between max-w-7xl mx-auto">
         {/* Brand */}
         <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-6 h-6 rounded-sm bg-text-primary text-accent flex items-center justify-center shadow-xs">
-              <SiMarkdown className="w-3.5 h-3.5" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-7 h-7 rounded-md bg-[#181A14] border border-[#2A2D23] text-accent flex items-center justify-center shadow-xs group-hover:border-accent/60 group-hover:shadow-[0_0_12px_rgba(197,244,103,0.3)] transition-all duration-200">
+              <SiMarkdown className="w-4 h-4 text-accent" />
             </div>
-            <span className="font-semibold text-nav tracking-[-0.02em] text-text-primary">
+            <span className="font-semibold text-nav tracking-[-0.02em] text-white group-hover:text-white transition-colors">
               Hello-md
             </span>
           </Link>
-          <span className="text-border font-mono text-meta">/</span>
-          <span className="font-mono text-eyebrow uppercase text-text-secondary bg-surface-raised px-1.5 py-0.5 rounded-sm border border-border">
-            ReadmeKit
-          </span>
-          <span className="hidden sm:inline-flex items-center gap-1.5 font-mono text-meta text-text-secondary">
-            <span className="w-1.5 h-1.5 rounded-full bg-status-success animate-pulse"></span>
-            v1.0
-          </span>
+
+          <span className="text-[#32352B] font-mono text-meta">/</span>
+
+          
         </div>
 
-        {/* Center Nav */}
-        <nav className="hidden md:flex items-center gap-8 h-full text-nav">
+        {/* Center Nav: Capsule Switcher */}
+        <nav className="hidden md:flex items-center bg-[#151712] p-1 rounded-full border border-[#24271F] shadow-inner">
           <Link
             href="/"
-            className={`h-full flex items-center px-1 transition-colors border-b-2 font-medium ${
+            className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium transition-all ${
               isGenerator
-                ? "text-text-primary border-text-primary"
-                : "text-text-secondary border-transparent hover:text-text-primary"
+                ? "bg-[#24271F] text-accent shadow-xs"
+                : "text-[#95988D] hover:text-white hover:bg-white/[0.04]"
             }`}
           >
-            <LuSparkles className="w-3.5 h-3.5 mr-1.5 stroke-[1.5]" />
-            Generator
+            <LuSparkles className="w-3.5 h-3.5 stroke-[1.8]" />
+            <span>Generator</span>
           </Link>
 
           <Link
             href="/templates"
-            className={`h-full flex items-center px-1 transition-colors border-b-2 font-medium ${
+            className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium transition-all ${
               isTemplates
-                ? "text-text-primary border-text-primary"
-                : "text-text-secondary border-transparent hover:text-text-primary"
+                ? "bg-[#24271F] text-accent shadow-xs"
+                : "text-[#95988D] hover:text-white hover:bg-white/[0.04]"
             }`}
           >
-            <LuLayoutTemplate className="w-3.5 h-3.5 mr-1.5 stroke-[1.5]" />
-            Templates
+            <LuLayoutTemplate className="w-3.5 h-3.5 stroke-[1.8]" />
+            <span>Templates</span>
           </Link>
         </nav>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           <a
             href="https://github.com/SajithNuski/Hello-md"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-meta font-mono text-text-secondary hover:text-text-primary transition-colors"
+            className="h-8 px-3 bg-[#151712] hover:bg-[#1E2019] text-[#D0D2C9] hover:text-white border border-[#272921] hover:border-[#383B30] rounded-sm transition-all flex items-center gap-2 font-mono text-xs shadow-xs"
           >
-            <SiGithub className="w-4 h-4" />
-            <span className="hidden sm:inline">GitHub</span>
+            <SiGithub className="w-3.5 h-3.5 text-white" />
+            <span className="hidden sm:inline font-sans font-medium text-xs">GitHub</span>
           </a>
+
+          <Link
+            href="/"
+            className="h-8 px-3.5 bg-accent hover:bg-accent-hover text-[#121310] font-semibold text-xs rounded-sm transition-all flex items-center gap-1.5 shadow-xs hover:shadow-[0_0_14px_rgba(197,244,103,0.35)] cursor-pointer"
+          >
+            <LuSparkles className="w-3.5 h-3.5 stroke-[2]" />
+            <span className="hidden xs:inline">New README</span>
+          </Link>
         </div>
       </div>
     </header>
