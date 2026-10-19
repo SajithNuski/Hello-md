@@ -16,6 +16,15 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  ::selection {
+    background-color: var(--accent);
+    color: #0D0E0C;
+  }
+
+  select {
+    accent-color: var(--accent);
+  }
 }
 
 /* Infinite Marquee Animation */

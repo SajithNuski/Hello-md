@@ -16,6 +16,7 @@ import {
 import { SiGithub } from "react-icons/si";
 import { LuSparkles } from "react-icons/lu";
 import { Tone } from "@/lib/config";
+import { CustomSelect, SelectOption } from "@/components/ui/CustomSelect";
 
 interface LogEntry {
   timestamp: string;
@@ -159,18 +160,18 @@ export function GeneratorForm() {
               <FiSliders className="w-3.5 h-3.5 text-text-secondary" />
               <span>Editorial Tone</span>
             </label>
-            <select
+            <CustomSelect<Tone>
               id="tone-select"
               disabled={isGenerating}
               value={tone}
-              onChange={(e) => setTone(e.target.value as Tone)}
-              className="w-full h-11 px-3 bg-surface-raised rounded-md border border-border text-nav text-text-primary focus:outline-none focus:border-text-primary cursor-pointer shadow-xs"
-            >
-              <option value="professional">Professional</option>
-              <option value="playful">Playful</option>
-              <option value="minimal">Minimal</option>
-              <option value="hacker">Hacker</option>
-            </select>
+              onChange={setTone}
+              options={[
+                { value: "professional", label: "Professional" },
+                { value: "playful", label: "Playful" },
+                { value: "minimal", label: "Minimal" },
+                { value: "hacker", label: "Hacker" },
+              ]}
+            />
           </div>
 
           {/* Template Select */}
@@ -179,17 +180,17 @@ export function GeneratorForm() {
               <FiLayout className="w-3.5 h-3.5 text-text-secondary" />
               <span>Structural Template</span>
             </label>
-            <select
+            <CustomSelect<string>
               id="template-select"
               disabled={isGenerating}
               value={theme}
-              onChange={(e) => setTheme(e.target.value)}
-              className="w-full h-11 px-3 bg-surface-raised rounded-md border border-border text-nav text-text-primary focus:outline-none focus:border-text-primary cursor-pointer shadow-xs"
-            >
-              <option value="minimal">Minimal Developer</option>
-              <option value="featured">Featured Showcase</option>
-              <option value="compact">Compact Stats</option>
-            </select>
+              onChange={setTheme}
+              options={[
+                { value: "minimal", label: "Minimal Developer" },
+                { value: "featured", label: "Featured Showcase" },
+                { value: "compact", label: "Compact Stats" },
+              ]}
+            />
           </div>
         </div>
 

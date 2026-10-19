@@ -124,9 +124,8 @@ export function Header() {
           >
             <SiGithub className="w-4 h-4 text-white group-hover:scale-105 transition-transform" />
             <span className="hidden sm:inline font-sans font-medium text-xs">GitHub</span>
-            <span className="hidden xl:inline text-[#65685E] group-hover:text-accent transition-colors font-mono text-[11px]">
-              ★
-            </span>
+            
+            
           </a>
 
           <Link
