@@ -48,17 +48,6 @@ export function Header() {
               Hello-md
             </span>
           </Link>
-
-          <span className="text-[#32352B] font-mono text-meta">/</span>
-
-          <span className="font-mono text-eyebrow uppercase text-[#A0A298] bg-[#161813] px-2 py-0.5 rounded-sm border border-[#262820] tracking-[0.04em]">
-            ReadmeKit
-          </span>
-
-          <span className="hidden sm:inline-flex items-center gap-1.5 font-mono text-[11px] text-[#787B70] bg-[#12140F] px-2 py-0.5 rounded-full border border-[#20221B]">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
-            v1.0
-          </span>
         </div>
 
         {/* Center Nav: Capsule Switcher */}

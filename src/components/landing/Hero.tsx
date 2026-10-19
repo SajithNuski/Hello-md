@@ -326,10 +326,10 @@ export function Hero() {
             </div>
             <div className="flex flex-col">
               <span className="font-sans font-bold text-xs text-white leading-tight">
-                100% Grounded
+                Real GitHub Data
               </span>
               <span className="font-mono text-[10px] text-accent font-medium leading-tight">
-                Zero AI Hallucinations
+                Accurate &amp; verified
               </span>
             </div>
           </div>
@@ -344,10 +344,10 @@ export function Hero() {
             </div>
             <div className="flex flex-col">
               <span className="font-sans font-bold text-xs text-white leading-tight">
-                Direct Sync
+                Ready to Publish
               </span>
               <span className="font-mono text-[10px] text-white/85 leading-tight">
-                Push to profile repo
+                Copy or save to GitHub
               </span>
             </div>
           </div>
