@@ -40,74 +40,80 @@ export function ExportDialog({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 select-none">
-      <div className="bg-[#FAFAF8] w-full max-w-[560px] rounded-[8px] border border-[#DEDFD8] shadow-lg flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 select-none">
+      <div className="bg-surface-raised w-full max-w-[560px] rounded-lg border border-border shadow-lg flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Header */}
-        <div className="h-12 px-5 flex items-center justify-between border-b border-[#DEDFD8] bg-[#F0F0EC]">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-sm text-[#171815]">Export README</span>
-            <span className="font-mono text-xs text-[#91928A]">@{login}</span>
+        <div className="h-12 px-6 flex items-center justify-between border-b border-border bg-surface">
+          <div className="flex items-center gap-2.5">
+            <span className="font-semibold text-nav text-text-primary">Export Profile README</span>
+            <span className="font-mono text-eyebrow text-text-secondary bg-surface-raised px-1.5 py-0.2 rounded-sm border border-border">
+              @{login}
+            </span>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-[#65665F] hover:text-[#171815] rounded-[4px] hover:bg-[#E2E3DD] transition-colors"
+            className="p-1.5 text-text-secondary hover:text-text-primary rounded-sm hover:bg-surface-raised transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-5 flex flex-col gap-5">
+        <div className="p-6 flex flex-col gap-6">
           {/* Option 1: Quick Actions (Copy & Download) */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <button
               onClick={handleCopy}
-              className="h-12 p-3 bg-[#F0F0EC] hover:bg-[#E2E3DD] border border-[#DEDFD8] rounded-[6px] transition-colors flex items-center gap-3 text-left cursor-pointer"
+              className="h-14 p-3.5 bg-surface hover:bg-surface-raised border border-border rounded-sm transition-colors flex items-center gap-3.5 text-left cursor-pointer shadow-xs"
             >
-              <div className="w-8 h-8 rounded-[4px] bg-[#FAFAF8] border border-[#DEDFD8] flex items-center justify-center shrink-0">
-                {copied ? <Check className="w-4 h-4 text-[#16A34A]" /> : <Copy className="w-4 h-4 text-[#171815]" />}
+              <div className="w-8 h-8 rounded-sm bg-surface-raised border border-border flex items-center justify-center shrink-0 shadow-xs">
+                {copied ? <Check className="w-4 h-4 text-status-success" /> : <Copy className="w-4 h-4 text-text-primary" />}
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-semibold text-[#171815]">{copied ? "Copied!" : "Copy Markdown"}</span>
-                <span className="text-[11px] text-[#65665F]">To clipboard</span>
+                <span className="text-nav font-medium text-text-primary">{copied ? "Copied!" : "Copy Markdown"}</span>
+                <span className="text-meta text-text-secondary">To clipboard</span>
               </div>
             </button>
 
             <button
               onClick={handleDownload}
-              className="h-12 p-3 bg-[#F0F0EC] hover:bg-[#E2E3DD] border border-[#DEDFD8] rounded-[6px] transition-colors flex items-center gap-3 text-left cursor-pointer"
+              className="h-14 p-3.5 bg-surface hover:bg-surface-raised border border-border rounded-sm transition-colors flex items-center gap-3.5 text-left cursor-pointer shadow-xs"
             >
-              <div className="w-8 h-8 rounded-[4px] bg-[#FAFAF8] border border-[#DEDFD8] flex items-center justify-center shrink-0">
-                <Download className="w-4 h-4 text-[#171815]" />
+              <div className="w-8 h-8 rounded-sm bg-surface-raised border border-border flex items-center justify-center shrink-0 shadow-xs">
+                <Download className="w-4 h-4 text-text-primary" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-semibold text-[#171815]">Download File</span>
-                <span className="text-[11px] text-[#65665F]">README.md</span>
+                <span className="text-nav font-medium text-text-primary">Download File</span>
+                <span className="text-meta text-text-secondary">README.md</span>
               </div>
             </button>
           </div>
 
           {/* Option 2: Push to GitHub */}
-          <div className="flex flex-col gap-3 p-4 bg-[#F0F0EC] rounded-[6px] border border-[#DEDFD8]">
+          <div className="flex flex-col gap-3.5 p-5 bg-surface rounded-sm border border-border shadow-xs">
             <div className="flex items-center gap-2">
-              <GitCommit className="w-4 h-4 text-[#171815]" />
-              <span className="text-xs font-semibold text-[#171815]">Push directly to GitHub repo</span>
+              <GitCommit className="w-4 h-4 text-text-primary" />
+              <span className="text-nav font-medium text-text-primary">Push directly to GitHub repo</span>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-mono text-[#65665F]">Target Repository</label>
-              <div className="h-8 px-3 bg-[#FAFAF8] rounded-[4px] border border-[#DEDFD8] flex items-center font-mono text-xs text-[#171815]">
+              <label className="text-eyebrow font-mono text-text-secondary uppercase tracking-[0.04em]">
+                Target Repository
+              </label>
+              <div className="h-9 px-3 bg-surface-raised rounded-sm border border-border flex items-center font-mono text-meta text-text-primary shadow-xs">
                 {login}/{login}
               </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-mono text-[#65665F]">Commit Message</label>
+              <label className="text-eyebrow font-mono text-text-secondary uppercase tracking-[0.04em]">
+                Commit Message
+              </label>
               <input
                 type="text"
                 value={commitMessage}
                 onChange={(e) => setCommitMessage(e.target.value)}
-                className="h-8 px-3 bg-[#FAFAF8] rounded-[4px] border border-[#DEDFD8] font-mono text-xs text-[#171815] focus:outline-none focus:border-[#171815]"
+                className="h-9 px-3 bg-surface-raised rounded-sm border border-border font-mono text-meta text-text-primary focus:outline-none focus:border-text-primary shadow-xs"
               />
             </div>
 
@@ -115,9 +121,9 @@ export function ExportDialog({
               onClick={() => {
                 alert("GitHub publishing with OAuth will be enabled in Milestone 7. You can Copy or Download your README.md right now!");
               }}
-              className="h-9 w-full mt-1 bg-[#171815] hover:bg-[#31322E] text-[#C5F467] font-semibold text-xs rounded-[6px] transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+              className="h-10 w-full mt-1.5 bg-accent hover:bg-accent-hover text-text-primary font-medium text-nav rounded-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
             >
-              <GitCommit className="w-3.5 h-3.5 stroke-[2]" />
+              <GitCommit className="w-4 h-4 stroke-[2]" />
               <span>Commit &amp; Push to {login}/{login}</span>
             </button>
           </div>

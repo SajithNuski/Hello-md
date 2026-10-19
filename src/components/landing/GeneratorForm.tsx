@@ -110,19 +110,19 @@ export function GeneratorForm() {
       {/* Form Card */}
       <form
         onSubmit={handleGenerate}
-        className="flex flex-col gap-4 bg-[#F0F0EC] p-5 rounded-[8px] border border-[#DEDFD8] shadow-sm"
+        className="flex flex-col gap-5 bg-surface p-6 rounded-md border border-border shadow-xs"
       >
         {/* Username Input */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <label
             htmlFor="gh-username"
-            className="text-xs font-medium text-[#171815] flex items-center justify-between"
+            className="text-nav font-medium text-text-primary flex items-center justify-between"
           >
             <span>GitHub Profile Handle</span>
-            <span className="font-mono text-[11px] text-[#91928A]">Required</span>
+            <span className="font-mono text-eyebrow text-text-muted tracking-[0.04em]">REQUIRED</span>
           </label>
-          <div className="flex h-9 w-full bg-[#FAFAF8] rounded-[6px] border border-[#DEDFD8] overflow-hidden focus-within:border-[#171815] focus-within:ring-2 focus-within:ring-[#C5F467]/50 transition-all">
-            <span className="inline-flex items-center justify-center px-3 bg-[#E2E3DD] border-r border-[#DEDFD8] font-mono text-xs text-[#65665F] select-none">
+          <div className="flex h-10 w-full bg-surface-raised rounded-sm border border-border overflow-hidden focus-within:border-text-primary focus-within:ring-2 focus-within:ring-accent/40 transition-all shadow-xs">
+            <span className="inline-flex items-center justify-center px-3.5 bg-surface border-r border-border font-mono text-meta text-text-secondary select-none">
               @
             </span>
             <input
@@ -133,16 +133,16 @@ export function GeneratorForm() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="torvalds"
-              className="w-full h-full px-3 bg-transparent font-mono text-xs text-[#171815] placeholder:text-[#91928A] focus:outline-none"
+              className="w-full h-full px-3.5 bg-transparent font-mono text-meta text-text-primary placeholder:text-text-muted focus:outline-none"
             />
           </div>
         </div>
 
         {/* Configuration Row: Tone & Template */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Tone Select */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="tone-select" className="text-xs font-medium text-[#171815]">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="tone-select" className="text-nav font-medium text-text-primary">
               Editorial Tone
             </label>
             <select
@@ -150,7 +150,7 @@ export function GeneratorForm() {
               disabled={isGenerating}
               value={tone}
               onChange={(e) => setTone(e.target.value as Tone)}
-              className="w-full h-9 px-3 bg-[#FAFAF8] rounded-[6px] border border-[#DEDFD8] text-xs text-[#171815] focus:outline-none focus:border-[#171815] cursor-pointer"
+              className="w-full h-10 px-3 bg-surface-raised rounded-sm border border-border text-nav text-text-primary focus:outline-none focus:border-text-primary cursor-pointer shadow-xs"
             >
               <option value="professional">Professional (Confident & clean)</option>
               <option value="playful">Playful (Light humor, concise)</option>
@@ -160,8 +160,8 @@ export function GeneratorForm() {
           </div>
 
           {/* Template Select */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="template-select" className="text-xs font-medium text-[#171815]">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="template-select" className="text-nav font-medium text-text-primary">
               Structural Template
             </label>
             <select
@@ -169,7 +169,7 @@ export function GeneratorForm() {
               disabled={isGenerating}
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
-              className="w-full h-9 px-3 bg-[#FAFAF8] rounded-[6px] border border-[#DEDFD8] text-xs text-[#171815] focus:outline-none focus:border-[#171815] cursor-pointer"
+              className="w-full h-10 px-3 bg-surface-raised rounded-sm border border-border text-nav text-text-primary focus:outline-none focus:border-text-primary cursor-pointer shadow-xs"
             >
               <option value="minimal">Minimal Developer</option>
               <option value="featured">Featured Projects Showcase</option>
@@ -180,7 +180,7 @@ export function GeneratorForm() {
 
         {/* Error Banner */}
         {errorMessage && (
-          <div className="p-3 bg-[#FEE2E2] border border-[#DC2626]/30 rounded-[6px] flex items-center gap-2 text-xs text-[#DC2626]">
+          <div className="p-3 bg-red-50 border border-status-error/30 rounded-sm flex items-center gap-2 text-nav text-status-error">
             <AlertCircle className="w-4 h-4 shrink-0 stroke-[1.5]" />
             <span>{errorMessage}</span>
           </div>
@@ -190,16 +190,16 @@ export function GeneratorForm() {
         <button
           type="submit"
           disabled={isGenerating}
-          className="h-9 w-full mt-1 bg-[#C5F467] hover:bg-[#A8D94E] text-[#171815] font-semibold text-xs rounded-[6px] transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed select-none"
+          className="h-10 w-full mt-2 bg-accent hover:bg-accent-hover text-text-primary font-medium text-nav rounded-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed select-none"
         >
           {isGenerating ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-[#171815]" />
+              <Loader2 className="w-4 h-4 animate-spin text-text-primary" />
               <span>Synthesizing Profile...</span>
             </>
           ) : (
             <>
-              <Sparkles className="w-4 h-4 text-[#171815] stroke-[1.5]" />
+              <Sparkles className="w-4 h-4 text-text-primary stroke-[1.5]" />
               <span>Generate README</span>
             </>
           )}
@@ -207,108 +207,108 @@ export function GeneratorForm() {
       </form>
 
       {/* Meta Availability Line */}
-      <div className="flex items-center justify-between px-1 text-xs text-[#65665F]">
+      <div className="flex items-center justify-between px-1 text-meta text-text-secondary font-mono">
         <div className="flex items-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
+          <span className="inline-block w-2 h-2 rounded-full bg-status-success animate-pulse"></span>
           <span>3 of 3 generations left today</span>
         </div>
-        <span className="font-mono text-[11px] text-[#91928A]">Free tier resets daily</span>
+        <span className="text-text-muted text-eyebrow tracking-[0.04em]">FREE TIER RESETS DAILY</span>
       </div>
 
       {/* Live Stepper & Terminal Log Console */}
       {isGenerating && (
-        <div className="w-full bg-[#F0F0EC] border border-[#DEDFD8] rounded-[8px] overflow-hidden flex flex-col shadow-sm">
+        <div className="w-full bg-surface border border-border rounded-md overflow-hidden flex flex-col shadow-xs">
           {/* Stepper Header */}
-          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-[#DEDFD8] bg-[#E2E3DD]">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-border bg-surface-raised/40">
             {/* Step 1: Ingestion */}
             <div
-              className={`flex items-center gap-2.5 px-4 py-3 border-b md:border-b-0 md:border-r border-[#DEDFD8] ${
-                currentStage === "fetching" ? "bg-[#FAFAF8]" : ""
+              className={`flex items-center gap-3 px-4 py-3 border-b md:border-b-0 md:border-r border-border ${
+                currentStage === "fetching" ? "bg-surface-raised" : ""
               }`}
             >
               {currentStage === "fetching" ? (
-                <Loader2 className="w-4 h-4 text-[#171815] animate-spin" />
+                <Loader2 className="w-4 h-4 text-text-primary animate-spin shrink-0" />
               ) : currentStage !== "idle" ? (
-                <CheckCircle2 className="w-4 h-4 text-[#16A34A]" />
+                <CheckCircle2 className="w-4 h-4 text-status-success shrink-0" />
               ) : (
-                <span className="w-4 h-4 rounded-full border border-[#91928A] flex items-center justify-center text-[10px] font-mono">
+                <span className="w-4 h-4 rounded-full border border-text-muted flex items-center justify-center text-[10px] font-mono shrink-0">
                   1
                 </span>
               )}
               <div className="flex flex-col">
-                <span className="font-mono text-xs font-medium text-[#171815]">
-                  1. Fetching data
+                <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
+                  1. FETCH DATA
                 </span>
-                <span className="text-[11px] text-[#65665F]">GraphQL facts</span>
+                <span className="text-meta text-text-secondary">GraphQL facts</span>
               </div>
             </div>
 
             {/* Step 2: Writing */}
             <div
-              className={`flex items-center gap-2.5 px-4 py-3 border-b md:border-b-0 md:border-r border-[#DEDFD8] ${
-                currentStage === "writing" ? "bg-[#FAFAF8]" : ""
+              className={`flex items-center gap-3 px-4 py-3 border-b md:border-b-0 md:border-r border-border ${
+                currentStage === "writing" ? "bg-surface-raised" : ""
               }`}
             >
               {currentStage === "writing" ? (
-                <Loader2 className="w-4 h-4 text-[#171815] animate-spin" />
+                <Loader2 className="w-4 h-4 text-text-primary animate-spin shrink-0" />
               ) : currentStage === "assembling" || currentStage === "done" ? (
-                <CheckCircle2 className="w-4 h-4 text-[#16A34A]" />
+                <CheckCircle2 className="w-4 h-4 text-status-success shrink-0" />
               ) : (
-                <span className="w-4 h-4 rounded-full border border-[#91928A] flex items-center justify-center text-[10px] font-mono">
+                <span className="w-4 h-4 rounded-full border border-text-muted flex items-center justify-center text-[10px] font-mono shrink-0">
                   2
                 </span>
               )}
               <div className="flex flex-col">
-                <span className="font-mono text-xs font-medium text-[#171815]">
-                  2. Writing prose
+                <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
+                  2. WRITE PROSE
                 </span>
-                <span className="text-[11px] text-[#65665F]">Grounded sections</span>
+                <span className="text-meta text-text-secondary">Grounded sections</span>
               </div>
             </div>
 
             {/* Step 3: Assembling */}
             <div
-              className={`flex items-center gap-2.5 px-4 py-3 ${
-                currentStage === "assembling" || currentStage === "done" ? "bg-[#FAFAF8]" : ""
+              className={`flex items-center gap-3 px-4 py-3 ${
+                currentStage === "assembling" || currentStage === "done" ? "bg-surface-raised" : ""
               }`}
             >
               {currentStage === "assembling" ? (
-                <Loader2 className="w-4 h-4 text-[#171815] animate-spin" />
+                <Loader2 className="w-4 h-4 text-text-primary animate-spin shrink-0" />
               ) : currentStage === "done" ? (
-                <CheckCircle2 className="w-4 h-4 text-[#16A34A]" />
+                <CheckCircle2 className="w-4 h-4 text-status-success shrink-0" />
               ) : (
-                <span className="w-4 h-4 rounded-full border border-[#91928A] flex items-center justify-center text-[10px] font-mono">
+                <span className="w-4 h-4 rounded-full border border-text-muted flex items-center justify-center text-[10px] font-mono shrink-0">
                   3
                 </span>
               )}
               <div className="flex flex-col">
-                <span className="font-mono text-xs font-medium text-[#171815]">
-                  3. Assembling
+                <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
+                  3. ASSEMBLE
                 </span>
-                <span className="text-[11px] text-[#65665F]">Badges & Markdown</span>
+                <span className="text-meta text-text-secondary">Badges & Markdown</span>
               </div>
             </div>
           </div>
 
           {/* Console Log Stream */}
-          <div className="p-4 flex flex-col gap-1.5 font-mono text-xs bg-[#171815] text-[#FAFAF8] min-h-[120px] max-h-[180px] overflow-y-auto">
-            <div className="flex items-center justify-between text-[#91928A] border-b border-[#31322E] pb-1.5 mb-1 text-[11px]">
+          <div className="p-4 flex flex-col gap-1.5 font-mono text-meta bg-[#171815] text-[#FAFAF8] min-h-[120px] max-h-[180px] overflow-y-auto">
+            <div className="flex items-center justify-between text-text-muted border-b border-[#31322E] pb-1.5 mb-1 text-eyebrow">
               <span className="flex items-center gap-1.5">
-                <Terminal className="w-3.5 h-3.5" />
-                <span>stdout stream</span>
+                <Terminal className="w-3.5 h-3.5 text-accent" />
+                <span className="tracking-[0.04em] uppercase">STDOUT STREAM</span>
               </span>
-              <span className="text-[#C5F467]">live</span>
+              <span className="text-accent uppercase tracking-wider text-[10px]">LIVE</span>
             </div>
             {logs.map((log, idx) => (
               <div key={idx} className="flex items-start gap-2">
-                <span className="text-[#65665F] select-none">{log.timestamp}</span>
-                <span className="text-[#C5F467] select-none">&gt;</span>
+                <span className="text-text-secondary select-none">{log.timestamp}</span>
+                <span className="text-accent select-none">&gt;</span>
                 <span
                   className={
                     log.type === "error"
-                      ? "text-[#DC2626]"
+                      ? "text-status-error"
                       : log.type === "success"
-                      ? "text-[#C5F467] font-medium"
+                      ? "text-accent font-medium"
                       : "text-[#FAFAF8]"
                   }
                 >

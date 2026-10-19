@@ -12,7 +12,7 @@
   body {
     background-color: var(--bg-page);
     color: var(--text-primary);
-    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

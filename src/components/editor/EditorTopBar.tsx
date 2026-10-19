@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Download, RefreshCw, Check, Copy } from "lucide-react";
+import { Download, Check, Copy } from "lucide-react";
 
 interface EditorTopBarProps {
   login: string;
@@ -25,14 +24,14 @@ export function EditorTopBar({
   copied,
 }: EditorTopBarProps) {
   return (
-    <div className="h-12 w-full bg-[#F0F0EC] border-b border-[#DEDFD8] flex items-center justify-between px-6 shrink-0 select-none">
+    <div className="h-12 w-full bg-surface border-b border-border flex items-center justify-between px-6 shrink-0 select-none">
       {/* User Metadata & Sync Status */}
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-1.5 bg-[#FAFAF8] px-2.5 py-1 rounded-[6px] border border-[#DEDFD8]">
-          <span className="font-mono text-xs font-semibold text-[#171815]">
+        <div className="flex items-center gap-2 bg-surface-raised px-2.5 py-1 rounded-sm border border-border shadow-xs">
+          <span className="font-mono text-meta font-medium text-text-primary">
             @{login}
           </span>
-          <span className="font-mono text-[10px] bg-[#E2E3DD] text-[#65665F] px-1 py-0.2 rounded uppercase tracking-wider">
+          <span className="font-mono text-[10px] bg-surface text-text-secondary px-1 py-0.2 rounded-sm border border-border uppercase tracking-wider">
             main
           </span>
         </div>
@@ -40,47 +39,47 @@ export function EditorTopBar({
         <div className="hidden sm:flex items-center gap-2">
           <span
             className={`w-1.5 h-1.5 rounded-full ${
-              isSaving ? "bg-[#B45309] animate-spin" : "bg-[#16A34A] animate-pulse"
+              isSaving ? "bg-status-warning animate-spin" : "bg-status-success animate-pulse"
             }`}
           ></span>
-          <span className="text-xs text-[#65665F]">
+          <span className="text-nav text-text-secondary font-sans">
             {isSaving
               ? "Saving changes..."
               : lastSavedAt
               ? `Saved ${lastSavedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
-              : "Saved"}
+              : "Saved to local cache"}
           </span>
         </div>
       </div>
 
       {/* Center View Switcher */}
-      <div className="hidden md:flex items-center bg-[#E2E3DD] p-0.5 rounded-[6px] border border-[#DEDFD8]">
+      <div className="hidden md:flex items-center bg-surface p-0.5 rounded-sm border border-border shadow-xs">
         <button
           onClick={() => onViewChange("split")}
-          className={`px-3 py-1 rounded-[4px] text-xs font-medium transition-colors ${
+          className={`px-3 py-1 rounded-sm text-nav font-medium transition-colors ${
             activeView === "split"
-              ? "bg-[#FAFAF8] text-[#171815] shadow-xs"
-              : "text-[#65665F] hover:text-[#171815]"
+              ? "bg-surface-raised text-text-primary shadow-xs"
+              : "text-text-secondary hover:text-text-primary"
           }`}
         >
           Split View
         </button>
         <button
           onClick={() => onViewChange("editor")}
-          className={`px-3 py-1 rounded-[4px] text-xs font-medium transition-colors ${
+          className={`px-3 py-1 rounded-sm text-nav font-medium transition-colors ${
             activeView === "editor"
-              ? "bg-[#FAFAF8] text-[#171815] shadow-xs"
-              : "text-[#65665F] hover:text-[#171815]"
+              ? "bg-surface-raised text-text-primary shadow-xs"
+              : "text-text-secondary hover:text-text-primary"
           }`}
         >
           Editor Only
         </button>
         <button
           onClick={() => onViewChange("preview")}
-          className={`px-3 py-1 rounded-[4px] text-xs font-medium transition-colors ${
+          className={`px-3 py-1 rounded-sm text-nav font-medium transition-colors ${
             activeView === "preview"
-              ? "bg-[#FAFAF8] text-[#171815] shadow-xs"
-              : "text-[#65665F] hover:text-[#171815]"
+              ? "bg-surface-raised text-text-primary shadow-xs"
+              : "text-text-secondary hover:text-text-primary"
           }`}
         >
           Preview Only
@@ -88,20 +87,20 @@ export function EditorTopBar({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-3">
         <button
           onClick={onCopy}
-          className="h-8 px-3 bg-[#FAFAF8] text-[#171815] text-xs font-medium rounded-[6px] border border-[#DEDFD8] hover:bg-[#E2E3DD] transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+          className="h-8 px-3.5 bg-surface-raised hover:bg-surface text-text-primary text-nav font-medium rounded-sm border border-border transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
           title="Copy Markdown"
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 text-[#16A34A]" />
+              <Check className="w-3.5 h-3.5 text-status-success" />
               <span>Copied</span>
             </>
           ) : (
             <>
-              <Copy className="w-3.5 h-3.5 text-[#65665F]" />
+              <Copy className="w-3.5 h-3.5 text-text-secondary" />
               <span>Copy</span>
             </>
           )}
@@ -109,7 +108,7 @@ export function EditorTopBar({
 
         <button
           onClick={onExport}
-          className="h-8 px-3.5 bg-[#C5F467] hover:bg-[#A8D94E] text-[#171815] font-semibold text-xs rounded-[6px] transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+          className="h-8 px-4 bg-accent hover:bg-accent-hover text-text-primary font-medium text-nav rounded-sm transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
         >
           <Download className="w-3.5 h-3.5 stroke-[2]" />
           <span>Export README</span>

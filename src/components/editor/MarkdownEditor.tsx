@@ -28,21 +28,20 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
 
   const insertFormatting = useCallback(
     (prefix: string, suffix: string = "") => {
-      // Basic insert at end or wraps
       onChange(`${value}\n${prefix}${suffix}`);
     },
     [value, onChange]
   );
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAF8] overflow-hidden border-r border-[#DEDFD8]">
+    <div className="flex-1 flex flex-col bg-surface-raised overflow-hidden border-r border-border">
       {/* Editor Toolbar */}
-      <div className="h-10 px-3 flex items-center justify-between bg-[#F0F0EC] border-b border-[#DEDFD8] select-none">
-        <div className="flex items-center gap-1 text-[#65665F]">
+      <div className="h-10 px-3 flex items-center justify-between bg-surface border-b border-border select-none">
+        <div className="flex items-center gap-1 text-text-secondary">
           <button
             type="button"
             onClick={() => insertFormatting("**", "**")}
-            className="p-1.5 hover:text-[#171815] hover:bg-[#E2E3DD] rounded-[4px] transition-colors"
+            className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Bold"
           >
             <Bold className="w-3.5 h-3.5" />
@@ -50,7 +49,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
           <button
             type="button"
             onClick={() => insertFormatting("*", "*")}
-            className="p-1.5 hover:text-[#171815] hover:bg-[#E2E3DD] rounded-[4px] transition-colors"
+            className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Italic"
           >
             <Italic className="w-3.5 h-3.5" />
@@ -58,18 +57,18 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
           <button
             type="button"
             onClick={() => insertFormatting("`", "`")}
-            className="p-1.5 hover:text-[#171815] hover:bg-[#E2E3DD] rounded-[4px] transition-colors"
+            className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Inline Code"
           >
             <Code className="w-3.5 h-3.5" />
           </button>
 
-          <div className="h-4 w-[1px] bg-[#DEDFD8] mx-1"></div>
+          <div className="h-4 w-[1px] bg-border mx-1"></div>
 
           <button
             type="button"
             onClick={() => insertFormatting("# ")}
-            className="p-1.5 hover:text-[#171815] hover:bg-[#E2E3DD] rounded-[4px] transition-colors"
+            className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Heading 1"
           >
             <Heading1 className="w-3.5 h-3.5" />
@@ -77,18 +76,18 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
           <button
             type="button"
             onClick={() => insertFormatting("## ")}
-            className="p-1.5 hover:text-[#171815] hover:bg-[#E2E3DD] rounded-[4px] transition-colors"
+            className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Heading 2"
           >
             <Heading2 className="w-3.5 h-3.5" />
           </button>
 
-          <div className="h-4 w-[1px] bg-[#DEDFD8] mx-1"></div>
+          <div className="h-4 w-[1px] bg-border mx-1"></div>
 
           <button
             type="button"
             onClick={() => insertFormatting("[", "](https://)")}
-            className="p-1.5 hover:text-[#171815] hover:bg-[#E2E3DD] rounded-[4px] transition-colors"
+            className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Link"
           >
             <LinkIcon className="w-3.5 h-3.5" />
@@ -96,16 +95,16 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
           <button
             type="button"
             onClick={() => insertFormatting("- ")}
-            className="p-1.5 hover:text-[#171815] hover:bg-[#E2E3DD] rounded-[4px] transition-colors"
+            className="p-1.5 hover:text-text-primary hover:bg-surface-raised rounded-sm transition-colors cursor-pointer"
             title="Bullet List"
           >
             <List className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-[11px] text-[#91928A]">
+        <div className="flex items-center gap-2 font-mono text-meta text-text-muted">
           {sectionTitle && (
-            <span className="bg-[#E2E3DD] text-[#171815] px-1.5 py-0.5 rounded text-[10px]">
+            <span className="bg-surface-raised text-text-primary px-1.5 py-0.5 rounded-sm border border-border text-eyebrow uppercase tracking-[0.04em]">
               {sectionTitle}
             </span>
           )}
@@ -114,7 +113,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
       </div>
 
       {/* CodeMirror Surface */}
-      <div className="flex-1 overflow-auto text-xs font-mono">
+      <div className="flex-1 overflow-auto text-[13px] font-mono leading-[1.6]">
         <CodeMirror
           value={value}
           height="100%"
@@ -140,15 +139,15 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
             searchKeymap: true,
             tabSize: 2,
           }}
-          className="h-full text-xs"
+          className="h-full"
         />
       </div>
 
       {/* Status Bar Footer */}
-      <div className="h-6 px-3 bg-[#F0F0EC] border-t border-[#DEDFD8] flex items-center justify-between text-[11px] font-mono text-[#65665F] select-none">
+      <div className="h-6 px-3 bg-surface border-t border-border flex items-center justify-between text-eyebrow font-mono text-text-secondary select-none">
         <div className="flex items-center gap-3">
           <span>UTF-8</span>
-          <span>Markdown</span>
+          <span>CommonMark</span>
           <span>LF</span>
         </div>
         <div className="flex items-center gap-3">
