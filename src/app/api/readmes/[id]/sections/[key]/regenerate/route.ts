@@ -7,8 +7,10 @@ import { buildSectionRegenPrompt, buildSystemPrompt } from "@/lib/ai/prompt";
 import { routeLLMRequest } from "@/lib/ai/router";
 import { validateSingleSection } from "@/lib/ai/validate";
 import { formatSection } from "@/lib/assemble/formatSection";
-import { SectionKey, SECTION_KEYS, TONES, Tone } from "@/lib/config";
+import { SectionKey, SECTION_KEYS, TONES, Tone, APP_CONFIG } from "@/lib/config";
 import { AIError } from "@/lib/ai/types";
+import { extractByokHeaders, getSubjectId } from "@/lib/owner";
+import { checkQuota, consumeQuota } from "@/lib/quota";
 
 export const runtime = "nodejs";
 
@@ -30,6 +32,29 @@ export async function POST(
     );
   }
   const sectionKey = key as SectionKey;
+
+  const byok = extractByokHeaders(req);
+  const subjectId = getSubjectId(req);
+
+  // Quota check (0.25 cost for single section regen) bypassed if BYOK is present
+  if (!byok) {
+    const quota = await checkQuota(subjectId, APP_CONFIG.sectionRegenCost);
+    if (!quota.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "QUOTA_EXCEEDED",
+            message: "Daily anonymous generation limit reached. Markdown editor and export features remain 100% usable.",
+            resetsAt: quota.resetsAt,
+            resetTimeFormatted: quota.resetTimeFormatted,
+            used: quota.used,
+            limit: quota.limit,
+          },
+        }),
+        { status: 429, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }
 
   let bodyJson: unknown = {};
   try {
@@ -83,6 +108,7 @@ export async function POST(
       user: userPrompt,
       temperature,
       maxOutputTokens: 1000,
+      byok: byok ? { provider: byok.provider, apiKey: byok.apiKey } : undefined,
     });
 
     const validation = validateSingleSection(sectionKey, aiResult.text, facts);
@@ -130,6 +156,11 @@ export async function POST(
       sections: updatedSections,
       updatedAt: new Date(),
     });
+
+    // Deduct fractional quota (0.25) only if not using BYOK
+    if (!byok) {
+      await consumeQuota(subjectId, APP_CONFIG.sectionRegenCost, 1000);
+    }
 
     const updatedSection = updatedSections.find((s) => s.key === sectionKey);
 

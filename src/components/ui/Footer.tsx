@@ -74,10 +74,14 @@ export function Footer() {
 
             {/* Live Status Pill */}
             <div className="flex items-center gap-2.5 mt-2">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#151712] border border-[#262820] text-meta font-mono text-[#D8D9D2]">
+              <Link
+                href="/system-states"
+                className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#151712] hover:bg-[#1C1F17] border border-[#262820] text-meta font-mono text-[#D8D9D2] transition-colors"
+                title="View System States & Error Handling"
+              >
                 <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
                 <span>Systems Operational</span>
-              </div>
+              </Link>
               <span className="font-mono text-[11px] text-[#787B70]">v1.0.0</span>
             </div>
           </div>

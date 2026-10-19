@@ -10,7 +10,8 @@ import { validateSections } from "@/lib/ai/validate";
 import { formatSection } from "@/lib/assemble/formatSection";
 import { assemble } from "@/lib/assemble";
 import { getReadmesCollection, SectionItem } from "@/lib/db/collections";
-import { getOrCreateOwnerId, OWNER_COOKIE_NAME } from "@/lib/owner";
+import { getOrCreateOwnerId, getSubjectId, extractByokHeaders, OWNER_COOKIE_NAME } from "@/lib/owner";
+import { checkQuota, consumeQuota } from "@/lib/quota";
 import { APP_CONFIG, TONES } from "@/lib/config";
 import { AIError } from "@/lib/ai/types";
 
@@ -50,6 +51,8 @@ export async function POST(req: NextRequest) {
 
   const { login, tone, theme } = parsed.data;
   const { ownerId, isNew } = getOrCreateOwnerId(req);
+  const byok = extractByokHeaders(req);
+  const subjectId = getSubjectId(req);
 
   const encoder = new TextEncoder();
 
@@ -61,6 +64,25 @@ export async function POST(req: NextRequest) {
       };
 
       try {
+        // --- QUOTA CHECK (Bypassed if BYOK is present) ---
+        if (!byok) {
+          const quota = await checkQuota(subjectId, 1.0);
+          if (!quota.allowed) {
+            sendEvent("error", {
+              error: {
+                code: "QUOTA_EXCEEDED",
+                message: "Daily anonymous generation limit reached. Markdown editor and export features remain 100% usable.",
+                resetsAt: quota.resetsAt,
+                resetTimeFormatted: quota.resetTimeFormatted,
+                used: quota.used,
+                limit: quota.limit,
+              },
+            });
+            controller.close();
+            return;
+          }
+        }
+
         // --- STAGE 1: FETCHING FACTS ---
         sendEvent("stage", {
           stage: "fetching",
@@ -76,7 +98,7 @@ export async function POST(req: NextRequest) {
         });
 
         const factsSlice = extractFactsSlice(facts);
-        const cacheKey = createCacheKey("all", tone, factsSlice);
+        const cacheKey = byok ? undefined : createCacheKey("all", tone, factsSlice);
         const systemPrompt = buildSystemPrompt(tone);
         const userPrompt = buildUserPrompt(facts);
 
@@ -84,6 +106,7 @@ export async function POST(req: NextRequest) {
           system: systemPrompt,
           user: userPrompt,
           cacheKey,
+          byok: byok ? { provider: byok.provider, apiKey: byok.apiKey } : undefined,
           temperature: 0.4,
           maxOutputTokens: 2500,
         });
@@ -96,6 +119,7 @@ export async function POST(req: NextRequest) {
           const retryAiResult = await routeLLMRequest({
             system: systemPrompt,
             user: `${userPrompt}\n\nCorrection instruction: Your previous response had schema/grounding issues: ${validation.error}. Ensure 100% adherence to schema and facts.`,
+            byok: byok ? { provider: byok.provider, apiKey: byok.apiKey } : undefined,
             temperature: 0.2,
             maxOutputTokens: 2500,
           });
@@ -158,6 +182,11 @@ export async function POST(req: NextRequest) {
         // Always cache in memoryDrafts so dev mode runs even if MongoDB is offline
         const { memoryDrafts } = await import("@/lib/db/draftStore");
         memoryDrafts.set(readmeId, { ...doc, _id: readmeId });
+
+        // --- CONSUME QUOTA (Only if not BYOK) ---
+        if (!byok) {
+          await consumeQuota(subjectId, 1.0, 2500);
+        }
 
         // --- STAGE 4: DONE ---
         sendEvent("done", {

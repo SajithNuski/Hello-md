@@ -8,10 +8,13 @@ import { SectionsManager } from "@/components/editor/SectionsManager";
 import { MarkdownEditor } from "@/components/editor/MarkdownEditor";
 import { MarkdownPreview } from "@/components/editor/MarkdownPreview";
 import { ExportDialog } from "@/components/export/ExportDialog";
+import { ByokDialog } from "@/components/system/ByokDialog";
+import { SystemStateBanner, SystemStateType } from "@/components/system/SystemStateBanner";
 import { SectionItem } from "@/lib/db/collections";
 import { SectionKey, Tone } from "@/lib/config";
 import { assemble } from "@/lib/assemble";
-import { FiLoader, FiAlertCircle } from "react-icons/fi";
+import { getByokHeaders } from "@/lib/byokClient";
+import { FiLoader, FiAlertCircle, FiX } from "react-icons/fi";
 
 export default function EditorPage() {
   const params = useParams();
@@ -31,62 +34,77 @@ export default function EditorPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [isByokOpen, setIsByokOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
 
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // System State Banner inside editor
+  const [activeSystemState, setActiveSystemState] = useState<SystemStateType | null>(null);
+  const [systemStatePayload, setSystemStatePayload] = useState<{
+    retryAfterSeconds?: number;
+    resetsAtFormatted?: string;
+  }>({});
 
-  // Fetch draft on mount
+  const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Fetch initial draft from API
   useEffect(() => {
+    let mounted = true;
+
     async function loadDraft() {
       try {
         setLoading(true);
         const res = await fetch(`/api/readmes/${id}`);
         if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData?.error?.message || "Could not load profile draft");
+          throw new Error("Could not load README draft");
         }
         const data = await res.json();
-        const r = data.readme;
-        setLogin(r.login);
-        setTheme(r.theme || "minimal");
-        setTone(r.tone || "professional");
-        setSections(r.sections || []);
-        if (r.sections?.[0]?.key) {
-          setSelectedKey(r.sections[0].key);
+        if (mounted && data.readme) {
+          const doc = data.readme;
+          setLogin(doc.login || "");
+          setTheme(doc.theme || "minimal");
+          setTone(doc.tone || "professional");
+          setSections(doc.sections || []);
+          if (doc.sections?.length > 0) {
+            setSelectedKey(doc.sections[0].key);
+          }
+          setLastSavedAt(new Date(doc.updatedAt || Date.now()));
         }
-        setLastSavedAt(new Date(r.updatedAt || Date.now()));
       } catch (err: unknown) {
-        setError((err as Error).message);
+        if (mounted) setError((err as Error).message);
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     }
 
     if (id) {
       loadDraft();
     }
+
+    return () => {
+      mounted = false;
+    };
   }, [id]);
 
-  // Active section data
-  const currentSection = useMemo(() => {
-    return sections.find((s) => s.key === selectedKey) || sections[0];
-  }, [sections, selectedKey]);
-
-  // Assembled full markdown for live preview and export
+  // Derive assembled full markdown string
   const fullMarkdown = useMemo(() => {
     return assemble(sections, theme);
   }, [sections, theme]);
 
-  // Save changes to backend with 800ms debounce
+  // Currently selected active section
+  const currentSection = useMemo(() => {
+    return sections.find((s) => s.key === selectedKey);
+  }, [sections, selectedKey]);
+
+  // Debounced auto-save triggers on edits
   const triggerAutoSave = useCallback(
     (newSections: SectionItem[]) => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
+      if (autosaveTimerRef.current) {
+        clearTimeout(autosaveTimerRef.current);
       }
 
-      setIsSaving(true);
-      saveTimeoutRef.current = setTimeout(async () => {
+      autosaveTimerRef.current = setTimeout(async () => {
+        setIsSaving(true);
         try {
           const res = await fetch(`/api/readmes/${id}`, {
             method: "PATCH",
@@ -149,15 +167,39 @@ export default function EditorPage() {
   const handleRegenerateSection = async (key: SectionKey, targetTone: Tone) => {
     try {
       setIsRegenerating(true);
+      setActiveSystemState(null);
+
+      const byokHeaders = getByokHeaders();
       const res = await fetch(`/api/readmes/${id}/sections/${key}/regenerate`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...byokHeaders,
+        },
         body: JSON.stringify({ tone: targetTone }),
       });
 
       if (!res.ok) {
         const errJson = await res.json().catch(() => ({}));
-        throw new Error(errJson?.error?.message || "Regeneration failed");
+        const err = errJson?.error;
+
+        if (res.status === 429 || err?.code === "QUOTA_EXCEEDED") {
+          setActiveSystemState("quota");
+          setSystemStatePayload({
+            resetsAtFormatted: err?.resetTimeFormatted || "4h 12m",
+          });
+          return;
+        }
+
+        if (res.status === 503 || err?.code === "AI_BUSY") {
+          setActiveSystemState("congestion");
+          setSystemStatePayload({
+            retryAfterSeconds: err?.retryAfter || 24,
+          });
+          return;
+        }
+
+        throw new Error(err?.message || "Regeneration failed");
       }
 
       const data = await res.json();
@@ -232,6 +274,30 @@ export default function EditorPage() {
           copied={copied}
         />
 
+        {/* System State Notice (if throttle/congestion occurred during single-section regen) */}
+        {activeSystemState && (
+          <div className="bg-[#141611] px-4 py-3 border-b border-[#2B2F23] relative z-20">
+            <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+              <div className="flex-1">
+                <SystemStateBanner
+                  state={activeSystemState}
+                  retryAfterSeconds={systemStatePayload.retryAfterSeconds}
+                  resetsAtFormatted={systemStatePayload.resetsAtFormatted}
+                  onOpenByok={() => setIsByokOpen(true)}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveSystemState(null)}
+                className="text-[#7A7E72] hover:text-white p-1 rounded hover:bg-white/5 transition-colors shrink-0"
+                title="Dismiss"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* 3-Column Workspace Canvas */}
         <div className="flex-1 flex overflow-hidden w-full">
           {/* Column 1: Sections Manager (280px) */}
@@ -266,6 +332,15 @@ export default function EditorPage() {
         onClose={() => setIsExportOpen(false)}
         markdown={fullMarkdown}
         login={login}
+      />
+
+      {/* BYOK Modal Dialog */}
+      <ByokDialog
+        isOpen={isByokOpen}
+        onClose={() => setIsByokOpen(false)}
+        onSaved={() => {
+          setActiveSystemState(null);
+        }}
       />
     </div>
   );

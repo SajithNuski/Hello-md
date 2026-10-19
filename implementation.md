@@ -168,13 +168,13 @@ flowchart TD
     * Right column: GitHub-styled markdown preview (`react-markdown`, `remark-gfm`, `rehype-sanitize`).
 * **Deliverable:** Working interactive editor matching Stitch aesthetics.
 
-#### Milestone 6: Quotas, System States & Bring-Your-Own-Key
+#### Milestone 6: Quotas, System States & Bring-Your-Own-Key [COMPLETED]
 * **Scope:**
   * Implement quota tracking in `src/lib/quota.ts` (3 generations/day, 0.25 for single section).
   * Implement anonymous owner cookie tracking (`src/lib/owner.ts`).
   * Support `x-groq-api-key` and `x-gemini-api-key` headers (unmetered, zero storage/logging).
   * Build system state banners from Stitch: AI busy countdown, quota exceeded, username not found.
-* **Deliverable:** Quota depletion handling and unmetered BYOK bypass verified.
+* **Deliverable:** Quota depletion handling and unmetered BYOK bypass verified via `scripts/test-quota-byok.ts`. Live `/system-states` diagnostics page and client BYOK modal implemented.
 
 #### Milestone 7: Auth.js, Token Encryption & GitHub Push with Diff
 * **Scope:**

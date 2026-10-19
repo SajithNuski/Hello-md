@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LuSparkles, LuLayoutTemplate } from "react-icons/lu";
 import { SiGithub } from "react-icons/si";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX, FiActivity } from "react-icons/fi";
 import { gsap, useGSAP } from "@/lib/animations/gsap";
 
 export function Header() {
@@ -16,6 +16,7 @@ export function Header() {
   const isEditor = pathname.startsWith("/editor");
   const isGenerator = pathname === "/";
   const isTemplates = pathname === "/templates";
+  const isSystemStates = pathname === "/system-states";
 
   useGSAP(
     () => {
@@ -112,6 +113,18 @@ export function Header() {
             <LuLayoutTemplate className="w-3.5 h-3.5 text-accent stroke-[1.8]" />
             <span>Templates</span>
           </Link>
+
+          <Link
+            href="/system-states"
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-150 ${
+              isSystemStates
+                ? "bg-[#23271D] text-accent border border-[#343A2B] shadow-xs"
+                : "text-[#9EAA96] hover:text-white hover:bg-white/[0.06]"
+            }`}
+          >
+            <FiActivity className="w-3.5 h-3.5 text-accent" />
+            <span>System States</span>
+          </Link>
         </nav>
 
         {/* Right Actions */}
@@ -125,17 +138,10 @@ export function Header() {
             <SiGithub className="w-4 h-4 text-white group-hover:scale-105 transition-transform" />
             <span className="hidden sm:inline font-sans font-medium text-xs">GitHub</span>
             
-            
+
           </a>
 
-          <Link
-            href="/#generator"
-            className="h-9 px-4 bg-accent hover:bg-accent-hover text-[#0D0E0C] font-semibold text-xs sm:text-sm rounded-md transition-all flex items-center gap-2 shadow-xs hover:shadow-[0_0_18px_rgba(197,244,103,0.45)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-          >
-            <LuSparkles className="w-3.5 h-3.5 stroke-[2.2]" />
-            <span>Synthesize README</span>
-          </Link>
-
+        
           {/* Mobile Menu Hamburger Button */}
           <button
             type="button"
@@ -188,6 +194,14 @@ export function Header() {
             >
               <LuLayoutTemplate className="w-4 h-4 text-accent" />
               <span>Templates</span>
+            </Link>
+            <Link
+              href="/system-states"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3.5 py-2.5 rounded-lg text-sm font-medium text-[#A5A89D] hover:text-white hover:bg-white/[0.05] transition-all flex items-center gap-2"
+            >
+              <FiActivity className="w-4 h-4 text-accent" />
+              <span>System States</span>
             </Link>
           </nav>
 

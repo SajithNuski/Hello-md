@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   FiTerminal,
@@ -12,16 +12,28 @@ import {
   FiDatabase,
   FiEdit3,
   FiPackage,
+  FiKey,
 } from "react-icons/fi";
 import { SiGithub } from "react-icons/si";
 import { LuSparkles } from "react-icons/lu";
 import { Tone } from "@/lib/config";
-import { CustomSelect, SelectOption } from "@/components/ui/CustomSelect";
+import { CustomSelect } from "@/components/ui/CustomSelect";
+import { SystemStateBanner, SystemStateType } from "@/components/system/SystemStateBanner";
+import { ByokDialog } from "@/components/system/ByokDialog";
+import { getByokHeaders, getByokConfig } from "@/lib/byokClient";
 
 interface LogEntry {
   timestamp: string;
   message: string;
   type: "info" | "success" | "warning" | "error";
+}
+
+interface QuotaDisplay {
+  used: number;
+  remaining: number;
+  limit: number;
+  resetsAtFormatted: string;
+  isByok: boolean;
 }
 
 export function GeneratorForm() {
@@ -36,6 +48,47 @@ export function GeneratorForm() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // System States & BYOK State
+  const [activeSystemState, setActiveSystemState] = useState<SystemStateType | null>(null);
+  const [statePayload, setStatePayload] = useState<{
+    retryAfterSeconds?: number;
+    username?: string;
+    resetsAtFormatted?: string;
+  }>({});
+  const [isByokOpen, setIsByokOpen] = useState(false);
+  const [quotaInfo, setQuotaInfo] = useState<QuotaDisplay | null>(null);
+
+  const fetchUsage = useCallback(async () => {
+    try {
+      const res = await fetch("/api/usage", {
+        headers: getByokHeaders(),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setQuotaInfo({
+          used: data.used,
+          remaining: data.remaining,
+          limit: data.limit,
+          resetsAtFormatted: data.resetTimeFormatted || "4h 12m",
+          isByok: Boolean(data.isByok),
+        });
+      }
+    } catch {
+      // ignore telemetry fetch error
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUsage();
+
+    const handleByokUpdated = () => {
+      fetchUsage();
+    };
+
+    window.addEventListener("hellomd:byok-updated", handleByokUpdated);
+    return () => window.removeEventListener("hellomd:byok-updated", handleByokUpdated);
+  }, [fetchUsage]);
+
   const addLog = (message: string, type: LogEntry["type"] = "info") => {
     const time = new Date().toTimeString().split(" ")[0];
     setLogs((prev) => [...prev, { timestamp: time, message, type }]);
@@ -48,15 +101,20 @@ export function GeneratorForm() {
 
     setIsGenerating(true);
     setErrorMessage(null);
+    setActiveSystemState(null);
     setCurrentStage("fetching");
     setLogs([]);
 
     addLog(`Initiating generation session for @${cleanUsername}`, "info");
 
     try {
+      const byokHeaders = getByokHeaders();
       const response = await fetch("/api/readmes", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...byokHeaders,
+        },
         body: JSON.stringify({
           login: cleanUsername,
           tone,
@@ -97,15 +155,40 @@ export function GeneratorForm() {
             setCurrentStage("done");
             addLog(`Assembled ${dataPayload.sections?.length || 5} profile sections! Redirecting to Editor...`, "success");
 
+            // Refresh quota telemetry
+            fetchUsage();
+
             // Redirect to editor
             setTimeout(() => {
               router.push(`/editor/${dataPayload.readmeId}`);
             }, 800);
           } else if (eventType === "error" && dataPayload) {
             const err = dataPayload.error;
-            setErrorMessage(err.message || "An error occurred during generation");
-            addLog(`Error [${err.code}]: ${err.message}`, "error");
             setIsGenerating(false);
+
+            if (err.code === "QUOTA_EXCEEDED") {
+              setActiveSystemState("quota");
+              setStatePayload({
+                resetsAtFormatted: err.resetTimeFormatted || "4h 12m",
+              });
+              addLog(`Quota Exceeded: 0 of 3 generations left today.`, "warning");
+              fetchUsage();
+            } else if (err.code === "AI_BUSY") {
+              setActiveSystemState("congestion");
+              setStatePayload({
+                retryAfterSeconds: err.retryAfter || 24,
+              });
+              addLog(`AI Busy: Throttling active. Retry in ${err.retryAfter || 24}s`, "warning");
+            } else if (err.code === "USER_NOT_FOUND") {
+              setActiveSystemState("user_not_found");
+              setStatePayload({
+                username: cleanUsername,
+              });
+              addLog(`GitHub user '@${cleanUsername}' not found.`, "error");
+            } else {
+              setErrorMessage(err.message || "An error occurred during generation");
+              addLog(`Error [${err.code}]: ${err.message}`, "error");
+            }
             return;
           }
         }
@@ -120,12 +203,63 @@ export function GeneratorForm() {
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-[720px]">
+      {/* Active System State Banner (State 01, 02, or 03) */}
+      {activeSystemState && (
+        <div className="w-full animate-in fade-in slide-in-from-top-2 duration-300">
+          <SystemStateBanner
+            state={activeSystemState}
+            retryAfterSeconds={statePayload.retryAfterSeconds}
+            username={statePayload.username || username}
+            resetsAtFormatted={statePayload.resetsAtFormatted}
+            onOpenByok={() => setIsByokOpen(true)}
+            onSelectSuggestion={(suggested) => {
+              setUsername(suggested);
+              setActiveSystemState(null);
+            }}
+          />
+        </div>
+      )}
+
       {/* Form Card */}
       <form
         id="generator-card"
         onSubmit={handleGenerate}
-        className="flex flex-col gap-6 bg-surface p-6 sm:p-7 rounded-xl border border-border shadow-sm transition-all duration-300"
+        className="flex flex-col gap-6 bg-surface p-6 sm:p-7 rounded-xl border border-border shadow-sm transition-all duration-300 text-left"
       >
+        {/* Card Header & Quota Bar */}
+        <div className="flex items-center justify-between pb-3 border-b border-border text-xs">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <span className="font-mono text-text-secondary text-[11px] uppercase tracking-wider font-semibold">
+              Precision Synthesizer
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            {quotaInfo && (
+              <span className="font-mono text-[11px] text-text-muted bg-surface-raised px-2 py-0.5 rounded border border-border">
+                {quotaInfo.isByok ? (
+                  <span className="text-accent font-medium">Unmetered (BYOK)</span>
+                ) : (
+                  <span>
+                    <strong className="text-text-primary">{quotaInfo.remaining}</strong> of {quotaInfo.limit} left today
+                  </span>
+                )}
+              </span>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setIsByokOpen(true)}
+              className="font-mono text-[11px] text-text-secondary hover:text-accent flex items-center gap-1 transition-colors"
+              title="Configure Bring Your Own Key"
+            >
+              <FiKey className="w-3 h-3" />
+              <span className="hidden sm:inline">BYOK</span>
+            </button>
+          </div>
+        </div>
+
         {/* Username Input */}
         <div className="flex flex-col gap-2">
           <label
@@ -145,7 +279,12 @@ export function GeneratorForm() {
               required
               disabled={isGenerating}
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                if (activeSystemState === "user_not_found") {
+                  setActiveSystemState(null);
+                }
+              }}
               placeholder="torvalds"
               style={{ outline: "none" }}
               className="w-full h-full px-3.5 bg-transparent font-mono text-meta text-text-primary placeholder:text-text-muted outline-none focus:outline-none focus-visible:outline-none"
@@ -225,7 +364,7 @@ export function GeneratorForm() {
 
       {/* Live Stepper & Terminal Log Console */}
       {isGenerating && (
-        <div className="w-full bg-surface border border-border rounded-md overflow-hidden flex flex-col shadow-xs">
+        <div className="w-full bg-surface border border-border rounded-md overflow-hidden flex flex-col shadow-xs text-left">
           {/* Stepper Header */}
           <div className="grid grid-cols-1 md:grid-cols-3 border-b border-border bg-surface-raised/40">
             {/* Step 1: Ingestion */}
@@ -249,7 +388,7 @@ export function GeneratorForm() {
               </div>
             </div>
 
-            {/* Step 2: Writing */}
+            {/* Step 2: Synthesis */}
             <div
               className={`flex items-center gap-3 px-4 py-3 border-b md:border-b-0 md:border-r border-border ${
                 currentStage === "writing" ? "bg-surface-raised" : ""
@@ -264,16 +403,16 @@ export function GeneratorForm() {
               )}
               <div className="flex flex-col">
                 <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
-                  2. WRITE PROSE
+                  2. AI SYNTHESIS
                 </span>
-                <span className="text-meta text-text-secondary">Grounded sections</span>
+                <span className="text-meta text-text-secondary">Grounded prose</span>
               </div>
             </div>
 
-            {/* Step 3: Assembling */}
+            {/* Step 3: Assembly */}
             <div
               className={`flex items-center gap-3 px-4 py-3 ${
-                currentStage === "assembling" || currentStage === "done" ? "bg-surface-raised" : ""
+                currentStage === "assembling" ? "bg-surface-raised" : ""
               }`}
             >
               {currentStage === "assembling" ? (
@@ -285,33 +424,36 @@ export function GeneratorForm() {
               )}
               <div className="flex flex-col">
                 <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
-                  3. ASSEMBLE
+                  3. ASSEMBLY
                 </span>
-                <span className="text-meta text-text-secondary">Badges & Markdown</span>
+                <span className="text-meta text-text-secondary">Deterministic layout</span>
               </div>
             </div>
           </div>
 
-          {/* Console Log Stream */}
-          <div className="p-4 flex flex-col gap-1.5 font-mono text-meta bg-[#171815] text-[#FAFAF8] min-h-[120px] max-h-[180px] overflow-y-auto">
-            <div className="flex items-center justify-between text-text-muted border-b border-[#31322E] pb-1.5 mb-1 text-eyebrow">
-              <span className="flex items-center gap-1.5">
-                <FiTerminal className="w-3.5 h-3.5 text-accent" />
-                <span className="tracking-[0.04em] uppercase">STDOUT STREAM</span>
-              </span>
-              <span className="text-accent uppercase tracking-wider text-[10px]">LIVE</span>
+          {/* Monospace Log Terminal Output */}
+          <div className="p-4 bg-[#0D0E0C] text-[#FAFAF8] flex flex-col gap-2 max-h-48 overflow-y-auto font-mono text-meta">
+            <div className="flex items-center gap-2 pb-2 mb-1 border-b border-[#21231D] text-text-muted text-eyebrow uppercase tracking-[0.05em]">
+              <FiTerminal className="w-3.5 h-3.5 text-accent" />
+              <span>Synthesis Log Console</span>
             </div>
+
+            {logs.length === 0 && (
+              <span className="text-text-muted italic">Connecting to streaming endpoint...</span>
+            )}
+
             {logs.map((log, idx) => (
-              <div key={idx} className="flex items-start gap-2">
-                <span className="text-text-secondary select-none">{log.timestamp}</span>
-                <span className="text-accent select-none">&gt;</span>
+              <div key={idx} className="flex items-start gap-2.5 leading-relaxed">
+                <span className="text-text-muted shrink-0 select-none">[{log.timestamp}]</span>
                 <span
                   className={
-                    log.type === "error"
-                      ? "text-status-error"
-                      : log.type === "success"
+                    log.type === "success"
                       ? "text-accent font-medium"
-                      : "text-[#FAFAF8]"
+                      : log.type === "error"
+                      ? "text-status-error font-medium"
+                      : log.type === "warning"
+                      ? "text-amber-400 font-medium"
+                      : "text-[#D8D9D2]"
                   }
                 >
                   {log.message}
@@ -321,6 +463,18 @@ export function GeneratorForm() {
           </div>
         </div>
       )}
+
+      {/* BYOK Modal */}
+      <ByokDialog
+        isOpen={isByokOpen}
+        onClose={() => {
+          setIsByokOpen(false);
+          fetchUsage();
+        }}
+        onSaved={() => {
+          fetchUsage();
+        }}
+      />
     </div>
   );
 }
