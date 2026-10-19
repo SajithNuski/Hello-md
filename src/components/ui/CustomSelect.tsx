@@ -98,10 +98,10 @@ export function CustomSelect<T extends string = string>({
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
         style={{ outline: "none" }}
-        className={`w-full h-11 px-3.5 bg-surface-raised rounded-md border flex items-center justify-between text-nav text-text-primary cursor-pointer shadow-xs transition-all select-none ${
+        className={`w-full h-11 px-3.5 bg-surface-raised rounded-md border flex items-center justify-between text-nav text-text-primary outline-none focus:outline-none focus-visible:outline-none cursor-pointer shadow-xs transition-all select-none ${
           isOpen
-            ? "border-[#0D0E0C] ring-2 ring-accent"
-            : "border-border hover:border-text-primary/40 focus:border-[#0D0E0C] focus:ring-2 focus:ring-accent"
+            ? "border-text-primary"
+            : "border-border hover:border-text-primary/40 focus:border-text-primary"
         } ${className}`}
       >
         <span className="font-medium text-sm text-[#0D0E0C] truncate">
@@ -119,7 +119,8 @@ export function CustomSelect<T extends string = string>({
         <div
           role="listbox"
           tabIndex={-1}
-          className="absolute top-[calc(100%+4px)] left-0 right-0 z-50 bg-white rounded-lg border border-[#0D0E0C]/15 shadow-xl p-1.5 flex flex-col gap-0.5 animate-in fade-in zoom-in-95 duration-150 overflow-hidden"
+          style={{ outline: "none" }}
+          className="absolute top-[calc(100%+4px)] left-0 right-0 z-50 bg-white rounded-lg border border-[#0D0E0C]/15 shadow-xl p-1.5 flex flex-col gap-0.5 outline-none focus:outline-none animate-in fade-in zoom-in-95 duration-150 overflow-hidden"
         >
           {options.map((option) => {
             const isSelected = option.value === value;
@@ -130,7 +131,8 @@ export function CustomSelect<T extends string = string>({
                 role="option"
                 aria-selected={isSelected}
                 onClick={() => handleSelect(option.value)}
-                className={`w-full px-3 py-2 rounded-md flex items-center justify-between text-sm transition-colors text-left cursor-pointer select-none ${
+                style={{ outline: "none" }}
+                className={`w-full px-3 py-2 rounded-md flex items-center justify-between text-sm transition-colors text-left outline-none focus:outline-none focus-visible:outline-none cursor-pointer select-none ${
                   isSelected
                     ? "bg-accent text-[#0D0E0C] font-semibold shadow-xs"
                     : "text-[#262822] hover:bg-accent/25 hover:text-[#0D0E0C]"

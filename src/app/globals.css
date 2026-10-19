@@ -25,6 +25,14 @@
   select {
     accent-color: var(--accent);
   }
+
+  #generator-card input,
+  #generator-card button,
+  #generator-card select,
+  #generator-card [role="listbox"],
+  #generator-card [role="option"] {
+    outline: none !important;
+  }
 }
 
 /* Infinite Marquee Animation */
