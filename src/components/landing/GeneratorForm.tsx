@@ -134,7 +134,7 @@ export function GeneratorForm() {
             GitHub Profile Handle
           </label>
           <div className="flex h-11 w-full bg-surface-raised rounded-md border border-border overflow-hidden focus-within:border-text-primary focus-within:ring-2 focus-within:ring-accent/40 transition-all shadow-xs">
-            <span className="inline-flex items-center justify-center px-3.5 bg-surface border-r border-border font-mono text-meta text-text-secondary select-none gap-1.5">
+            <span className="inline-flex items-center justify-center px-3.5 bg-surface border-r border-border font-medium text-meta text-text-secondary select-none gap-1.5">
               <SiGithub className="w-4 h-4 text-text-secondary" />
               <span>@</span>
             </span>

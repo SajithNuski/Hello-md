@@ -15,7 +15,6 @@ export function Hero() {
   const cardContainerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
-  const ribbonRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
@@ -100,18 +99,6 @@ export function Hero() {
             ease: "power3.out",
           },
           "-=0.7"
-        );
-      }
-
-      if (ribbonRef.current) {
-        tl.from(
-          ribbonRef.current,
-          {
-            opacity: 0,
-            y: 15,
-            duration: 0.7,
-          },
-          "-=0.3"
         );
       }
 
@@ -347,60 +334,6 @@ export function Hero() {
           </div>
         </div>
       </section>
-
-      {/* Tech Pipeline Feature Ribbon */}
-      <div
-        ref={ribbonRef}
-        className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-[#0D0E0C]/15 select-none"
-      >
-        <div className="flex flex-col gap-1.5 p-4 rounded-xl bg-white border border-[#0D0E0C]/10 shadow-xs hover:border-[#0D0E0C]/40 transition-colors">
-          <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 w-fit px-2 py-0.5 rounded">
-            01 / ROUTER
-          </span>
-          <span className="font-bold text-sm text-[#0D0E0C]">
-            Llama 3.3 + Gemini
-          </span>
-          <span className="text-xs text-[#2B2D26] font-medium">
-            Multi-model fallback
-          </span>
-        </div>
-
-        <div className="flex flex-col gap-1.5 p-4 rounded-xl bg-white border border-[#0D0E0C]/10 shadow-xs hover:border-[#0D0E0C]/40 transition-colors">
-          <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 w-fit px-2 py-0.5 rounded">
-            02 / DATA
-          </span>
-          <span className="font-bold text-sm text-[#0D0E0C]">
-            GitHub GraphQL API
-          </span>
-          <span className="text-xs text-[#2B2D26] font-medium">
-            Repos, stats, languages
-          </span>
-        </div>
-
-        <div className="flex flex-col gap-1.5 p-4 rounded-xl bg-white border border-[#0D0E0C]/10 shadow-xs hover:border-[#0D0E0C]/40 transition-colors">
-          <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 w-fit px-2 py-0.5 rounded">
-            03 / EDITOR
-          </span>
-          <span className="font-bold text-sm text-[#0D0E0C]">
-            CodeMirror 6 Suite
-          </span>
-          <span className="text-xs text-[#2B2D26] font-medium">
-            Live split markdown
-          </span>
-        </div>
-
-        <div className="flex flex-col gap-1.5 p-4 rounded-xl bg-white border border-[#0D0E0C]/10 shadow-xs hover:border-[#0D0E0C]/40 transition-colors">
-          <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 w-fit px-2 py-0.5 rounded">
-            04 / EXPORT
-          </span>
-          <span className="font-bold text-sm text-[#0D0E0C]">
-            Direct GitHub Push
-          </span>
-          <span className="text-xs text-[#2B2D26] font-medium">
-            Copy, download, or sync
-          </span>
-        </div>
-      </div>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
 import { Hero } from "@/components/landing/Hero";
+import { HowItWorks } from "@/components/landing/HowItWorks";
 import { GeneratorSection } from "@/components/landing/GeneratorSection";
-import { Methodology } from "@/components/landing/Methodology";
 
 export default function Home() {
   return (
@@ -14,11 +14,11 @@ export default function Home() {
           {/* 1. Hero Section: Headline, Pitch, Action CTAs & 3D Interactive Preview */}
           <Hero />
 
-          {/* 2. Dedicated Generator Section (ScrollTrigger & Highlight) */}
-          <GeneratorSection />
+          {/* 2. How It Works Section: 3-Step Workflow Architecture */}
+          <HowItWorks />
 
-          {/* 3. Methodology Three-Step Section (ScrollTrigger Stagger & Micro-interactions) */}
-          <Methodology />
+          {/* 3. Dedicated Generator Section (ScrollTrigger & Highlight) */}
+          <GeneratorSection />
         </div>
       </main>
 
