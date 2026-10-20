@@ -123,7 +123,7 @@ export function Header() {
             }`}
           >
             <FiActivity className="w-3.5 h-3.5 text-accent" />
-            <span>System States</span>
+            <span>Status</span>
           </Link>
         </nav>
 
@@ -201,7 +201,7 @@ export function Header() {
               className="px-3.5 py-2.5 rounded-lg text-sm font-medium text-[#A5A89D] hover:text-white hover:bg-white/[0.05] transition-all flex items-center gap-2"
             >
               <FiActivity className="w-4 h-4 text-accent" />
-              <span>System States</span>
+              <span>Status</span>
             </Link>
           </nav>
 
