@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -171,48 +172,42 @@ export function SectionsManager({
                 {/* Selected Action Drawer */}
                 {isSelected && (
                   <div className="px-3 pb-3 pt-1 border-t border-border/50 flex flex-col gap-2">
-                    {/* Regenerate Bar */}
-                    <div className="flex items-center justify-between text-nav text-text-secondary pt-1">
-                      <button
-                        type="button"
-                        disabled={isRegenerating}
-                        onClick={() => onRegenerateSection(section.key as SectionKey, selectedTone)}
-                        className="flex items-center gap-1.5 text-meta font-medium text-text-primary hover:text-accent-hover transition-colors disabled:opacity-50 cursor-pointer"
-                      >
-                        {isRegenerating ? (
-                          <FiRefreshCw className="w-3.5 h-3.5 animate-spin text-text-primary" />
-                        ) : (
-                          <LuSparkles className="w-3.5 h-3.5 text-text-primary stroke-[1.5]" />
-                        )}
-                        <span>Regenerate</span>
-                      </button>
-
-                      <div className="flex items-center gap-1.5 bg-surface px-2 py-0.5 rounded-sm border border-border shadow-xs">
-                        <span className="font-mono text-eyebrow text-text-muted">Tone:</span>
-                        <select
-                          value={selectedTone}
-                          onChange={(e) => setSelectedTone(e.target.value as Tone)}
-                          className="bg-transparent font-mono text-meta text-text-primary focus:outline-none cursor-pointer"
+                    {/* Regenerate Bar (only for sections other than Intro & Bio) */}
+                    {section.key !== "intro" && (
+                      <div className="flex items-center justify-between text-nav text-text-secondary pt-1">
+                        <button
+                          type="button"
+                          disabled={isRegenerating}
+                          onClick={() => onRegenerateSection(section.key as SectionKey, selectedTone)}
+                          className="flex items-center gap-1.5 text-meta font-medium text-text-primary hover:text-accent-hover transition-colors disabled:opacity-50 cursor-pointer"
                         >
-                          <option value="professional">Prof.</option>
-                          <option value="playful">Playful</option>
-                          <option value="minimal">Minimal</option>
-                          <option value="hacker">Hacker</option>
-                        </select>
+                          {isRegenerating ? (
+                            <FiRefreshCw className="w-3.5 h-3.5 animate-spin text-text-primary" />
+                          ) : (
+                            <LuSparkles className="w-3.5 h-3.5 text-text-primary stroke-[1.5]" />
+                          )}
+                          <span>Regenerate</span>
+                        </button>
+
+                        <div className="flex items-center gap-1.5 bg-surface px-2 py-0.5 rounded-sm border border-border shadow-xs">
+                          <span className="font-mono text-eyebrow text-text-muted">Tone:</span>
+                          <select
+                            value={selectedTone}
+                            onChange={(e) => setSelectedTone(e.target.value as Tone)}
+                            className="bg-transparent font-mono text-meta text-text-primary focus:outline-none cursor-pointer"
+                          >
+                            <option value="professional">Prof.</option>
+                            <option value="playful">Playful</option>
+                            <option value="minimal">Minimal</option>
+                            <option value="hacker">Hacker</option>
+                          </select>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Dedicated Intro & Bio Controls (Profile Photo, Title Animation, Color) */}
                     {section.key === "intro" && onIntroConfigChange && (
-                      <div className="pt-2 border-t border-border/50">
-                        <div className="flex items-center justify-between pb-1">
-                          <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted font-semibold">
-                            Intro Controls
-                          </span>
-                          <span className="font-mono text-[10px] text-accent">
-                            Live Interactive
-                          </span>
-                        </div>
+                      <div className="pt-1">
                         <IntroSectionControls
                           config={introConfig || getDefaultIntroConfig(username)}
                           onChange={onIntroConfigChange}

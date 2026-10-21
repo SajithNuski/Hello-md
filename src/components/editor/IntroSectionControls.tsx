@@ -49,10 +49,6 @@ export function IntroSectionControls({
     update({ photoSize: Math.max(40, Math.min(300, size)) });
   };
 
-  const handlePhotoRoundedToggle = () => {
-    update({ photoRounded: !config.photoRounded });
-  };
-
   // Animation handlers
   const handleAnimationToggle = () => {
     update({ animationEnabled: !config.animationEnabled });
@@ -179,21 +175,6 @@ export function IntroSectionControls({
                   onChange={(e) => handlePhotoSizeChange(parseInt(e.target.value, 10) || 150)}
                   className="w-14 bg-surface border border-border rounded px-1.5 py-0.5 text-center font-mono text-xs text-text-primary focus:outline-none"
                 />
-              </div>
-            </div>
-
-            {/* Rounded Toggle */}
-            <div
-              onClick={handlePhotoRoundedToggle}
-              className="flex items-center justify-between cursor-pointer select-none py-0.5"
-            >
-              <span className="text-meta text-text-secondary">Rounded (circle)</span>
-              <div
-                className={`w-6 h-3.5 rounded-full p-[1.5px] transition-colors cursor-pointer shrink-0 flex items-center ${
-                  config.photoRounded ? "bg-text-primary justify-end" : "bg-border justify-start"
-                }`}
-              >
-                <div className="w-2.5 h-2.5 bg-white rounded-full shadow-xs"></div>
               </div>
             </div>
           </div>
