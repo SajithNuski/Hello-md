@@ -41,10 +41,6 @@ export function IntroSectionControls({
     update({ photoEnabled: !config.photoEnabled });
   };
 
-  const handlePhotoUsernameChange = (val: string) => {
-    update({ photoUsername: val.trim() });
-  };
-
   const handlePhotoSizeChange = (size: number) => {
     update({ photoSize: Math.max(40, Math.min(300, size)) });
   };
@@ -132,23 +128,6 @@ export function IntroSectionControls({
         {/* Enabled Fields */}
         {config.photoEnabled && (
           <div className="pt-2 border-t border-border/60 flex flex-col gap-2.5 animate-in fade-in duration-150">
-            {/* Username Input */}
-            <div className="flex flex-col gap-1">
-              <label className="font-mono text-eyebrow text-text-secondary uppercase">
-                GitHub Username
-              </label>
-              <div className="flex items-center bg-surface border border-border rounded px-2 py-1 focus-within:border-accent transition-colors">
-                <span className="text-text-muted font-mono mr-1">@</span>
-                <input
-                  type="text"
-                  value={config.photoUsername ?? defaultUsername}
-                  onChange={(e) => handlePhotoUsernameChange(e.target.value)}
-                  placeholder={defaultUsername}
-                  className="bg-transparent w-full text-xs font-mono text-text-primary focus:outline-none"
-                />
-              </div>
-            </div>
-
             {/* Size Slider & Input */}
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between">
