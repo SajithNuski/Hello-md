@@ -322,7 +322,7 @@ export default function EditorPage() {
 
           {/* Column 3: Live Preview Pane */}
           {(activeView === "split" || activeView === "preview") && (
-            <MarkdownPreview markdown={fullMarkdown} />
+            <MarkdownPreview markdown={fullMarkdown} username={login} />
           )}
         </div>
       </main>

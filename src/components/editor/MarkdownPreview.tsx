@@ -1,103 +1,323 @@
 "use client";
 
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { FiEye } from "react-icons/fi";
+import rehypeRaw from "rehype-raw";
+import { FiEye, FiBookOpen, FiMoon, FiSun } from "react-icons/fi";
 
 interface MarkdownPreviewProps {
   markdown: string;
+  username?: string;
+  defaultTheme?: "dark" | "light";
 }
 
-export function MarkdownPreview({ markdown }: MarkdownPreviewProps) {
+interface ExtraAttributes {
+  align?: string;
+  vAlign?: string;
+  valign?: string;
+  width?: string | number;
+  height?: string | number;
+  src?: string;
+  alt?: string;
+}
+
+export function MarkdownPreview({
+  markdown,
+  username = "profile",
+  defaultTheme = "dark",
+}: MarkdownPreviewProps) {
+  const [previewTheme, setPreviewTheme] = useState<"dark" | "light">(defaultTheme);
+
+  const isDark = previewTheme === "dark";
+
   return (
     <div className="flex-1 bg-page flex flex-col overflow-hidden">
-      {/* Header Tab */}
-      <div className="h-10 px-4 flex items-center justify-between border-b border-border bg-surface select-none">
+      {/* Top Header Tab Bar */}
+      <div className="h-10 px-4 flex items-center justify-between border-b border-border bg-surface select-none shrink-0">
         <div className="flex items-center gap-2 text-text-secondary">
           <FiEye className="w-4 h-4 stroke-[1.5]" />
           <span className="text-nav font-medium text-text-primary">Rendered Output</span>
-          <span className="font-mono text-eyebrow bg-surface-raised px-1.5 py-0.2 rounded-sm border border-border text-text-secondary uppercase tracking-[0.04em]">
+          <span className="font-mono text-eyebrow bg-surface-raised px-1.5 py-0.5 rounded-sm border border-border text-text-secondary uppercase tracking-[0.04em]">
             README.md
           </span>
         </div>
-        <div className="flex items-center gap-2 text-meta text-text-secondary">
-          <span className="w-2 h-2 rounded-full bg-status-success animate-pulse"></span>
-          <span>Live Synchronized</span>
+
+        <div className="flex items-center gap-3">
+          {/* GitHub Dark / Light preview toggle */}
+          <button
+            type="button"
+            onClick={() => setPreviewTheme(isDark ? "light" : "dark")}
+            className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded bg-surface-raised border border-border text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            title={`Switch to GitHub ${isDark ? "Light" : "Dark"} mode`}
+          >
+            {isDark ? (
+              <>
+                <FiSun className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden sm:inline font-mono text-[11px]">GitHub Dark</span>
+              </>
+            ) : (
+              <>
+                <FiMoon className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="hidden sm:inline font-mono text-[11px]">GitHub Light</span>
+              </>
+            )}
+          </button>
+
+          <div className="flex items-center gap-2 text-meta text-text-secondary">
+            <span className="w-2 h-2 rounded-full bg-status-success animate-pulse"></span>
+            <span className="hidden sm:inline">Live Synchronized</span>
+          </div>
         </div>
       </div>
 
-      {/* Canvas Scroll Container */}
-      <div className="flex-1 p-6 md:p-8 overflow-y-auto flex justify-center">
-        {/* GitHub Style Card */}
-        <div className="w-full max-w-[760px] bg-surface-raised rounded-md p-8 sm:p-10 border border-border shadow-xs flex flex-col gap-6 text-text-primary leading-relaxed h-fit">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              h1: ({ children }) => (
-                <div className="flex flex-col pb-3 border-b border-border mt-2 mb-4">
-                  <h1 className="text-2xl sm:text-[32px] font-semibold tracking-[-0.03em] leading-[1.15] text-text-primary">
-                    {children}
-                  </h1>
-                </div>
-              ),
-              h2: ({ children }) => (
-                <h2 className="text-xl font-semibold tracking-[-0.03em] text-text-primary pb-2 border-b border-border/70 mt-6 mb-3">
-                  {children}
-                </h2>
-              ),
-              h3: ({ children }) => (
-                <h3 className="text-card font-medium tracking-[-0.02em] text-text-primary mt-4 mb-2">
-                  {children}
-                </h3>
-              ),
-              blockquote: ({ children }) => (
-                <blockquote className="border-l-4 border-accent bg-surface px-4 py-3 rounded-r-sm text-text-secondary text-body my-3 italic leading-[1.65]">
-                  {children}
-                </blockquote>
-              ),
-              p: ({ children }) => (
-                <p className="text-body leading-[1.65] text-text-primary my-2">
-                  {children}
-                </p>
-              ),
-              ul: ({ children }) => (
-                <ul className="list-disc pl-5 my-2 space-y-1.5 text-body leading-[1.65]">
-                  {children}
-                </ul>
-              ),
-              ol: ({ children }) => (
-                <ol className="list-decimal pl-5 my-2 space-y-1.5 text-body leading-[1.65]">
-                  {children}
-                </ol>
-              ),
-              li: ({ children }) => <li className="text-body text-text-primary">{children}</li>,
-              a: ({ href, children }) => (
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#0969DA] hover:underline font-medium inline-flex items-center gap-0.5"
-                >
-                  {children}
-                </a>
-              ),
-              img: ({ src, alt }) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={src}
-                  alt={alt || "badge"}
-                  className="inline-block mr-1.5 my-1 rounded-sm shadow-xs"
-                />
-              ),
-              code: ({ children }) => (
-                <code className="bg-surface text-text-primary px-1.5 py-0.5 rounded-sm font-mono text-meta border border-border">
-                  {children}
-                </code>
-              ),
-            }}
+      {/* Canvas Scroll Area */}
+      <div className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto flex justify-center bg-page">
+        {/* GitHub Profile README Container */}
+        <div
+          className={`w-full max-w-[820px] rounded-lg border shadow-sm flex flex-col h-fit transition-colors duration-200 ${
+            isDark
+              ? "bg-[#0D1117] text-[#E6EDF3] border-[#30363D]"
+              : "bg-[#FFFFFF] text-[#1F2328] border-[#D0D7DE]"
+          }`}
+        >
+          {/* GitHub README Card Header */}
+          <div
+            className={`flex items-center justify-between px-4 py-3 border-b text-xs font-mono select-none rounded-t-lg ${
+              isDark
+                ? "bg-[#161B22] border-[#30363D] text-[#8B949E]"
+                : "bg-[#F6F8FA] border-[#D0D7DE] text-[#656D76]"
+            }`}
           >
-            {markdown}
-          </ReactMarkdown>
+            <div className="flex items-center gap-2">
+              <FiBookOpen className="w-4 h-4 opacity-80" />
+              <span className={`font-semibold ${isDark ? "text-[#E6EDF3]" : "text-[#1F2328]"}`}>
+                {username}
+              </span>
+              <span className="opacity-40">/</span>
+              <span>README.md</span>
+            </div>
+
+            <div className="flex items-center gap-2 text-[11px]">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span className="uppercase tracking-wider font-semibold">Public</span>
+            </div>
+          </div>
+
+          {/* GitHub Markdown Rendered Content */}
+          <div className="p-6 sm:p-8 flex flex-col gap-4 text-inherit leading-relaxed overflow-x-auto text-[14px]">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw]}
+              components={{
+                h1: ({ children }) => (
+                  <div className={`flex flex-col pb-2.5 border-b mt-2 mb-3 ${isDark ? "border-[#30363D]" : "border-[#D0D7DE]"}`}>
+                    <h1 className="text-2xl sm:text-[30px] font-semibold tracking-tight leading-[1.2] text-inherit">
+                      {children}
+                    </h1>
+                  </div>
+                ),
+                h2: ({ children }) => (
+                  <h2 className={`text-xl sm:text-2xl font-semibold tracking-tight pb-2 border-b mt-6 mb-3 text-inherit flex items-center gap-2 ${
+                    isDark ? "border-[#30363D]/80" : "border-[#D0D7DE]"
+                  }`}>
+                    {children}
+                  </h2>
+                ),
+                h3: ({ children }) => (
+                  <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-inherit mt-4 mb-2">
+                    {children}
+                  </h3>
+                ),
+                h4: ({ children }) => (
+                  <h4 className="text-base font-semibold text-inherit mt-3 mb-1">
+                    {children}
+                  </h4>
+                ),
+                p: (props) => {
+                  const { align, className, children, style } = props as React.HTMLAttributes<HTMLParagraphElement> & ExtraAttributes;
+                  const isCenter = align === "center";
+                  return (
+                    <p
+                      style={{
+                        textAlign: isCenter ? "center" : (align as React.CSSProperties["textAlign"]),
+                        ...style,
+                      }}
+                      className={`leading-[1.65] my-2 ${isCenter ? "text-center" : ""} ${className || ""}`}
+                    >
+                      {children}
+                    </p>
+                  );
+                },
+                div: (props) => {
+                  const { align, className, children, style } = props as React.HTMLAttributes<HTMLDivElement> & ExtraAttributes;
+                  const isCenter = align === "center";
+                  return (
+                    <div
+                      style={{
+                        textAlign: isCenter ? "center" : (align as React.CSSProperties["textAlign"]),
+                        ...style,
+                      }}
+                      className={`${isCenter ? "text-center my-3" : ""} ${className || ""}`}
+                    >
+                      {children}
+                    </div>
+                  );
+                },
+                table: (props) => {
+                  const { className, style, children } = props as React.TableHTMLAttributes<HTMLTableElement>;
+                  return (
+                    <div className="w-full overflow-x-auto my-3">
+                      <table
+                        style={{ width: "100%", borderCollapse: "collapse", ...style }}
+                        className={`w-full table-fixed border-collapse border ${
+                          isDark ? "border-[#30363D]" : "border-[#D0D7DE]"
+                        } ${className || ""}`}
+                      >
+                        {children}
+                      </table>
+                    </div>
+                  );
+                },
+                td: (props) => {
+                  const { vAlign, valign, width, style, className, children } = props as React.TdHTMLAttributes<HTMLTableCellElement> & ExtraAttributes;
+                  const verticalAlignment = vAlign || valign || "top";
+                  return (
+                    <td
+                      style={{
+                        verticalAlign: verticalAlignment as React.CSSProperties["verticalAlign"],
+                        width: width || undefined,
+                        ...style,
+                      }}
+                      className={`p-3.5 border align-top text-inherit text-sm leading-relaxed ${
+                        isDark ? "border-[#30363D]" : "border-[#D0D7DE]"
+                      } ${className || ""}`}
+                    >
+                      {children}
+                    </td>
+                  );
+                },
+                th: (props) => {
+                  const { style, className, children } = props as React.ThHTMLAttributes<HTMLTableCellElement>;
+                  return (
+                    <th
+                      style={style}
+                      className={`p-3 border text-left font-semibold text-inherit text-sm ${
+                        isDark ? "border-[#30363D] bg-[#161B22]" : "border-[#D0D7DE] bg-[#F6F8FA]"
+                      } ${className || ""}`}
+                    >
+                      {children}
+                    </th>
+                  );
+                },
+                tr: (props) => {
+                  const { className, children } = props as React.HTMLAttributes<HTMLTableRowElement>;
+                  return (
+                    <tr
+                      className={`border-b ${isDark ? "border-[#30363D]" : "border-[#D0D7DE]"} ${className || ""}`}
+                    >
+                      {children}
+                    </tr>
+                  );
+                },
+                img: (props) => {
+                  const { className, style, width, height, alt, src, align } = props as React.ImgHTMLAttributes<HTMLImageElement> & ExtraAttributes;
+                  const isFull = width === "100%";
+                  const isCenter = align === "center";
+                  return (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={src}
+                      alt={alt || ""}
+                      width={width}
+                      height={height}
+                      style={{
+                        ...(isFull ? { width: "100%" } : {}),
+                        ...(height ? { height: `${height}px` } : {}),
+                        ...style,
+                      }}
+                      className={`inline-block ${isFull ? "w-full my-2 block" : "mr-1.5 my-1"} ${
+                        isCenter ? "mx-auto block" : ""
+                      } max-w-full rounded-xs ${className || ""}`}
+                      loading="lazy"
+                    />
+                  );
+                },
+                a: ({ href, children, className, ...props }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${
+                      isDark ? "text-[#58A6FF]" : "text-[#0969DA]"
+                    } hover:underline font-medium inline-flex items-center gap-0.5 break-words ${className || ""}`}
+                    {...props}
+                  >
+                    {children}
+                  </a>
+                ),
+                blockquote: ({ children }) => (
+                  <blockquote
+                    className={`border-l-4 px-4 py-2.5 rounded-r italic my-3 leading-relaxed ${
+                      isDark
+                        ? "border-[#388BFD] bg-[#388BFD]/10 text-[#8B949E]"
+                        : "border-[#0969DA] bg-[#F6F8FA] text-[#656D76]"
+                    }`}
+                  >
+                    {children}
+                  </blockquote>
+                ),
+                ul: ({ children }) => (
+                  <ul className="list-disc pl-5 my-2.5 space-y-1.5 text-inherit leading-relaxed">
+                    {children}
+                  </ul>
+                ),
+                ol: ({ children }) => (
+                  <ol className="list-decimal pl-5 my-2.5 space-y-1.5 text-inherit leading-relaxed">
+                    {children}
+                  </ol>
+                ),
+                li: ({ children }) => <li className="text-inherit leading-relaxed">{children}</li>,
+                code: ({ className, children, ...props }) => {
+                  const isInline = !className;
+                  return (
+                    <code
+                      className={
+                        isInline
+                          ? `px-1.5 py-0.5 rounded font-mono text-xs border ${
+                              isDark
+                                ? "bg-[#161B22] text-[#E6EDF3] border-[#30363D]"
+                                : "bg-[#F6F8FA] text-[#1F2328] border-[#D0D7DE]"
+                            }`
+                          : "font-mono text-xs"
+                      }
+                      {...props}
+                    >
+                      {children}
+                    </code>
+                  );
+                },
+                pre: ({ children }) => (
+                  <pre
+                    className={`border rounded-md p-4 overflow-x-auto my-3 font-mono text-xs sm:text-sm leading-relaxed ${
+                      isDark
+                        ? "bg-[#161B22] text-[#E6EDF3] border-[#30363D]"
+                        : "bg-[#F6F8FA] text-[#1F2328] border-[#D0D7DE]"
+                    }`}
+                  >
+                    {children}
+                  </pre>
+                ),
+                hr: () => (
+                  <hr
+                    className={`border-t my-6 ${isDark ? "border-[#30363D]" : "border-[#D0D7DE]"}`}
+                  />
+                ),
+              }}
+            >
+              {markdown}
+            </ReactMarkdown>
+          </div>
         </div>
       </div>
     </div>
