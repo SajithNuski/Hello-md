@@ -1,9 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { FiCheck, FiCpu, FiCode, FiLayers, FiShield, FiGitBranch } from "react-icons/fi";
-import { SiGithub, SiTypescript, SiReact, SiNextdotjs, SiTailwindcss, SiMongodb } from "react-icons/si";
-import { LuSparkles, LuZap } from "react-icons/lu";
+import { FiCheck, FiCpu, FiCode, FiLayers, FiShield } from "react-icons/fi";
+import { SiTypescript, SiReact, SiNextdotjs, SiTailwindcss } from "react-icons/si";
 import { gsap, useGSAP } from "@/lib/animations/gsap";
 
 export function FeaturesBento() {

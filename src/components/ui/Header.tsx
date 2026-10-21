@@ -13,7 +13,6 @@ export function Header() {
   const headerRef = useRef<HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isEditor = pathname.startsWith("/editor");
   const isGenerator = pathname === "/";
   const isTemplates = pathname === "/templates";
   const isSystemStates = pathname === "/system-states";
@@ -68,7 +67,7 @@ export function Header() {
         </div>
 
         {/* Center Nav: Premium Capsule Switcher */}
-        <nav className="hidden lg:flex items-center bg-[#141611]/90 p-1.5 rounded-full border border-[#262920] shadow-inner backdrop-blur-md">
+        <nav className="hidden lg:flex items-center bg-[#141611]/90 p-1.5 rounded-full border border-[#C5F467] border-2 shadow-inner backdrop-blur-md">
           <Link
             href="/#how-it-works"
             className="px-3.5 py-1.5 rounded-full text-[13px] font-medium text-[#9EAA96] hover:text-white hover:bg-white/[0.06] transition-all duration-150"

@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { SiGithub } from "react-icons/si";
 import { LuSparkles, LuCheck } from "react-icons/lu";
-import { FiGitCommit, FiTerminal } from "react-icons/fi";
+import { FiGitCommit } from "react-icons/fi";
 import { gsap, useGSAP } from "@/lib/animations/gsap";
 
 export function HowItWorks() {

@@ -146,6 +146,7 @@ export async function POST(req: NextRequest) {
         const aboutMd = formatSection("about", validOutput.about, facts, theme);
         const skillsMd = formatSection("skills", validOutput.skills, facts, theme);
         const projectsMd = formatSection("projects", validOutput.projects, facts, theme);
+        const statsMd = formatSection("stats", {}, facts, theme);
         const contactMd = formatSection("contact", validOutput.contact, facts, theme);
 
         const sections: SectionItem[] = [
@@ -153,7 +154,8 @@ export async function POST(req: NextRequest) {
           { key: "about", markdown: aboutMd, source: "ai", enabled: true, order: 1 },
           { key: "skills", markdown: skillsMd, source: "ai", enabled: true, order: 2 },
           { key: "projects", markdown: projectsMd, source: "ai", enabled: true, order: 3 },
-          { key: "contact", markdown: contactMd, source: "ai", enabled: true, order: 4 },
+          { key: "stats", markdown: statsMd, source: "ai", enabled: true, order: 4 },
+          { key: "contact", markdown: contactMd, source: "ai", enabled: true, order: 5 },
         ];
 
         const fullMarkdown = assemble(sections, theme, facts);

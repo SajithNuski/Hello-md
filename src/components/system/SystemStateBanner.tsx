@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FiClock, FiKey, FiAlertCircle, FiCheckCircle, FiShield, FiTrendingUp } from "react-icons/fi";
+import { FiClock, FiKey, FiAlertCircle, FiCheckCircle, FiShield } from "react-icons/fi";
 import { SiGithub } from "react-icons/si";
 import { suggestClosestUsername } from "@/lib/levenshtein";
 
@@ -25,7 +25,6 @@ export function SystemStateBanner({
   resetsAtFormatted = "4h 12m",
   onOpenByok,
   onSelectSuggestion,
-  onDismiss,
   className = "",
 }: SystemStateBannerProps) {
   // Live countdown timer for State 01 (Engine Congestion)

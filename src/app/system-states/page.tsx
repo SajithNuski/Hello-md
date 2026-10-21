@@ -24,10 +24,9 @@ import {
   FiExternalLink,
   FiHelpCircle,
   FiTrash2,
-  FiAlertCircle,
 } from "react-icons/fi";
 import { LuSparkles } from "react-icons/lu";
-import { SiGithub, SiGoogle } from "react-icons/si";
+import { SiGoogle } from "react-icons/si";
 
 interface UsageData {
   used: number;

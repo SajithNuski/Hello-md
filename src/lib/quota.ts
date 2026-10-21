@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "./config";
-import { getUsageCollection, UsageDoc } from "./db/collections";
+import { getUsageCollection } from "./db/collections";
 
 export const DAILY_GENERATIONS = APP_CONFIG.dailyGenerationsLimit; // 3
 export const SECTION_REGEN_COST = APP_CONFIG.sectionRegenCost; // 0.25

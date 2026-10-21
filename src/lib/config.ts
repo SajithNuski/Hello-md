@@ -13,6 +13,7 @@ export const SECTION_KEYS = [
   "about",
   "skills",
   "projects",
+  "stats",
   "contact",
 ] as const;
 

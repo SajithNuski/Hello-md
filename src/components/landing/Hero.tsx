@@ -216,18 +216,18 @@ export function Hero() {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0D0E0C] border border-[#2B2E24] shadow-xs select-none w-fit"
           >
             <span className="font-mono text-xs uppercase tracking-wider font-semibold text-white">
-              GitHub GraphQL Engine
+              FREE TO START
             </span>
             <span className="text-[#3A3D33]">|</span>
             <span className="font-mono text-xs text-accent font-semibold">
-              Zero Hallucinations
+              No Sign-up Needed
             </span>
           </div>
 
           {/* Short & Big Font Headline */}
           <h1
             ref={headlineRef}
-            className="text-5xl sm:text-6xl lg:text-[68px] xl:text-[74px] font-extrabold tracking-[-0.04em] leading-[1.02] text-[#0D0E0C]"
+            className="text-5xl sm:text-6xl lg:text-[68px] xl:text-[74px] font-extrabold tracking-[-0.04em] leading-[1.02] text-white"
           >
             Turn your GitHub into an{" "}
             <span className="relative inline-block text-[#0D0E0C] bg-accent px-3 py-0.5 rounded-lg -rotate-1 shadow-xs">
@@ -236,10 +236,10 @@ export function Hero() {
             .
           </h1>
 
-          {/* Value Prop Lead Description (High-contrast, Crisp Black) */}
+          {/* Value Prop Lead Description */}
           <p
             ref={descRef}
-            className="text-lg sm:text-xl font-normal leading-[1.55] text-[#171815] max-w-xl"
+            className="text-lg sm:text-xl font-normal leading-[1.55] text-[#9EAA96] max-w-xl"
           >
             Connect your username. We parse verified repos, contributions, and language metrics into a structured, ready-to-commit profile README.
           </p>
@@ -264,15 +264,15 @@ export function Hero() {
             ref={featuresRef}
             className="flex flex-wrap items-center gap-2.5 pt-2 select-none"
           >
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0D0E0C] text-white text-xs font-mono font-medium shadow-xs">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141611] border border-[#23261D] text-white text-xs font-mono font-medium shadow-xs">
               <FiCheck className="w-4 h-4 text-accent stroke-[2.5]" />
               <span>GraphQL Verified</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0D0E0C] text-white text-xs font-mono font-medium shadow-xs">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141611] border border-[#23261D] text-white text-xs font-mono font-medium shadow-xs">
               <FiCheck className="w-4 h-4 text-accent stroke-[2.5]" />
               <span>Shields.io Badges</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0D0E0C] text-white text-xs font-mono font-medium shadow-xs">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141611] border border-[#23261D] text-white text-xs font-mono font-medium shadow-xs">
               <FiCheck className="w-4 h-4 text-accent stroke-[2.5]" />
               <span>1-Click Git Push</span>
             </div>

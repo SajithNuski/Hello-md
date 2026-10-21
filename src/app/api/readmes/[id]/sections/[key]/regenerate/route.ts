@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
 import { ObjectId } from "mongodb";
+import { Collection } from "mongodb";
 import { z } from "zod";
-import { getReadmesCollection, SectionItem } from "@/lib/db/collections";
+import { getReadmesCollection, ReadmeDoc, SectionItem } from "@/lib/db/collections";
 import { fetchFacts } from "@/lib/github/fetchFacts";
 import { buildSectionRegenPrompt, buildSystemPrompt } from "@/lib/ai/prompt";
 import { routeLLMRequest } from "@/lib/ai/router";
@@ -67,8 +68,8 @@ export async function POST(
   const userTone = parsed.success ? parsed.data.tone : undefined;
   const instruction = parsed.success ? parsed.data.instruction : undefined;
 
-  let doc: any = null;
-  let col: any = null;
+  let doc: ReadmeDoc | null | undefined = null;
+  let col: Collection<ReadmeDoc> | null = null;
   let query: Record<string, unknown> = {};
 
   try {
@@ -99,28 +100,33 @@ export async function POST(
     const facts = await fetchFacts(doc.login);
     const activeTone: Tone = (userTone || doc.tone || "professional") as Tone;
 
-    const systemPrompt = buildSystemPrompt(activeTone);
-    const userPrompt = buildSectionRegenPrompt(sectionKey, facts, instruction);
+    let newMarkdown = "";
+    if (sectionKey === "stats") {
+      newMarkdown = formatSection("stats", {}, facts, doc.theme || "minimal");
+    } else {
+      const systemPrompt = buildSystemPrompt(activeTone);
+      const userPrompt = buildSectionRegenPrompt(sectionKey, facts, instruction);
 
-    const temperature = sectionKey === "intro" || sectionKey === "about" ? 0.8 : 0.4;
-    const aiResult = await routeLLMRequest({
-      system: systemPrompt,
-      user: userPrompt,
-      temperature,
-      maxOutputTokens: 1000,
-      byok: byok ? { provider: byok.provider, apiKey: byok.apiKey } : undefined,
-    });
+      const temperature = sectionKey === "intro" || sectionKey === "about" ? 0.8 : 0.4;
+      const aiResult = await routeLLMRequest({
+        system: systemPrompt,
+        user: userPrompt,
+        temperature,
+        maxOutputTokens: 2000,
+        byok: byok ? { provider: byok.provider, apiKey: byok.apiKey } : undefined,
+      });
 
-    const validation = validateSingleSection(sectionKey, aiResult.text, facts);
-    if (!validation.success) {
-      throw new AIError(
-        `Section output failed validation: ${validation.error}`,
-        "INVALID_AI_OUTPUT",
-        { status: 502 }
-      );
+      const validation = validateSingleSection(sectionKey, aiResult.text, facts);
+      if (!validation.success) {
+        throw new AIError(
+          `Section output failed validation: ${validation.error}`,
+          "INVALID_AI_OUTPUT",
+          { status: 502 }
+        );
+      }
+
+      newMarkdown = formatSection(sectionKey, validation.data, facts, doc.theme || "minimal");
     }
-
-    const newMarkdown = formatSection(sectionKey, validation.data, facts, doc.theme || "minimal");
 
     // Update section in document
     const updatedSections: SectionItem[] = doc.sections.map((s: SectionItem) => {

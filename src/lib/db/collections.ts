@@ -15,7 +15,7 @@ export const UserSchema = z.object({
 export type UserDoc = z.infer<typeof UserSchema>;
 
 export const SectionItemSchema = z.object({
-  key: z.enum(["intro", "about", "skills", "projects", "contact"]),
+  key: z.enum(["intro", "about", "skills", "projects", "stats", "contact"]),
   markdown: z.string(),
   source: z.enum(["ai", "user"]),
   enabled: z.boolean(),

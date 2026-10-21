@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FiRefreshCw, FiUser, FiInfo, FiCpu, FiFolder, FiShare2 } from "react-icons/fi";
+import { FiRefreshCw, FiUser, FiInfo, FiCpu, FiFolder, FiShare2, FiBarChart2 } from "react-icons/fi";
 import { LuGripVertical, LuSparkles } from "react-icons/lu";
 import { SectionItem } from "@/lib/db/collections";
 import { SectionKey, Tone } from "@/lib/config";
@@ -20,6 +20,7 @@ const SECTION_LABELS: Record<SectionKey, string> = {
   about: "About Me",
   skills: "Tech Stack & Badges",
   projects: "Featured Projects",
+  stats: "GitHub Analytics",
   contact: "Connect & Socials",
 };
 
@@ -28,6 +29,7 @@ const SECTION_ICONS: Record<SectionKey, React.ComponentType<{ className?: string
   about: FiInfo,
   skills: FiCpu,
   projects: FiFolder,
+  stats: FiBarChart2,
   contact: FiShare2,
 };
 

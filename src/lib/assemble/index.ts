@@ -1,7 +1,8 @@
 import { Facts } from "@/lib/github/types";
+import { SectionKey } from "@/lib/config";
 
 export interface AssembleSection {
-  key: "intro" | "about" | "skills" | "projects" | "contact";
+  key: SectionKey;
   markdown: string;
   source?: "ai" | "user";
   enabled: boolean;
@@ -17,6 +18,8 @@ export function assemble(
   theme: string = "minimal",
   facts?: Facts
 ): string {
+  void theme;
+  void facts;
   // 1. Filter enabled and non-empty sections
   const activeSections = sections
     .filter((s) => s.enabled && s.markdown.trim().length > 0)
@@ -33,3 +36,4 @@ export function assemble(
 
 export * from "./badges";
 export * from "./formatSection";
+export * from "./themes";

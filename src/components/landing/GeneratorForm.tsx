@@ -20,7 +20,7 @@ import { Tone } from "@/lib/config";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { SystemStateBanner, SystemStateType } from "@/components/system/SystemStateBanner";
 import { ByokDialog } from "@/components/system/ByokDialog";
-import { getByokHeaders, getByokConfig } from "@/lib/byokClient";
+import { getByokHeaders } from "@/lib/byokClient";
 
 interface LogEntry {
   timestamp: string;
