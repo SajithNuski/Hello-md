@@ -14,6 +14,12 @@ import { SectionItem } from "@/lib/db/collections";
 import { SectionKey, Tone } from "@/lib/config";
 import { assemble } from "@/lib/assemble";
 import { getByokHeaders } from "@/lib/byokClient";
+import {
+  IntroConfig,
+  getDefaultIntroConfig,
+  generateIntroMarkdown,
+  parseIntroMarkdown,
+} from "@/lib/introConfig";
 import { FiLoader, FiAlertCircle, FiX } from "react-icons/fi";
 
 export default function EditorPage() {
@@ -96,6 +102,22 @@ export default function EditorPage() {
     return sections.find((s) => s.key === selectedKey);
   }, [sections, selectedKey]);
 
+  // Intro section & config
+  const introSection = useMemo(() => {
+    return sections.find((s) => s.key === "intro");
+  }, [sections]);
+
+  const introConfig: IntroConfig = useMemo(() => {
+    if (introSection?.config?.intro) {
+      return introSection.config.intro as IntroConfig;
+    }
+    const parsed = introSection ? parseIntroMarkdown(introSection.markdown, login) : null;
+    return {
+      ...getDefaultIntroConfig(login),
+      ...(parsed || {}),
+    };
+  }, [introSection, login]);
+
   // Debounced auto-save triggers on edits
   const triggerAutoSave = useCallback(
     (newSections: SectionItem[]) => {
@@ -162,6 +184,53 @@ export default function EditorPage() {
       return updated;
     });
   };
+
+  // Handle intro section custom controls change
+  const handleIntroConfigChange = useCallback(
+    (newConfig: IntroConfig) => {
+      const newMarkdown = generateIntroMarkdown(newConfig, login);
+      setSections((prev) => {
+        const updated = prev.map((s) => {
+          if (s.key === "intro") {
+            return {
+              ...s,
+              markdown: newMarkdown,
+              source: "user" as const,
+              config: {
+                ...(s.config || {}),
+                intro: newConfig,
+              },
+            };
+          }
+          return s;
+        });
+        triggerAutoSave(updated);
+        return updated;
+      });
+    },
+    [login, triggerAutoSave]
+  );
+
+  // Handle reordering sections
+  const handleMoveSection = useCallback(
+    (key: SectionKey, direction: "up" | "down") => {
+      setSections((prev) => {
+        const index = prev.findIndex((s) => s.key === key);
+        if (index === -1) return prev;
+        const targetIndex = direction === "up" ? index - 1 : index + 1;
+        if (targetIndex < 0 || targetIndex >= prev.length) return prev;
+
+        const updated = [...prev];
+        const [moved] = updated.splice(index, 1);
+        updated.splice(targetIndex, 0, moved);
+
+        const reordered = updated.map((s, idx) => ({ ...s, order: idx }));
+        triggerAutoSave(reordered);
+        return reordered;
+      });
+    },
+    [triggerAutoSave]
+  );
 
   // Regenerate single section
   const handleRegenerateSection = async (key: SectionKey, targetTone: Tone) => {
@@ -301,7 +370,7 @@ export default function EditorPage() {
 
         {/* 3-Column Workspace Canvas */}
         <div className="flex-1 flex overflow-hidden w-full">
-          {/* Column 1: Sections Manager (280px) */}
+          {/* Column 1: Sections Manager */}
           <SectionsManager
             sections={sections}
             selectedKey={selectedKey}
@@ -309,6 +378,10 @@ export default function EditorPage() {
             onToggleEnabled={handleToggleEnabled}
             onRegenerateSection={handleRegenerateSection}
             isRegenerating={isRegenerating}
+            onMoveSection={handleMoveSection}
+            introConfig={introConfig}
+            onIntroConfigChange={handleIntroConfigChange}
+            username={login}
           />
 
           {/* Column 2: Code Editor Pane */}

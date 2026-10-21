@@ -20,6 +20,7 @@ export const SectionItemSchema = z.object({
   source: z.enum(["ai", "user"]),
   enabled: z.boolean(),
   order: z.number().int(),
+  config: z.record(z.string(), z.any()).optional(),
 });
 export type SectionItem = z.infer<typeof SectionItemSchema>;
 
