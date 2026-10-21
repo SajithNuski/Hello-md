@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FiClock, FiKey, FiAlertCircle, FiCheckCircle, FiShield } from "react-icons/fi";
+import { FiClock, FiKey, FiAlertCircle, FiCheckCircle, FiShield, FiX } from "react-icons/fi";
 import { SiGithub } from "react-icons/si";
 import { suggestClosestUsername } from "@/lib/levenshtein";
 
@@ -25,6 +25,7 @@ export function SystemStateBanner({
   resetsAtFormatted = "4h 12m",
   onOpenByok,
   onSelectSuggestion,
+  onDismiss,
   className = "",
 }: SystemStateBannerProps) {
   // Live countdown timer for State 01 (Engine Congestion)
@@ -67,9 +68,21 @@ export function SystemStateBanner({
             <span className="font-mono text-xs text-[#44473C]">/</span>
             <span className="font-mono text-xs text-[#8E9285]">HTTP 503 AI Busy / Throttled</span>
           </div>
-          <span className="font-mono text-xs text-[#7A7E72] hidden sm:inline">
-            Trigger: Token-Bucket Exhaustion
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs text-[#7A7E72] hidden sm:inline">
+              Trigger: Token-Bucket Exhaustion
+            </span>
+            {onDismiss && (
+              <button
+                type="button"
+                onClick={onDismiss}
+                className="text-[#7A7E72] hover:text-white p-0.5 rounded transition-colors"
+                aria-label="Dismiss banner"
+              >
+                <FiX className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="bg-[#141611] border border-[#2B2F23] rounded-xl p-5 sm:p-6 shadow-[0_1px_2px_0_rgba(23,24,21,0.25)]">
@@ -140,9 +153,21 @@ export function SystemStateBanner({
             <span className="font-mono text-xs text-[#44473C]">/</span>
             <span className="font-mono text-xs text-[#8E9285]">Anonymous Daily Throttle</span>
           </div>
-          <span className="font-mono text-xs text-[#7A7E72] hidden sm:inline">
-            Resets 00:00 UTC
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs text-[#7A7E72] hidden sm:inline">
+              Resets 00:00 UTC
+            </span>
+            {onDismiss && (
+              <button
+                type="button"
+                onClick={onDismiss}
+                className="text-[#7A7E72] hover:text-white p-0.5 rounded transition-colors"
+                aria-label="Dismiss banner"
+              >
+                <FiX className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="bg-[#141611] border border-[#2B2F23] rounded-xl p-5 sm:p-6 shadow-[0_1px_2px_0_rgba(23,24,21,0.25)]">
@@ -231,9 +256,21 @@ export function SystemStateBanner({
           <span className="font-mono text-xs text-[#44473C]">/</span>
           <span className="font-mono text-xs text-[#8E9285]">Validation / User Not Found</span>
         </div>
-        <span className="font-mono text-xs text-red-400 hidden sm:inline">
-          Octokit::NotFound (404)
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-xs text-red-400 hidden sm:inline">
+            Octokit::NotFound (404)
+          </span>
+          {onDismiss && (
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="text-[#7A7E72] hover:text-white p-0.5 rounded transition-colors"
+              aria-label="Dismiss banner"
+            >
+              <FiX className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="bg-[#141611] border border-[#2B2F23] rounded-xl p-5 sm:p-6 shadow-[0_1px_2px_0_rgba(23,24,21,0.25)]">

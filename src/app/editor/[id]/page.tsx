@@ -284,6 +284,7 @@ export default function EditorPage() {
                   retryAfterSeconds={systemStatePayload.retryAfterSeconds}
                   resetsAtFormatted={systemStatePayload.resetsAtFormatted}
                   onOpenByok={() => setIsByokOpen(true)}
+                  onDismiss={() => setActiveSystemState(null)}
                 />
               </div>
               <button

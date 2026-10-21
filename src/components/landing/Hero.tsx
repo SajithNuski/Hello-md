@@ -227,7 +227,7 @@ export function Hero() {
           {/* Short & Big Font Headline */}
           <h1
             ref={headlineRef}
-            className="text-5xl sm:text-6xl lg:text-[68px] xl:text-[74px] font-extrabold tracking-[-0.04em] leading-[1.02] text-white"
+            className="text-5xl sm:text-6xl lg:text-[68px] xl:text-[74px] font-extrabold tracking-[-0.04em] leading-[1.02] text-[#0D0E0C]"
           >
             Turn your GitHub into an{" "}
             <span className="relative inline-block text-[#0D0E0C] bg-accent px-3 py-0.5 rounded-lg -rotate-1 shadow-xs">
@@ -239,7 +239,7 @@ export function Hero() {
           {/* Value Prop Lead Description */}
           <p
             ref={descRef}
-            className="text-lg sm:text-xl font-normal leading-[1.55] text-[#9EAA96] max-w-xl"
+            className="text-lg sm:text-xl font-normal leading-[1.55] text-[#45483D] max-w-xl"
           >
             Connect your username. We parse verified repos, contributions, and language metrics into a structured, ready-to-commit profile README.
           </p>
