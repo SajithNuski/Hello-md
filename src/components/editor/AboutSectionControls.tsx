@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, KeyboardEvent } from "react";
-import { AboutConfig, AboutStyle, GifPlacement, GIF_PRESETS } from "@/lib/aboutConfig";
+import { AboutConfig, AboutStyle, GIF_PRESETS } from "@/lib/aboutConfig";
 import {
   FiUser,
   FiCode,
@@ -12,7 +12,6 @@ import {
   FiImage,
   FiPlus,
   FiX,
-  FiBriefcase,
   FiBookOpen,
   FiAlignLeft,
   FiAlignCenter,

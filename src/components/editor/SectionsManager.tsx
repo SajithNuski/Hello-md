@@ -18,10 +18,12 @@ import { SectionItem } from "@/lib/db/collections";
 import { SectionKey, Tone } from "@/lib/config";
 import { IntroConfig, getDefaultIntroConfig } from "@/lib/introConfig";
 import { IntroSectionControls } from "./IntroSectionControls";
-import { AboutConfig, DEFAULT_ABOUT_CONFIG, getDefaultAboutConfig } from "@/lib/aboutConfig";
+import { AboutConfig, getDefaultAboutConfig } from "@/lib/aboutConfig";
 import { AboutSectionControls } from "./AboutSectionControls";
 import { StatsConfig, getDefaultStatsConfig } from "@/lib/statsConfig";
 import { StatsSectionControls } from "./StatsSectionControls";
+import { TechStackConfig, getDefaultSkillsConfig } from "@/lib/techStackConfig";
+import { TechStackSectionControls } from "./TechStackSectionControls";
 
 interface SectionsManagerProps {
   sections: SectionItem[];
@@ -37,6 +39,8 @@ interface SectionsManagerProps {
   onAboutConfigChange?: (updated: AboutConfig) => void;
   statsConfig?: StatsConfig;
   onStatsConfigChange?: (updated: StatsConfig) => void;
+  techStackConfig?: TechStackConfig;
+  onTechStackConfigChange?: (updated: TechStackConfig) => void;
   username?: string;
 }
 
@@ -72,6 +76,8 @@ export function SectionsManager({
   onAboutConfigChange,
   statsConfig,
   onStatsConfigChange,
+  techStackConfig,
+  onTechStackConfigChange,
   username = "",
 }: SectionsManagerProps) {
   const [selectedTone, setSelectedTone] = useState<Tone>("professional");
@@ -182,7 +188,7 @@ export function SectionsManager({
                 </div>
 
                 {/* Selected Action Drawer */}
-                {isSelected && section.key !== "skills" && (
+                {isSelected && (
                   <div className="px-3 pb-3 pt-1 border-t border-border/50 flex flex-col gap-2">
                     {/* Regenerate Bar (only for AI-written prose sections: projects, contact) */}
                     {(section.key === "projects" || section.key === "contact") && (
@@ -234,6 +240,16 @@ export function SectionsManager({
                         <AboutSectionControls
                           config={aboutConfig || getDefaultAboutConfig(username)}
                           onChange={onAboutConfigChange}
+                        />
+                      </div>
+                    )}
+
+                    {/* Dedicated Tech Stack & Badges Controls (Skills Catalog Picker) */}
+                    {section.key === "skills" && onTechStackConfigChange && (
+                      <div className="pt-1">
+                        <TechStackSectionControls
+                          config={techStackConfig || getDefaultSkillsConfig()}
+                          onChange={onTechStackConfigChange}
                         />
                       </div>
                     )}

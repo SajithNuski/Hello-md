@@ -17,7 +17,6 @@ import {
   FiArrowDown,
   FiCheck,
 } from "react-icons/fi";
-import { LuSparkles } from "react-icons/lu";
 
 interface IntroSectionControlsProps {
   config: IntroConfig;
@@ -30,6 +29,7 @@ export function IntroSectionControls({
   onChange,
   defaultUsername = "",
 }: IntroSectionControlsProps) {
+  void defaultUsername;
   const [colorInput, setColorInput] = useState<string>(config.animationColor || "A78BFA");
 
   const update = (partial: Partial<IntroConfig>) => {

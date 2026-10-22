@@ -22,7 +22,6 @@ import {
 } from "@/lib/introConfig";
 import {
   AboutConfig,
-  DEFAULT_ABOUT_CONFIG,
   getDefaultAboutConfig,
   generateAboutMarkdown,
 } from "@/lib/aboutConfig";
@@ -32,6 +31,12 @@ import {
   generateStatsMarkdown,
   parseStatsMarkdown,
 } from "@/lib/statsConfig";
+import {
+  TechStackConfig,
+  getDefaultSkillsConfig,
+  generateSkillsMarkdown,
+  parseSkillsMarkdown,
+} from "@/lib/techStackConfig";
 import { FiLoader, FiAlertCircle, FiX } from "react-icons/fi";
 
 export default function EditorPage() {
@@ -125,6 +130,21 @@ export default function EditorPage() {
                 },
               };
             }
+            if (s.key === "skills" && !s.config?.skills) {
+              const parsed = s.markdown ? parseSkillsMarkdown(s.markdown) : null;
+              const cfg = {
+                ...getDefaultSkillsConfig(),
+                ...(parsed || {}),
+              };
+              return {
+                ...s,
+                markdown: s.markdown || generateSkillsMarkdown(cfg),
+                config: {
+                  ...(s.config || {}),
+                  skills: cfg,
+                },
+              };
+            }
             return s;
           });
           setSections(updatedSections);
@@ -202,6 +222,22 @@ export default function EditorPage() {
       ...(parsed || {}),
     };
   }, [statsSection, login]);
+
+  // Tech Stack & Badges section & config
+  const skillsSection = useMemo(() => {
+    return sections.find((s) => s.key === "skills");
+  }, [sections]);
+
+  const techStackConfig: TechStackConfig = useMemo(() => {
+    if (skillsSection?.config?.skills) {
+      return skillsSection.config.skills as TechStackConfig;
+    }
+    const parsed = skillsSection ? parseSkillsMarkdown(skillsSection.markdown) : null;
+    return {
+      ...getDefaultSkillsConfig(),
+      ...(parsed || {}),
+    };
+  }, [skillsSection]);
 
   // Debounced auto-save triggers on edits
   const triggerAutoSave = useCallback(
@@ -346,6 +382,32 @@ export default function EditorPage() {
       });
     },
     [login, triggerAutoSave]
+  );
+
+  // Handle tech stack section custom controls change
+  const handleTechStackConfigChange = useCallback(
+    (newConfig: TechStackConfig) => {
+      const newMarkdown = generateSkillsMarkdown(newConfig);
+      setSections((prev) => {
+        const updated = prev.map((s) => {
+          if (s.key === "skills") {
+            return {
+              ...s,
+              markdown: newMarkdown,
+              source: "user" as const,
+              config: {
+                ...(s.config || {}),
+                skills: newConfig,
+              },
+            };
+          }
+          return s;
+        });
+        triggerAutoSave(updated);
+        return updated;
+      });
+    },
+    [triggerAutoSave]
   );
 
   // Handle reordering sections
@@ -522,6 +584,8 @@ export default function EditorPage() {
             onAboutConfigChange={handleAboutConfigChange}
             statsConfig={statsConfig}
             onStatsConfigChange={handleStatsConfigChange}
+            techStackConfig={techStackConfig}
+            onTechStackConfigChange={handleTechStackConfigChange}
             username={login}
           />
 

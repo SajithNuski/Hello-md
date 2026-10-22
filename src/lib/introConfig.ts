@@ -195,6 +195,7 @@ export function generateIntroMarkdown(config: IntroConfig, defaultUsername: stri
  * Optional parser to infer IntroConfig from existing markdown if config is not yet set.
  */
 export function parseIntroMarkdown(markdown: string, defaultUsername: string = ""): Partial<IntroConfig> | null {
+  void defaultUsername;
   if (!markdown || !markdown.includes("<div align=\"center\">")) {
     return null;
   }

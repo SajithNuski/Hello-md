@@ -39,6 +39,7 @@ export const STATS_THEMES: StatsThemeOption[] = [
  * Ensures strict grounding: uses ONLY the provided username.
  */
 export function getDefaultStatsConfig(username: string = ""): StatsConfig {
+  void username;
   return {
     showStats: true,
     showLangs: true,

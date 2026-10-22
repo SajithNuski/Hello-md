@@ -7,7 +7,7 @@ export interface AssembleSection {
   source?: "ai" | "user";
   enabled: boolean;
   order: number;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
 }
 
 /**
