@@ -18,6 +18,7 @@ import { getDefaultAboutConfig } from "@/lib/aboutConfig";
 import { getDefaultIntroConfig } from "@/lib/introConfig";
 import { getDefaultStatsConfig } from "@/lib/statsConfig";
 import { getDefaultSkillsConfig, parseSkillsMarkdown, TechStackConfig } from "@/lib/techStackConfig";
+import { getDefaultSocialConfig, SocialConfig } from "@/lib/socialConfig";
 
 export const runtime = "nodejs";
 
@@ -159,7 +160,8 @@ export async function POST(req: NextRequest) {
         };
 
         const statsMd = formatSection("stats", initialStatsConfig, facts, theme);
-        const contactMd = formatSection("contact", validOutput.contact, facts, theme);
+        const initialSocialConfig: SocialConfig = getDefaultSocialConfig();
+        const contactMd = formatSection("contact", initialSocialConfig, facts, theme);
 
         const sections: SectionItem[] = [
           { key: "intro", markdown: introMd, source: "ai", enabled: true, order: 0, config: { intro: initialIntroConfig } },
@@ -167,7 +169,7 @@ export async function POST(req: NextRequest) {
           { key: "skills", markdown: skillsMd, source: "ai", enabled: true, order: 2, config: { skills: initialSkillsConfig } },
           { key: "projects", markdown: projectsMd, source: "ai", enabled: true, order: 3 },
           { key: "stats", markdown: statsMd, source: "ai", enabled: true, order: 4, config: { stats: initialStatsConfig } },
-          { key: "contact", markdown: contactMd, source: "ai", enabled: true, order: 5 },
+          { key: "contact", markdown: contactMd, source: "ai", enabled: true, order: 5, config: { contact: initialSocialConfig } },
         ];
 
         const fullMarkdown = assemble(sections, theme, facts);

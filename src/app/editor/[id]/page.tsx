@@ -37,6 +37,12 @@ import {
   generateSkillsMarkdown,
   parseSkillsMarkdown,
 } from "@/lib/techStackConfig";
+import {
+  SocialConfig,
+  getDefaultSocialConfig,
+  generateContactMarkdown,
+  parseContactMarkdown,
+} from "@/lib/socialConfig";
 import { FiLoader, FiAlertCircle, FiX } from "react-icons/fi";
 
 export default function EditorPage() {
@@ -145,6 +151,21 @@ export default function EditorPage() {
                 },
               };
             }
+            if (s.key === "contact" && !s.config?.contact) {
+              const parsed = s.markdown ? parseContactMarkdown(s.markdown) : null;
+              const cfg = {
+                ...getDefaultSocialConfig(),
+                ...(parsed || {}),
+              };
+              return {
+                ...s,
+                markdown: s.markdown || generateContactMarkdown(cfg),
+                config: {
+                  ...(s.config || {}),
+                  contact: cfg,
+                },
+              };
+            }
             return s;
           });
           setSections(updatedSections);
@@ -238,6 +259,22 @@ export default function EditorPage() {
       ...(parsed || {}),
     };
   }, [skillsSection]);
+
+  // Connect & Social links section & config
+  const contactSection = useMemo(() => {
+    return sections.find((s) => s.key === "contact");
+  }, [sections]);
+
+  const socialConfig: SocialConfig = useMemo(() => {
+    if (contactSection?.config?.contact) {
+      return contactSection.config.contact as SocialConfig;
+    }
+    const parsed = contactSection ? parseContactMarkdown(contactSection.markdown) : null;
+    return {
+      ...getDefaultSocialConfig(),
+      ...(parsed || {}),
+    };
+  }, [contactSection]);
 
   // Debounced auto-save triggers on edits
   const triggerAutoSave = useCallback(
@@ -398,6 +435,32 @@ export default function EditorPage() {
               config: {
                 ...(s.config || {}),
                 skills: newConfig,
+              },
+            };
+          }
+          return s;
+        });
+        triggerAutoSave(updated);
+        return updated;
+      });
+    },
+    [triggerAutoSave]
+  );
+
+  // Handle contact section custom controls change
+  const handleSocialConfigChange = useCallback(
+    (newConfig: SocialConfig) => {
+      const newMarkdown = generateContactMarkdown(newConfig);
+      setSections((prev) => {
+        const updated = prev.map((s) => {
+          if (s.key === "contact") {
+            return {
+              ...s,
+              markdown: newMarkdown,
+              source: "user" as const,
+              config: {
+                ...(s.config || {}),
+                contact: newConfig,
               },
             };
           }
@@ -586,6 +649,8 @@ export default function EditorPage() {
             onStatsConfigChange={handleStatsConfigChange}
             techStackConfig={techStackConfig}
             onTechStackConfigChange={handleTechStackConfigChange}
+            socialConfig={socialConfig}
+            onSocialConfigChange={handleSocialConfigChange}
             username={login}
           />
 

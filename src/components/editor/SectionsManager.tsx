@@ -22,6 +22,8 @@ import { StatsConfig, getDefaultStatsConfig } from "@/lib/statsConfig";
 import { StatsSectionControls } from "./StatsSectionControls";
 import { TechStackConfig, getDefaultSkillsConfig } from "@/lib/techStackConfig";
 import { TechStackSectionControls } from "./TechStackSectionControls";
+import { SocialConfig, getDefaultSocialConfig } from "@/lib/socialConfig";
+import { ConnectSectionControls } from "./ConnectSectionControls";
 
 interface SectionsManagerProps {
   sections: SectionItem[];
@@ -39,6 +41,8 @@ interface SectionsManagerProps {
   onStatsConfigChange?: (updated: StatsConfig) => void;
   techStackConfig?: TechStackConfig;
   onTechStackConfigChange?: (updated: TechStackConfig) => void;
+  socialConfig?: SocialConfig;
+  onSocialConfigChange?: (updated: SocialConfig) => void;
   username?: string;
 }
 
@@ -76,6 +80,8 @@ export function SectionsManager({
   onStatsConfigChange,
   techStackConfig,
   onTechStackConfigChange,
+  socialConfig,
+  onSocialConfigChange,
   username = "",
 }: SectionsManagerProps) {
   void onRegenerateSection;
@@ -107,7 +113,8 @@ export function SectionsManager({
               (section.key === "intro" && Boolean(onIntroConfigChange)) ||
               (section.key === "about" && Boolean(onAboutConfigChange)) ||
               (section.key === "skills" && Boolean(onTechStackConfigChange)) ||
-              (section.key === "stats" && Boolean(onStatsConfigChange));
+              (section.key === "stats" && Boolean(onStatsConfigChange)) ||
+              (section.key === "contact" && Boolean(onSocialConfigChange));
 
             return (
               <div
@@ -233,6 +240,16 @@ export function SectionsManager({
                           config={statsConfig || getDefaultStatsConfig(username)}
                           onChange={onStatsConfigChange}
                           username={username}
+                        />
+                      </div>
+                    )}
+
+                    {/* Dedicated Connect & Social Controls */}
+                    {section.key === "contact" && onSocialConfigChange && (
+                      <div className="pt-1">
+                        <ConnectSectionControls
+                          config={socialConfig || getDefaultSocialConfig()}
+                          onChange={onSocialConfigChange}
                         />
                       </div>
                     )}

@@ -42,7 +42,7 @@ export function EditorTopBar({
         <div className="hidden sm:flex items-center gap-2">
           <span
             className={`w-1.5 h-1.5 rounded-full ${
-              isSaving ? "bg-status-warning animate-spin" : "bg-status-success animate-pulse"
+              isSaving ? "bg-status-warning animate-spin" : "bg-status-success"
             }`}
           ></span>
           <span className="text-nav text-text-secondary font-sans">
