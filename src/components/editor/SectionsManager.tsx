@@ -1,9 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
 import {
-  FiRefreshCw,
   FiUser,
   FiInfo,
   FiCpu,
@@ -13,7 +11,7 @@ import {
   FiArrowUp,
   FiArrowDown,
 } from "react-icons/fi";
-import { LuGripVertical, LuSparkles } from "react-icons/lu";
+import { LuGripVertical } from "react-icons/lu";
 import { SectionItem } from "@/lib/db/collections";
 import { SectionKey, Tone } from "@/lib/config";
 import { IntroConfig, getDefaultIntroConfig } from "@/lib/introConfig";
@@ -80,7 +78,8 @@ export function SectionsManager({
   onTechStackConfigChange,
   username = "",
 }: SectionsManagerProps) {
-  const [selectedTone, setSelectedTone] = useState<Tone>("professional");
+  void onRegenerateSection;
+  void isRegenerating;
 
   const activeCount = sections.filter((s) => s.enabled).length;
 
@@ -103,6 +102,12 @@ export function SectionsManager({
             const isSelected = section.key === selectedKey;
             const label = SECTION_LABELS[section.key as SectionKey] || section.key;
             const SectionIcon = SECTION_ICONS[section.key as SectionKey] || FiFolder;
+
+            const hasDrawerContent =
+              (section.key === "intro" && Boolean(onIntroConfigChange)) ||
+              (section.key === "about" && Boolean(onAboutConfigChange)) ||
+              (section.key === "skills" && Boolean(onTechStackConfigChange)) ||
+              (section.key === "stats" && Boolean(onStatsConfigChange));
 
             return (
               <div
@@ -187,42 +192,9 @@ export function SectionsManager({
                   </div>
                 </div>
 
-                {/* Selected Action Drawer */}
-                {isSelected && (
+                {/* Selected Action Drawer (only for sections with custom controls: intro, about, skills, stats) */}
+                {isSelected && hasDrawerContent && (
                   <div className="px-3 pb-3 pt-1 border-t border-border/50 flex flex-col gap-2">
-                    {/* Regenerate Bar (only for AI-written prose sections: projects, contact) */}
-                    {(section.key === "projects" || section.key === "contact") && (
-                      <div className="flex items-center justify-between text-nav text-text-secondary pt-1">
-                        <button
-                          type="button"
-                          disabled={isRegenerating}
-                          onClick={() => onRegenerateSection(section.key as SectionKey, selectedTone)}
-                          className="flex items-center gap-1.5 text-meta font-medium text-text-primary hover:text-accent-hover transition-colors disabled:opacity-50 cursor-pointer"
-                        >
-                          {isRegenerating ? (
-                            <FiRefreshCw className="w-3.5 h-3.5 animate-spin text-text-primary" />
-                          ) : (
-                            <LuSparkles className="w-3.5 h-3.5 text-text-primary stroke-[1.5]" />
-                          )}
-                          <span>Regenerate</span>
-                        </button>
-
-                        <div className="flex items-center gap-1.5 bg-surface px-2 py-0.5 rounded-sm border border-border shadow-xs">
-                          <span className="font-mono text-eyebrow text-text-muted">Tone:</span>
-                          <select
-                            value={selectedTone}
-                            onChange={(e) => setSelectedTone(e.target.value as Tone)}
-                            className="bg-transparent font-mono text-meta text-text-primary focus:outline-none cursor-pointer"
-                          >
-                            <option value="professional">Prof.</option>
-                            <option value="playful">Playful</option>
-                            <option value="minimal">Minimal</option>
-                            <option value="hacker">Hacker</option>
-                          </select>
-                        </div>
-                      </div>
-                    )}
-
                     {/* Dedicated Intro & Bio Controls (Profile Photo, Title Animation, Color) */}
                     {section.key === "intro" && onIntroConfigChange && (
                       <div className="pt-1">
