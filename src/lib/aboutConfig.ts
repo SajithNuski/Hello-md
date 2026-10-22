@@ -1,6 +1,69 @@
 import type { Facts } from "./github/types";
 
 export type AboutStyle = "hacker" | "playful" | "professional" | "minimal";
+export type GifPlacement = "left" | "center" | "right";
+
+export interface GifPreset {
+  id: string;
+  name: string;
+  gender: "male" | "female";
+  url: string;
+}
+
+export const GIF_PRESETS: Record<"male" | "female", GifPreset[]> = {
+  male: [
+    {
+      id: "male-workspace",
+      name: "Multi-Monitor Desk",
+      gender: "male",
+      url: "https://user-images.githubusercontent.com/74038190/212750147-854a394f-fee9-4080-9770-78a4b7ece53f.gif",
+    },
+    {
+      id: "male-pro",
+      name: "Software Engineer",
+      gender: "male",
+      url: "https://user-images.githubusercontent.com/74038190/212751818-13da6fd2-27ca-45c4-9c64-3940ccfa6fd3.gif",
+    },
+    {
+      id: "male-office",
+      name: "Tech Workstation",
+      gender: "male",
+      url: "https://user-images.githubusercontent.com/74038190/212897707-026174ef-f09d-4d41-a4bb-c7266f5420b0.gif",
+    },
+    {
+      id: "male-dev",
+      name: "Developer Workspace",
+      gender: "male",
+      url: "https://user-images.githubusercontent.com/74038190/212750155-3ceddfbd-19d3-40a3-87af-8d329c8323c4.gif",
+    },
+  ],
+  female: [
+    {
+      id: "female-dev",
+      name: "Software Engineer",
+      gender: "female",
+      url: "https://user-images.githubusercontent.com/74038190/213760677-e45ca5f7-d1aa-4c2c-91e0-573819287304.gif",
+    },
+    {
+      id: "female-laptop",
+      name: "Laptop Workstation",
+      gender: "female",
+      url: "https://user-images.githubusercontent.com/74038190/212900420-11d6daeb-4bcd-474f-ad58-86c47d25b541.gif",
+    },
+    {
+      id: "female-pro",
+      name: "Professional Coder",
+      gender: "female",
+      url: "https://user-images.githubusercontent.com/74038190/216644497-1951db19-8f3d-4e44-ac08-8e9d7e0d94a7.gif",
+    },
+    {
+      id: "female-workspace",
+      name: "Modern Tech Desk",
+      gender: "female",
+      url: "https://user-images.githubusercontent.com/74038190/229223263-cf2e4b07-2615-4f87-9c38-e37600f8381a.gif",
+    },
+  ],
+};
 
 export interface AboutConfig {
   name: string;
@@ -16,6 +79,7 @@ export interface AboutConfig {
   gifEnabled: boolean;
   gifUrl: string;
   gifWidth: number;
+  gifPlacement?: GifPlacement;
   style: AboutStyle;
   emoji: boolean;
 }
@@ -33,8 +97,9 @@ export const DEFAULT_ABOUT_CONFIG: AboutConfig = {
   status: "Open to internship opportunities 🎯",
   currentlyLearning: "AI + Cloud Engineering",
   gifEnabled: false,
-  gifUrl: "https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif",
+  gifUrl: "https://user-images.githubusercontent.com/74038190/212750147-854a394f-fee9-4080-9770-78a4b7ece53f.gif",
   gifWidth: 300,
+  gifPlacement: "right",
   style: "hacker",
   emoji: true,
 };
@@ -85,8 +150,9 @@ export function getDefaultAboutConfig(
     status: "Open to opportunities 🎯",
     currentlyLearning: "",
     gifEnabled: false,
-    gifUrl: "https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif",
+    gifUrl: "https://user-images.githubusercontent.com/74038190/212750147-854a394f-fee9-4080-9770-78a4b7ece53f.gif",
     gifWidth: 300,
+    gifPlacement: "right",
     style: "hacker",
     emoji: true,
   };
@@ -141,13 +207,18 @@ export function getFirstName(fullName: string): string {
 }
 
 /**
- * Renders the GIF element if enabled and non-empty.
+ * Renders the GIF element if enabled and non-empty with placement options (left, center, right).
  */
 export function renderGif(data: AboutConfig): string {
   if (!data.gifEnabled || !data.gifUrl?.trim()) return "";
   const w = data.gifWidth || 300;
   const url = data.gifUrl.trim();
-  return `<img align="right" width="${w}" src="${url}"/>`;
+  const placement = data.gifPlacement || "right";
+
+  if (placement === "center") {
+    return `<div align="center">\n  <img width="${w}" src="${url}"/>\n</div>`;
+  }
+  return `<img align="${placement}" width="${w}" src="${url}"/>`;
 }
 
 // -------------------------------------------------------------

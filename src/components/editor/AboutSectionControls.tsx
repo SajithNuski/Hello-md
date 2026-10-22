@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, KeyboardEvent } from "react";
-import { AboutConfig, AboutStyle } from "@/lib/aboutConfig";
+import { AboutConfig, AboutStyle, GifPlacement, GIF_PRESETS } from "@/lib/aboutConfig";
 import {
   FiUser,
   FiCode,
@@ -14,6 +14,10 @@ import {
   FiX,
   FiBriefcase,
   FiBookOpen,
+  FiAlignLeft,
+  FiAlignCenter,
+  FiAlignRight,
+  FiCheck,
 } from "react-icons/fi";
 
 interface AboutSectionControlsProps {
@@ -34,6 +38,12 @@ export function AboutSectionControls({
 }: AboutSectionControlsProps) {
   const [newStackTag, setNewStackTag] = useState("");
   const [newFocusTag, setNewFocusTag] = useState("");
+  const [gifGender, setGifGender] = useState<"male" | "female">(() => {
+    if (GIF_PRESETS.female.some((p) => p.url === config.gifUrl)) {
+      return "female";
+    }
+    return "male";
+  });
 
   const update = (partial: Partial<AboutConfig>) => {
     onChange({ ...config, ...partial });
@@ -405,10 +415,122 @@ export function AboutSectionControls({
 
         {/* Enabled GIF Fields */}
         {config.gifEnabled && (
-          <div className="pt-2 border-t border-border/60 flex flex-col gap-2 animate-in fade-in duration-150">
+          <div className="pt-2 border-t border-border/60 flex flex-col gap-2.5 animate-in fade-in duration-150">
+            {/* Gender Switch Tabs (Male / Female) */}
             <div className="flex flex-col gap-1">
               <label className="font-mono text-eyebrow text-text-secondary uppercase">
-                GIF Image URL
+                Choose Character Style
+              </label>
+              <div className="grid grid-cols-2 gap-1 p-0.5 bg-surface border border-border rounded">
+                <button
+                  type="button"
+                  onClick={() => setGifGender("male")}
+                  className={`py-1 text-center font-mono text-xs rounded transition-all cursor-pointer ${
+                    gifGender === "male"
+                      ? "bg-accent/20 text-accent font-semibold border border-accent/40 shadow-xs"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  👨 Male (4 GIFs)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGifGender("female")}
+                  className={`py-1 text-center font-mono text-xs rounded transition-all cursor-pointer ${
+                    gifGender === "female"
+                      ? "bg-accent/20 text-accent font-semibold border border-accent/40 shadow-xs"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  👩 Female (4 GIFs)
+                </button>
+              </div>
+            </div>
+
+            {/* 4 Preset GIF Cards */}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <label className="font-mono text-eyebrow text-text-secondary uppercase">
+                  Select Animation
+                </label>
+                <span className="font-mono text-[10px] text-text-muted">
+                  4 Options Available
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                {GIF_PRESETS[gifGender].map((preset) => {
+                  const isSelected = config.gifUrl === preset.url;
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => update({ gifUrl: preset.url, gifEnabled: true })}
+                      className={`relative rounded border p-1 flex flex-col items-center gap-1 transition-all cursor-pointer overflow-hidden ${
+                        isSelected
+                          ? "border-accent bg-accent/15 ring-1 ring-accent shadow-xs"
+                          : "border-border bg-surface hover:border-border-hover hover:bg-surface-raised"
+                      }`}
+                    >
+                      <div className="w-full h-14 rounded overflow-hidden bg-black/40 flex items-center justify-center relative">
+                        <img
+                          src={preset.url}
+                          alt={preset.name}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 bg-accent text-white p-0.5 rounded-full shadow">
+                            <FiCheck className="w-2.5 h-2.5" />
+                          </div>
+                        )}
+                      </div>
+                      <span className="font-mono text-[10px] text-text-primary truncate w-full text-center">
+                        {preset.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* GIF Placement (Left / Center / Right) */}
+            <div className="flex flex-col gap-1">
+              <label className="font-mono text-eyebrow text-text-secondary uppercase">
+                GIF Placement
+              </label>
+              <div className="grid grid-cols-3 gap-1">
+                {(
+                  [
+                    { id: "left", label: "Left", icon: FiAlignLeft },
+                    { id: "center", label: "Center", icon: FiAlignCenter },
+                    { id: "right", label: "Right", icon: FiAlignRight },
+                  ] as const
+                ).map((opt) => {
+                  const active = (config.gifPlacement || "right") === opt.id;
+                  const Icon = opt.icon;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => update({ gifPlacement: opt.id })}
+                      className={`flex items-center justify-center gap-1 py-1 rounded text-xs transition-colors cursor-pointer border ${
+                        active
+                          ? "bg-accent/20 text-accent border-accent/40 font-medium"
+                          : "bg-surface border-border text-text-secondary hover:text-text-primary"
+                      }`}
+                    >
+                      <Icon className="w-3 h-3" />
+                      <span>{opt.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Custom GIF URL input */}
+            <div className="flex flex-col gap-1">
+              <label className="font-mono text-eyebrow text-text-secondary uppercase">
+                Custom GIF URL
               </label>
               <input
                 type="text"
@@ -419,12 +541,15 @@ export function AboutSectionControls({
               />
             </div>
 
+            {/* Width Slider */}
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between">
                 <label className="font-mono text-eyebrow text-text-secondary uppercase">
                   Width: {config.gifWidth}px
                 </label>
-                <span className="font-mono text-[10px] text-text-muted">align=&quot;right&quot;</span>
+                <span className="font-mono text-[10px] text-text-muted capitalize">
+                  align=&quot;{config.gifPlacement || "right"}&quot;
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <input

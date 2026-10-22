@@ -196,7 +196,26 @@ styles.forEach((style) => {
   });
   assert(!md.includes(gifUrl), `[${style}] Must omit GIF when gifEnabled is false`);
 });
-console.log("✅ Passed Test 6: GIF on / off");
+
+// GIF PLACEMENT: left, center, right
+["left", "center", "right"].forEach((placement) => {
+  const md = generateAboutMarkdown({
+    ...DEFAULT_ABOUT_CONFIG,
+    style: "hacker",
+    gifEnabled: true,
+    gifUrl,
+    gifWidth: 320,
+    gifPlacement: placement as "left" | "center" | "right",
+  });
+
+  if (placement === "center") {
+    assert(md.includes(`<div align="center">\n  <img width="320" src="${gifUrl}"/>\n</div>`), "Should include centered GIF div");
+  } else {
+    assert(md.includes(`<img align="${placement}" width="320" src="${gifUrl}"/>`), `Should include align="${placement}" GIF`);
+  }
+});
+
+console.log("✅ Passed Test 6: GIF on / off and placement");
 
 // -----------------------------------------------------------------
 // Test 7: Emoji on / off for each style
