@@ -18,6 +18,8 @@ import { SectionItem } from "@/lib/db/collections";
 import { SectionKey, Tone } from "@/lib/config";
 import { IntroConfig, getDefaultIntroConfig } from "@/lib/introConfig";
 import { IntroSectionControls } from "./IntroSectionControls";
+import { AboutConfig, DEFAULT_ABOUT_CONFIG, getDefaultAboutConfig } from "@/lib/aboutConfig";
+import { AboutSectionControls } from "./AboutSectionControls";
 
 interface SectionsManagerProps {
   sections: SectionItem[];
@@ -29,6 +31,8 @@ interface SectionsManagerProps {
   onMoveSection?: (key: SectionKey, direction: "up" | "down") => void;
   introConfig?: IntroConfig;
   onIntroConfigChange?: (updated: IntroConfig) => void;
+  aboutConfig?: AboutConfig;
+  onAboutConfigChange?: (updated: AboutConfig) => void;
   username?: string;
 }
 
@@ -60,7 +64,9 @@ export function SectionsManager({
   onMoveSection,
   introConfig,
   onIntroConfigChange,
-  username = "sajithnuski",
+  aboutConfig,
+  onAboutConfigChange,
+  username = "",
 }: SectionsManagerProps) {
   const [selectedTone, setSelectedTone] = useState<Tone>("professional");
 
@@ -172,8 +178,8 @@ export function SectionsManager({
                 {/* Selected Action Drawer */}
                 {isSelected && (
                   <div className="px-3 pb-3 pt-1 border-t border-border/50 flex flex-col gap-2">
-                    {/* Regenerate Bar (only for sections other than Intro & Bio) */}
-                    {section.key !== "intro" && (
+                    {/* Regenerate Bar (only for sections other than Intro & Bio and About Me) */}
+                    {section.key !== "intro" && section.key !== "about" && (
                       <div className="flex items-center justify-between text-nav text-text-secondary pt-1">
                         <button
                           type="button"
@@ -212,6 +218,16 @@ export function SectionsManager({
                           config={introConfig || getDefaultIntroConfig(username)}
                           onChange={onIntroConfigChange}
                           defaultUsername={username}
+                        />
+                      </div>
+                    )}
+
+                    {/* Dedicated About Me Controls (Hacker, Playful, Professional, Minimal) */}
+                    {section.key === "about" && onAboutConfigChange && (
+                      <div className="pt-1">
+                        <AboutSectionControls
+                          config={aboutConfig || getDefaultAboutConfig(username)}
+                          onChange={onAboutConfigChange}
                         />
                       </div>
                     )}

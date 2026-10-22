@@ -14,6 +14,8 @@ import { getOrCreateOwnerId, getSubjectId, extractByokHeaders, OWNER_COOKIE_NAME
 import { checkQuota, consumeQuota } from "@/lib/quota";
 import { APP_CONFIG, TONES } from "@/lib/config";
 import { AIError } from "@/lib/ai/types";
+import { getDefaultAboutConfig } from "@/lib/aboutConfig";
+import { getDefaultIntroConfig } from "@/lib/introConfig";
 
 export const runtime = "nodejs";
 
@@ -149,9 +151,12 @@ export async function POST(req: NextRequest) {
         const statsMd = formatSection("stats", {}, facts, theme);
         const contactMd = formatSection("contact", validOutput.contact, facts, theme);
 
+        const initialIntroConfig = getDefaultIntroConfig(facts.login);
+        const initialAboutConfig = getDefaultAboutConfig(facts.login, facts);
+
         const sections: SectionItem[] = [
-          { key: "intro", markdown: introMd, source: "ai", enabled: true, order: 0 },
-          { key: "about", markdown: aboutMd, source: "ai", enabled: true, order: 1 },
+          { key: "intro", markdown: introMd, source: "ai", enabled: true, order: 0, config: { intro: initialIntroConfig } },
+          { key: "about", markdown: aboutMd, source: "ai", enabled: true, order: 1, config: { about: initialAboutConfig } },
           { key: "skills", markdown: skillsMd, source: "ai", enabled: true, order: 2 },
           { key: "projects", markdown: projectsMd, source: "ai", enabled: true, order: 3 },
           { key: "stats", markdown: statsMd, source: "ai", enabled: true, order: 4 },

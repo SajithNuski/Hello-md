@@ -20,6 +20,12 @@ import {
   generateIntroMarkdown,
   parseIntroMarkdown,
 } from "@/lib/introConfig";
+import {
+  AboutConfig,
+  DEFAULT_ABOUT_CONFIG,
+  getDefaultAboutConfig,
+  generateAboutMarkdown,
+} from "@/lib/aboutConfig";
 import { FiLoader, FiAlertCircle, FiX } from "react-icons/fi";
 
 export default function EditorPage() {
@@ -70,9 +76,25 @@ export default function EditorPage() {
           setLogin(doc.login || "");
           setTheme(doc.theme || "minimal");
           setTone(doc.tone || "professional");
-          setSections(doc.sections || []);
-          if (doc.sections?.length > 0) {
-            setSelectedKey(doc.sections[0].key);
+          const rawSections = (doc.sections || []) as SectionItem[];
+          const userLogin = doc.login || "";
+          const updatedSections = rawSections.map((s) => {
+            if (s.key === "about" && !s.config?.about) {
+              const cfg = getDefaultAboutConfig(userLogin);
+              return {
+                ...s,
+                markdown: s.markdown || generateAboutMarkdown(cfg),
+                config: {
+                  ...(s.config || {}),
+                  about: cfg,
+                },
+              };
+            }
+            return s;
+          });
+          setSections(updatedSections);
+          if (updatedSections.length > 0) {
+            setSelectedKey(updatedSections[0].key);
           }
           setLastSavedAt(new Date(doc.updatedAt || Date.now()));
         }
@@ -117,6 +139,18 @@ export default function EditorPage() {
       ...(parsed || {}),
     };
   }, [introSection, login]);
+
+  // About section & config
+  const aboutSection = useMemo(() => {
+    return sections.find((s) => s.key === "about");
+  }, [sections]);
+
+  const aboutConfig: AboutConfig = useMemo(() => {
+    if (aboutSection?.config?.about) {
+      return aboutSection.config.about as AboutConfig;
+    }
+    return getDefaultAboutConfig(login);
+  }, [aboutSection, login]);
 
   // Debounced auto-save triggers on edits
   const triggerAutoSave = useCallback(
@@ -209,6 +243,32 @@ export default function EditorPage() {
       });
     },
     [login, triggerAutoSave]
+  );
+
+  // Handle about section custom controls change
+  const handleAboutConfigChange = useCallback(
+    (newConfig: AboutConfig) => {
+      const newMarkdown = generateAboutMarkdown(newConfig);
+      setSections((prev) => {
+        const updated = prev.map((s) => {
+          if (s.key === "about") {
+            return {
+              ...s,
+              markdown: newMarkdown,
+              source: "user" as const,
+              config: {
+                ...(s.config || {}),
+                about: newConfig,
+              },
+            };
+          }
+          return s;
+        });
+        triggerAutoSave(updated);
+        return updated;
+      });
+    },
+    [triggerAutoSave]
   );
 
   // Handle reordering sections
@@ -381,6 +441,8 @@ export default function EditorPage() {
             onMoveSection={handleMoveSection}
             introConfig={introConfig}
             onIntroConfigChange={handleIntroConfigChange}
+            aboutConfig={aboutConfig}
+            onAboutConfigChange={handleAboutConfigChange}
             username={login}
           />
 
