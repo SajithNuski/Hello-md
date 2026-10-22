@@ -182,10 +182,10 @@ export function SectionsManager({
                 </div>
 
                 {/* Selected Action Drawer */}
-                {isSelected && (
+                {isSelected && section.key !== "skills" && (
                   <div className="px-3 pb-3 pt-1 border-t border-border/50 flex flex-col gap-2">
-                    {/* Regenerate Bar (only for AI-written sections: skills, projects, contact) */}
-                    {section.key !== "intro" && section.key !== "about" && section.key !== "stats" && (
+                    {/* Regenerate Bar (only for AI-written prose sections: projects, contact) */}
+                    {(section.key === "projects" || section.key === "contact") && (
                       <div className="flex items-center justify-between text-nav text-text-secondary pt-1">
                         <button
                           type="button"
