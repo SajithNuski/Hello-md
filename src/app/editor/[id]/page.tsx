@@ -26,6 +26,12 @@ import {
   getDefaultAboutConfig,
   generateAboutMarkdown,
 } from "@/lib/aboutConfig";
+import {
+  StatsConfig,
+  getDefaultStatsConfig,
+  generateStatsMarkdown,
+  parseStatsMarkdown,
+} from "@/lib/statsConfig";
 import { FiLoader, FiAlertCircle, FiX } from "react-icons/fi";
 
 export default function EditorPage() {
@@ -104,6 +110,21 @@ export default function EditorPage() {
                 },
               };
             }
+            if (s.key === "stats" && !s.config?.stats) {
+              const parsed = s.markdown ? parseStatsMarkdown(s.markdown) : null;
+              const cfg = {
+                ...getDefaultStatsConfig(userLogin),
+                ...(parsed || {}),
+              };
+              return {
+                ...s,
+                markdown: s.markdown || generateStatsMarkdown(cfg, userLogin),
+                config: {
+                  ...(s.config || {}),
+                  stats: cfg,
+                },
+              };
+            }
             return s;
           });
           setSections(updatedSections);
@@ -165,6 +186,22 @@ export default function EditorPage() {
     }
     return getDefaultAboutConfig(login);
   }, [aboutSection, login]);
+
+  // GitHub Analytics section & config
+  const statsSection = useMemo(() => {
+    return sections.find((s) => s.key === "stats");
+  }, [sections]);
+
+  const statsConfig: StatsConfig = useMemo(() => {
+    if (statsSection?.config?.stats) {
+      return statsSection.config.stats as StatsConfig;
+    }
+    const parsed = statsSection ? parseStatsMarkdown(statsSection.markdown) : null;
+    return {
+      ...getDefaultStatsConfig(login),
+      ...(parsed || {}),
+    };
+  }, [statsSection, login]);
 
   // Debounced auto-save triggers on edits
   const triggerAutoSave = useCallback(
@@ -283,6 +320,32 @@ export default function EditorPage() {
       });
     },
     [triggerAutoSave]
+  );
+
+  // Handle stats section custom controls change
+  const handleStatsConfigChange = useCallback(
+    (newConfig: StatsConfig) => {
+      const newMarkdown = generateStatsMarkdown(newConfig, login);
+      setSections((prev) => {
+        const updated = prev.map((s) => {
+          if (s.key === "stats") {
+            return {
+              ...s,
+              markdown: newMarkdown,
+              source: "user" as const,
+              config: {
+                ...(s.config || {}),
+                stats: newConfig,
+              },
+            };
+          }
+          return s;
+        });
+        triggerAutoSave(updated);
+        return updated;
+      });
+    },
+    [login, triggerAutoSave]
   );
 
   // Handle reordering sections
@@ -457,6 +520,8 @@ export default function EditorPage() {
             onIntroConfigChange={handleIntroConfigChange}
             aboutConfig={aboutConfig}
             onAboutConfigChange={handleAboutConfigChange}
+            statsConfig={statsConfig}
+            onStatsConfigChange={handleStatsConfigChange}
             username={login}
           />
 

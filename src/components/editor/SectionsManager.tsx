@@ -20,6 +20,8 @@ import { IntroConfig, getDefaultIntroConfig } from "@/lib/introConfig";
 import { IntroSectionControls } from "./IntroSectionControls";
 import { AboutConfig, DEFAULT_ABOUT_CONFIG, getDefaultAboutConfig } from "@/lib/aboutConfig";
 import { AboutSectionControls } from "./AboutSectionControls";
+import { StatsConfig, getDefaultStatsConfig } from "@/lib/statsConfig";
+import { StatsSectionControls } from "./StatsSectionControls";
 
 interface SectionsManagerProps {
   sections: SectionItem[];
@@ -33,6 +35,8 @@ interface SectionsManagerProps {
   onIntroConfigChange?: (updated: IntroConfig) => void;
   aboutConfig?: AboutConfig;
   onAboutConfigChange?: (updated: AboutConfig) => void;
+  statsConfig?: StatsConfig;
+  onStatsConfigChange?: (updated: StatsConfig) => void;
   username?: string;
 }
 
@@ -66,6 +70,8 @@ export function SectionsManager({
   onIntroConfigChange,
   aboutConfig,
   onAboutConfigChange,
+  statsConfig,
+  onStatsConfigChange,
   username = "",
 }: SectionsManagerProps) {
   const [selectedTone, setSelectedTone] = useState<Tone>("professional");
@@ -228,6 +234,17 @@ export function SectionsManager({
                         <AboutSectionControls
                           config={aboutConfig || getDefaultAboutConfig(username)}
                           onChange={onAboutConfigChange}
+                        />
+                      </div>
+                    )}
+
+                    {/* Dedicated GitHub Analytics Controls (Stats, Languages, Streak, Theme) */}
+                    {section.key === "stats" && onStatsConfigChange && (
+                      <div className="pt-1">
+                        <StatsSectionControls
+                          config={statsConfig || getDefaultStatsConfig(username)}
+                          onChange={onStatsConfigChange}
+                          username={username}
                         />
                       </div>
                     )}

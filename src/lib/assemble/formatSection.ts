@@ -8,6 +8,7 @@ import {
   ContactSection,
 } from "../ai/schema";
 import { THEMES, type Theme, type ThemeId } from "./themes";
+import { StatsConfig, generateStatsMarkdown } from "../statsConfig";
 
 /**
  * Deterministic Markdown/HTML builder. The AI supplies plain text only; every
@@ -261,26 +262,25 @@ function renderProjects(d: ProjectsSection, c: Ctx): string {
   return `${heading(c, "🚀", "Featured Projects")}\n\n<table>\n${rows.join("\n")}\n</table>`;
 }
 
-function renderStats(c: Ctx): string {
-  const { t, opts } = c;
-  const w = { ...DEFAULT_WIDGETS, ...(opts.widgets ?? {}) };
-  const colors = `hide_border=true&bg_color=${CARD_BG}&title_color=${t.accent}&icon_color=${t.accent}&text_color=${TEXT}&ring_color=${t.accent}`;
-  const parts: string[] = [];
+function renderStats(data: unknown, c: Ctx): string {
+  const isStatsConfig =
+    data &&
+    typeof data === "object" &&
+    ("showStats" in data || "showLangs" in data || "showStreak" in data);
 
-  const row: string[] = [];
-  if (w.stats) row.push(`<img height="170" src="${host(opts)}/api?username=${c.user}&show_icons=true&${colors}" alt="GitHub stats"/>`);
-  if (w.languages) row.push(`<img height="170" src="${host(opts)}/api/top-langs/?username=${c.user}&layout=compact&${colors}" alt="Top languages"/>`);
-  if (row.length) parts.push(`<p align="center">\n  ${row.join("\n  ")}\n</p>`);
+  if (isStatsConfig) {
+    return generateStatsMarkdown(data as StatsConfig, c.facts.login);
+  }
 
-  if (w.streak)
-    parts.push(`<p align="center">\n  <img src="https://streak-stats.demolab.com/?user=${c.user}&theme=dark&hide_border=true&background=${CARD_BG}&ring=${t.accent}&fire=${t.accent}&currStreakLabel=${t.accent}" alt="Streak"/>\n</p>`);
-  if (w.activity)
-    parts.push(`<p align="center">\n  <img src="https://github-readme-activity-graph.vercel.app/graph?username=${c.user}&bg_color=${CARD_BG}&color=${t.accent}&line=${t.accent}&point=ffffff&area=true&hide_border=true" width="100%" alt="Contribution graph"/>\n</p>`);
-  if (w.trophies)
-    parts.push(`<p align="center">\n  <img src="https://github-profile-trophy.vercel.app/?username=${c.user}&theme=darkhub&no-frame=true&no-bg=true&margin-w=8&column=7" alt="Trophies"/>\n</p>`);
-
-  if (!parts.length) return "";
-  return `${heading(c, "📊", "GitHub Analytics")}\n\n${parts.join("\n\n")}`;
+  // Derive from opts.widgets or defaults
+  const w = { ...DEFAULT_WIDGETS, ...(c.opts.widgets ?? {}) };
+  const statsConfig: StatsConfig = {
+    showStats: Boolean(w.stats),
+    showLangs: Boolean(w.languages),
+    showStreak: Boolean(w.streak),
+    theme: "dark",
+  };
+  return generateStatsMarkdown(statsConfig, c.facts.login);
 }
 
 function renderContact(d: ContactSection, c: Ctx): string {
@@ -355,7 +355,7 @@ export function formatSection(
     case "projects":
       return renderProjects(data as ProjectsSection, c);
     case "stats":
-      return renderStats(c);
+      return renderStats(data, c);
     case "contact":
       return renderContact(data as ContactSection, c);
     default:
