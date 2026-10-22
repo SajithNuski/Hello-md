@@ -79,6 +79,20 @@ export default function EditorPage() {
           const rawSections = (doc.sections || []) as SectionItem[];
           const userLogin = doc.login || "";
           const updatedSections = rawSections.map((s) => {
+            if (s.key === "intro" && !s.config?.intro) {
+              const parsed = s.markdown ? parseIntroMarkdown(s.markdown, userLogin) : null;
+              const cfg = {
+                ...getDefaultIntroConfig(userLogin),
+                ...(parsed || {}),
+              };
+              return {
+                ...s,
+                config: {
+                  ...(s.config || {}),
+                  intro: cfg,
+                },
+              };
+            }
             if (s.key === "about" && !s.config?.about) {
               const cfg = getDefaultAboutConfig(userLogin);
               return {

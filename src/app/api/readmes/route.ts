@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
         const statsMd = formatSection("stats", {}, facts, theme);
         const contactMd = formatSection("contact", validOutput.contact, facts, theme);
 
-        const initialIntroConfig = getDefaultIntroConfig(facts.login);
+        const initialIntroConfig = getDefaultIntroConfig(facts.login, facts, validOutput.intro.roles);
         const initialAboutConfig = getDefaultAboutConfig(facts.login, facts);
 
         const sections: SectionItem[] = [

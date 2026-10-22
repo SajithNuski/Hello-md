@@ -28,7 +28,7 @@ interface IntroSectionControlsProps {
 export function IntroSectionControls({
   config,
   onChange,
-  defaultUsername = "sajithnuski",
+  defaultUsername = "",
 }: IntroSectionControlsProps) {
   const [colorInput, setColorInput] = useState<string>(config.animationColor || "A78BFA");
 

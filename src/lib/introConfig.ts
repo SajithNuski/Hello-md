@@ -1,3 +1,5 @@
+import type { Facts } from "./github/types";
+
 export interface IntroConfig {
   // 1. Profile Photo
   photoEnabled: boolean;
@@ -21,10 +23,10 @@ export interface IntroConfig {
 }
 
 export const DEFAULT_INTRO_LINES = [
-  "Building full-stack web applications",
-  "Integrating AI into real-world apps",
-  "Fiverr Level 2 Seller 🚀",
-  "Cloud & AI Engineering in progress ☁️",
+  "Building modern web applications",
+  "Full-Stack Developer & Open Source Contributor",
+  "Passionate about clean code and architecture",
+  "Turning ideas into scalable software 🚀",
 ];
 
 export const AVAILABLE_FONTS = [
@@ -44,15 +46,44 @@ export const AVAILABLE_FONTS = [
 
 export const AVAILABLE_WEIGHTS = [300, 400, 500, 600, 700, 800];
 
-export function getDefaultIntroConfig(username: string = "sajithnuski"): IntroConfig {
+export function getDefaultIntroConfig(
+  username: string = "",
+  facts?: Partial<Facts> | null,
+  roles?: string[]
+): IntroConfig {
+  const cleanUsername = (username || "").trim().replace(/^@/, "");
+  let lines: string[] = [];
+
+  if (roles && roles.length > 0) {
+    lines = roles.filter((r) => r && r.trim().length > 0).slice(0, 4);
+  } else if (facts) {
+    if (facts.name || cleanUsername) {
+      lines.push(`${facts.name || cleanUsername} | Developer`);
+    }
+    if (facts.bio) {
+      const firstBioLine = facts.bio.split(/[\r\n]+/)[0]?.trim();
+      if (firstBioLine && firstBioLine.length <= 50) {
+        lines.push(firstBioLine);
+      }
+    }
+    if (facts.topLanguages && facts.topLanguages.length > 0) {
+      const topLangs = facts.topLanguages.slice(0, 3).map((l) => l.name).join(", ");
+      lines.push(`Building with ${topLangs}`);
+    }
+  }
+
+  if (lines.length === 0) {
+    lines = [...DEFAULT_INTRO_LINES];
+  }
+
   return {
     photoEnabled: false,
-    photoUsername: username || "sajithnuski",
+    photoUsername: cleanUsername,
     photoSize: 150,
     photoRounded: true,
 
     animationEnabled: false,
-    animationLines: [...DEFAULT_INTRO_LINES],
+    animationLines: lines,
     animationFont: "Fira Code",
     animationWeight: 600,
     animationSize: 22,
@@ -126,12 +157,12 @@ export function buildTypingSvgUrl(config: IntroConfig): string {
  * Builds the profile photo <img> tag according to specification:
  * <img margin-top="5px" align="center" width="150" height="150" style="border-radius:50%" src="https://github.com/sajithnuski.png"/>
  */
-export function buildProfilePhotoTag(config: IntroConfig, defaultUsername: string = "sajithnuski"): string {
-  const user = (config.photoUsername || defaultUsername || "sajithnuski").trim().replace(/^@/, "");
+export function buildProfilePhotoTag(config: IntroConfig, defaultUsername: string = ""): string {
+  const user = (config.photoUsername || defaultUsername || "").trim().replace(/^@/, "");
   const size = config.photoSize || 150;
   const styleAttr = config.photoRounded ? ' style="border-radius:50%"' : "";
 
-  return `<img margin-top="5px" align="center" width="${size}" height="${size}"${styleAttr} src="https://github.com/${user}.png"/>`;
+  return `<img margin-top="5px" align="center" width="${size}" height="${size}"${styleAttr} src="https://github.com/${user || "user"}.png"/>`;
 }
 
 /**
@@ -141,7 +172,7 @@ export function buildProfilePhotoTag(config: IntroConfig, defaultUsername: strin
  * - Only animation on: output the div with just the Typing SVG
  * - Both on: output div with <img> and Typing SVG, with a blank line between them
  */
-export function generateIntroMarkdown(config: IntroConfig, defaultUsername: string = "sajithnuski"): string {
+export function generateIntroMarkdown(config: IntroConfig, defaultUsername: string = ""): string {
   const parts: string[] = [];
 
   if (config.photoEnabled) {
@@ -163,7 +194,7 @@ export function generateIntroMarkdown(config: IntroConfig, defaultUsername: stri
 /**
  * Optional parser to infer IntroConfig from existing markdown if config is not yet set.
  */
-export function parseIntroMarkdown(markdown: string, defaultUsername: string = "sajithnuski"): Partial<IntroConfig> | null {
+export function parseIntroMarkdown(markdown: string, defaultUsername: string = ""): Partial<IntroConfig> | null {
   if (!markdown || !markdown.includes("<div align=\"center\">")) {
     return null;
   }
