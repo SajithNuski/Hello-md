@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Header } from "@/components/ui/Header";
 import { EditorTopBar } from "@/components/editor/EditorTopBar";
 import { SectionsManager } from "@/components/editor/SectionsManager";
-import { MarkdownEditor } from "@/components/editor/MarkdownEditor";
+import { EditorPane } from "@/components/editor/EditorPane";
 import { MarkdownPreview } from "@/components/editor/MarkdownPreview";
+import { MobileBottomNav, EditorMobileTab } from "@/components/editor/MobileBottomNav";
 import { ExportDialog } from "@/components/export/ExportDialog";
 import { ByokDialog } from "@/components/system/ByokDialog";
 import { SystemStateBanner, SystemStateType } from "@/components/system/SystemStateBanner";
@@ -22,7 +22,6 @@ import {
 } from "@/lib/introConfig";
 import {
   AboutConfig,
-  DEFAULT_ABOUT_CONFIG,
   getDefaultAboutConfig,
   generateAboutMarkdown,
 } from "@/lib/aboutConfig";
@@ -44,6 +43,14 @@ import {
   generateContactMarkdown,
   parseContactMarkdown,
 } from "@/lib/socialConfig";
+import {
+  ProjectCardItem,
+} from "@/components/editor/ProjectsSectionControls";
+import {
+  getDefaultProjectsConfig,
+  generateProjectsMarkdown,
+  parseProjectsMarkdown,
+} from "@/lib/projectsConfig";
 import { FiLoader, FiAlertCircle, FiX } from "react-icons/fi";
 
 export default function EditorPage() {
@@ -60,13 +67,20 @@ export default function EditorPage() {
   const [sections, setSections] = useState<SectionItem[]>([]);
   const [selectedKey, setSelectedKey] = useState<SectionKey>("intro");
 
+  // View state: desktop view mode and mobile/tablet tab
   const [activeView, setActiveView] = useState<"split" | "editor" | "preview">("split");
+  const [mobileTab, setMobileTab] = useState<EditorMobileTab>("editor");
+
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isByokOpen, setIsByokOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
+
+  // Undo / Redo History Stack
+  const [history, setHistory] = useState<SectionItem[][]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number>(-1);
 
   // System State Banner inside editor
   const [activeSystemState, setActiveSystemState] = useState<SystemStateType | null>(null);
@@ -167,9 +181,25 @@ export default function EditorPage() {
                 },
               };
             }
+            if (s.key === "projects" && !s.config?.projects) {
+              const parsed = s.markdown ? parseProjectsMarkdown(s.markdown) : [];
+              const cfg = parsed.length > 0 ? parsed : getDefaultProjectsConfig(userLogin);
+              return {
+                ...s,
+                markdown: s.markdown || generateProjectsMarkdown(cfg, userLogin),
+                config: {
+                  ...(s.config || {}),
+                  projects: cfg,
+                },
+              };
+            }
             return s;
           });
+
           setSections(updatedSections);
+          setHistory([updatedSections]);
+          setHistoryIndex(0);
+
           if (updatedSections.length > 0) {
             setSelectedKey(updatedSections[0].key);
           }
@@ -229,7 +259,7 @@ export default function EditorPage() {
     return getDefaultAboutConfig(login);
   }, [aboutSection, login]);
 
-  // GitHub Analytics section & config
+  // Stats section & config
   const statsSection = useMemo(() => {
     return sections.find((s) => s.key === "stats");
   }, [sections]);
@@ -280,6 +310,20 @@ export default function EditorPage() {
     };
   }, [contactSection]);
 
+  // Projects section & config
+  const projectsSection = useMemo(() => {
+    return sections.find((s) => s.key === "projects");
+  }, [sections]);
+
+  const projectsList: ProjectCardItem[] = useMemo(() => {
+    if (projectsSection?.config?.projects && Array.isArray(projectsSection.config.projects)) {
+      return projectsSection.config.projects as ProjectCardItem[];
+    }
+    const parsed = projectsSection ? parseProjectsMarkdown(projectsSection.markdown) : [];
+    if (parsed.length > 0) return parsed;
+    return getDefaultProjectsConfig(login);
+  }, [projectsSection, login]);
+
   // Debounced auto-save triggers on edits
   const triggerAutoSave = useCallback(
     (newSections: SectionItem[]) => {
@@ -312,206 +356,349 @@ export default function EditorPage() {
     [id, theme, tone]
   );
 
-  // Handle active section text edits
+  // Helper to update sections and record to undo/redo history
+  const updateSectionsState = useCallback(
+    (newSections: SectionItem[], pushToHistory = true) => {
+      setSections(newSections);
+      triggerAutoSave(newSections);
+
+      if (pushToHistory) {
+        setHistory((prevHistory) => {
+          const trimmed = prevHistory.slice(0, historyIndex + 1);
+          trimmed.push(newSections);
+          if (trimmed.length > 40) trimmed.shift();
+          return trimmed;
+        });
+        setHistoryIndex((prev) => Math.min(prev + 1, 39));
+      }
+    },
+    [historyIndex, triggerAutoSave]
+  );
+
+  // Undo / Redo handlers
+  const canUndo = historyIndex > 0;
+  const canRedo = historyIndex < history.length - 1;
+
+  const handleUndo = useCallback(() => {
+    if (historyIndex > 0) {
+      const prevStep = history[historyIndex - 1];
+      setHistoryIndex((idx) => idx - 1);
+      setSections(prevStep);
+      triggerAutoSave(prevStep);
+    }
+  }, [history, historyIndex, triggerAutoSave]);
+
+  const handleRedo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      const nextStep = history[historyIndex + 1];
+      setHistoryIndex((idx) => idx + 1);
+      setSections(nextStep);
+      triggerAutoSave(nextStep);
+    }
+  }, [history, historyIndex, triggerAutoSave]);
+
+  // Global Undo / Redo keyboard shortcuts (Ctrl+Z, Ctrl+Y / Cmd+Shift+Z)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept if inside CodeMirror (CodeMirror handles its own internal text undo)
+      const target = e.target as HTMLElement;
+      if (target?.closest?.(".cm-editor")) return;
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        if (e.shiftKey) {
+          e.preventDefault();
+          handleRedo();
+        } else {
+          e.preventDefault();
+          handleUndo();
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") {
+        e.preventDefault();
+        handleRedo();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleUndo, handleRedo]);
+
+  // Handle section selection (with mobile tab switch to editor)
+  const handleSelectSection = useCallback((key: SectionKey) => {
+    setSelectedKey(key);
+    setMobileTab("editor");
+  }, []);
+
+  // Handle active section raw text edits
   const handleEditorChange = (newText: string) => {
-    setSections((prev) => {
-      const updated = prev.map((s) => {
-        if (s.key === selectedKey) {
-          const configUpdates: Record<string, unknown> = { ...(s.config || {}) };
-          if (s.key === "skills") {
-            const parsed = parseSkillsMarkdown(newText);
-            configUpdates.skills = {
-              ...getDefaultSkillsConfig(),
-              ...(parsed || {}),
-            };
-          }
-          if (s.key === "contact") {
-            const parsed = parseContactMarkdown(newText);
-            configUpdates.contact = {
-              ...getDefaultSocialConfig(),
-              ...(parsed || {}),
-            };
-          }
-          return {
-            ...s,
-            markdown: newText,
-            source: "user" as const, // Hand-edited by user
-            config: configUpdates,
+    const updated = sections.map((s) => {
+      if (s.key === selectedKey) {
+        const configUpdates: Record<string, unknown> = { ...(s.config || {}) };
+        if (s.key === "skills") {
+          const parsed = parseSkillsMarkdown(newText);
+          configUpdates.skills = {
+            ...getDefaultSkillsConfig(),
+            ...(parsed || {}),
           };
         }
-        return s;
-      });
-      triggerAutoSave(updated);
-      return updated;
+        if (s.key === "contact") {
+          const parsed = parseContactMarkdown(newText);
+          configUpdates.contact = {
+            ...getDefaultSocialConfig(),
+            ...(parsed || {}),
+          };
+        }
+        if (s.key === "projects") {
+          const parsed = parseProjectsMarkdown(newText);
+          if (parsed.length > 0) {
+            configUpdates.projects = parsed;
+          }
+        }
+        return {
+          ...s,
+          markdown: newText,
+          source: "user" as const, // Hand-edited by user
+          config: configUpdates,
+        };
+      }
+      return s;
     });
+
+    updateSectionsState(updated, false); // Debounce saves, avoid spamming history on each keystroke
   };
 
   // Toggle section enabled
   const handleToggleEnabled = (key: SectionKey) => {
-    setSections((prev) => {
-      const updated = prev.map((s) => {
-        if (s.key === key) {
-          return {
-            ...s,
-            enabled: !s.enabled,
-          };
-        }
-        return s;
-      });
-      triggerAutoSave(updated);
-      return updated;
+    const updated = sections.map((s) => {
+      if (s.key === key) {
+        return {
+          ...s,
+          enabled: !s.enabled,
+        };
+      }
+      return s;
     });
+    updateSectionsState(updated);
   };
 
   // Handle intro section custom controls change
   const handleIntroConfigChange = useCallback(
     (newConfig: IntroConfig) => {
       const newMarkdown = generateIntroMarkdown(newConfig, login);
-      setSections((prev) => {
-        const updated = prev.map((s) => {
-          if (s.key === "intro") {
-            return {
-              ...s,
-              markdown: newMarkdown,
-              source: "user" as const,
-              config: {
-                ...(s.config || {}),
-                intro: newConfig,
-              },
-            };
-          }
-          return s;
-        });
-        triggerAutoSave(updated);
-        return updated;
+      const updated = sections.map((s) => {
+        if (s.key === "intro") {
+          return {
+            ...s,
+            markdown: newMarkdown,
+            source: "user" as const,
+            config: {
+              ...(s.config || {}),
+              intro: newConfig,
+            },
+          };
+        }
+        return s;
       });
+      updateSectionsState(updated);
     },
-    [login, triggerAutoSave]
+    [login, sections, updateSectionsState]
   );
 
   // Handle about section custom controls change
   const handleAboutConfigChange = useCallback(
     (newConfig: AboutConfig) => {
       const newMarkdown = generateAboutMarkdown(newConfig);
-      setSections((prev) => {
-        const updated = prev.map((s) => {
-          if (s.key === "about") {
-            return {
-              ...s,
-              markdown: newMarkdown,
-              source: "user" as const,
-              config: {
-                ...(s.config || {}),
-                about: newConfig,
-              },
-            };
-          }
-          return s;
-        });
-        triggerAutoSave(updated);
-        return updated;
+      const updated = sections.map((s) => {
+        if (s.key === "about") {
+          return {
+            ...s,
+            markdown: newMarkdown,
+            source: "user" as const,
+            config: {
+              ...(s.config || {}),
+              about: newConfig,
+            },
+          };
+        }
+        return s;
       });
+      updateSectionsState(updated);
     },
-    [triggerAutoSave]
+    [sections, updateSectionsState]
   );
 
   // Handle stats section custom controls change
   const handleStatsConfigChange = useCallback(
     (newConfig: StatsConfig) => {
       const newMarkdown = generateStatsMarkdown(newConfig, login);
-      setSections((prev) => {
-        const updated = prev.map((s) => {
-          if (s.key === "stats") {
-            return {
-              ...s,
-              markdown: newMarkdown,
-              source: "user" as const,
-              config: {
-                ...(s.config || {}),
-                stats: newConfig,
-              },
-            };
-          }
-          return s;
-        });
-        triggerAutoSave(updated);
-        return updated;
+      const updated = sections.map((s) => {
+        if (s.key === "stats") {
+          return {
+            ...s,
+            markdown: newMarkdown,
+            source: "user" as const,
+            config: {
+              ...(s.config || {}),
+              stats: newConfig,
+            },
+          };
+        }
+        return s;
       });
+      updateSectionsState(updated);
     },
-    [login, triggerAutoSave]
+    [login, sections, updateSectionsState]
   );
 
   // Handle tech stack section custom controls change
   const handleTechStackConfigChange = useCallback(
     (newConfig: TechStackConfig) => {
       const newMarkdown = generateSkillsMarkdown(newConfig);
-      setSections((prev) => {
-        const updated = prev.map((s) => {
-          if (s.key === "skills") {
-            return {
-              ...s,
-              markdown: newMarkdown,
-              source: "user" as const,
-              config: {
-                ...(s.config || {}),
-                skills: newConfig,
-              },
-            };
-          }
-          return s;
-        });
-        triggerAutoSave(updated);
-        return updated;
+      const updated = sections.map((s) => {
+        if (s.key === "skills") {
+          return {
+            ...s,
+            markdown: newMarkdown,
+            source: "user" as const,
+            config: {
+              ...(s.config || {}),
+              skills: newConfig,
+            },
+          };
+        }
+        return s;
       });
+      updateSectionsState(updated);
     },
-    [triggerAutoSave]
+    [sections, updateSectionsState]
   );
 
   // Handle contact section custom controls change
   const handleSocialConfigChange = useCallback(
     (newConfig: SocialConfig) => {
       const newMarkdown = generateContactMarkdown(newConfig);
-      setSections((prev) => {
-        const updated = prev.map((s) => {
-          if (s.key === "contact") {
-            return {
-              ...s,
-              markdown: newMarkdown,
-              source: "user" as const,
-              config: {
-                ...(s.config || {}),
-                contact: newConfig,
-              },
-            };
-          }
-          return s;
-        });
-        triggerAutoSave(updated);
-        return updated;
+      const updated = sections.map((s) => {
+        if (s.key === "contact") {
+          return {
+            ...s,
+            markdown: newMarkdown,
+            source: "user" as const,
+            config: {
+              ...(s.config || {}),
+              contact: newConfig,
+            },
+          };
+        }
+        return s;
       });
+      updateSectionsState(updated);
     },
-    [triggerAutoSave]
+    [sections, updateSectionsState]
   );
+
+  // Handle projects section custom controls change
+  const handleProjectsListChange = useCallback(
+    (newProjects: ProjectCardItem[]) => {
+      const newMarkdown = generateProjectsMarkdown(newProjects, login);
+      const updated = sections.map((s) => {
+        if (s.key === "projects") {
+          return {
+            ...s,
+            markdown: newMarkdown,
+            source: "user" as const,
+            config: {
+              ...(s.config || {}),
+              projects: newProjects,
+            },
+          };
+        }
+        return s;
+      });
+      updateSectionsState(updated);
+    },
+    [login, sections, updateSectionsState]
+  );
+
+  // Reset current section to its default configuration
+  const handleResetSection = useCallback(() => {
+    const updated = sections.map((s) => {
+      if (s.key === selectedKey) {
+        if (s.key === "intro") {
+          const cfg = getDefaultIntroConfig(login);
+          return {
+            ...s,
+            markdown: generateIntroMarkdown(cfg, login),
+            source: "ai" as const,
+            config: { ...(s.config || {}), intro: cfg },
+          };
+        }
+        if (s.key === "about") {
+          const cfg = getDefaultAboutConfig(login);
+          return {
+            ...s,
+            markdown: generateAboutMarkdown(cfg),
+            source: "ai" as const,
+            config: { ...(s.config || {}), about: cfg },
+          };
+        }
+        if (s.key === "skills") {
+          const cfg = getDefaultSkillsConfig();
+          return {
+            ...s,
+            markdown: generateSkillsMarkdown(cfg),
+            source: "ai" as const,
+            config: { ...(s.config || {}), skills: cfg },
+          };
+        }
+        if (s.key === "stats") {
+          const cfg = getDefaultStatsConfig(login);
+          return {
+            ...s,
+            markdown: generateStatsMarkdown(cfg, login),
+            source: "ai" as const,
+            config: { ...(s.config || {}), stats: cfg },
+          };
+        }
+        if (s.key === "contact") {
+          const cfg = getDefaultSocialConfig();
+          return {
+            ...s,
+            markdown: generateContactMarkdown(cfg),
+            source: "ai" as const,
+            config: { ...(s.config || {}), contact: cfg },
+          };
+        }
+        if (s.key === "projects") {
+          const cfg = getDefaultProjectsConfig(login);
+          return {
+            ...s,
+            markdown: generateProjectsMarkdown(cfg, login),
+            source: "ai" as const,
+            config: { ...(s.config || {}), projects: cfg },
+          };
+        }
+      }
+      return s;
+    });
+
+    updateSectionsState(updated);
+  }, [selectedKey, login, sections, updateSectionsState]);
 
   // Handle reordering sections
   const handleMoveSection = useCallback(
     (key: SectionKey, direction: "up" | "down") => {
-      setSections((prev) => {
-        const index = prev.findIndex((s) => s.key === key);
-        if (index === -1) return prev;
-        const targetIndex = direction === "up" ? index - 1 : index + 1;
-        if (targetIndex < 0 || targetIndex >= prev.length) return prev;
+      const index = sections.findIndex((s) => s.key === key);
+      if (index === -1) return;
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= sections.length) return;
 
-        const updated = [...prev];
-        const [moved] = updated.splice(index, 1);
-        updated.splice(targetIndex, 0, moved);
+      const updated = [...sections];
+      const [moved] = updated.splice(index, 1);
+      updated.splice(targetIndex, 0, moved);
 
-        const reordered = updated.map((s, idx) => ({ ...s, order: idx }));
-        triggerAutoSave(reordered);
-        return reordered;
-      });
+      const reordered = updated.map((s, idx) => ({ ...s, order: idx }));
+      updateSectionsState(reordered);
     },
-    [triggerAutoSave]
+    [sections, updateSectionsState]
   );
 
   // Regenerate single section
@@ -555,9 +742,8 @@ export default function EditorPage() {
 
       const data = await res.json();
       if (data.section) {
-        setSections((prev) =>
-          prev.map((s) => (s.key === key ? data.section : s))
-        );
+        const updated = sections.map((s) => (s.key === key ? data.section : s));
+        updateSectionsState(updated);
         setLastSavedAt(new Date());
       }
     } catch (err: unknown) {
@@ -577,10 +763,9 @@ export default function EditorPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex flex-col">
-        <Header />
-        <div className="flex-1 flex flex-col items-center justify-center gap-3 pt-16">
+        <div className="flex-1 flex flex-col items-center justify-center gap-3">
           <FiLoader className="w-6 h-6 animate-spin text-[#171815]" />
-          <span className="font-mono text-xs text-[#65665F]">
+          <span className="font-mono text-sm text-[#52534C]">
             Loading workspace draft...
           </span>
         </div>
@@ -591,15 +776,14 @@ export default function EditorPage() {
   if (error || !sections.length) {
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex flex-col">
-        <Header />
-        <div className="flex-1 flex flex-col items-center justify-center gap-4 pt-16 px-6">
-          <div className="p-4 bg-[#FEE2E2] border border-[#DC2626]/30 rounded-[8px] flex items-center gap-3 text-xs text-[#DC2626] max-w-md">
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 px-6">
+          <div className="p-4 bg-[#FEE2E2] border border-[#DC2626]/30 rounded-lg flex items-center gap-3 text-sm text-[#DC2626] max-w-md">
             <FiAlertCircle className="w-5 h-5 shrink-0" />
             <span>{error || "Draft not found"}</span>
           </div>
           <button
             onClick={() => router.push("/")}
-            className="h-9 px-4 bg-[#171815] text-[#C5F467] font-semibold text-xs rounded-[6px] hover:bg-[#31322E] transition-colors"
+            className="h-10 px-5 bg-[#171815] text-[#FAFAF8] font-semibold text-sm rounded-lg hover:bg-[#31322E] transition-colors cursor-pointer"
           >
             Return to Generator
           </button>
@@ -609,86 +793,129 @@ export default function EditorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] flex flex-col">
-      <Header />
+    <div className="h-screen overflow-hidden bg-[#FAFAF8] flex flex-col select-none">
+      {/* 1. Slim Sticky Top Bar (52px) */}
+      <EditorTopBar
+        login={login}
+        isSaving={isSaving}
+        lastSavedAt={lastSavedAt}
+        activeView={activeView}
+        onViewChange={setActiveView}
+        mobileTab={mobileTab}
+        onMobileTabChange={setMobileTab}
+        onExport={() => setIsExportOpen(true)}
+        onCopy={handleCopy}
+        copied={copied}
+      />
 
-      <main className="w-full pt-16 flex-1 flex flex-col overflow-hidden h-[calc(100vh)]">
-        {/* Top 48px Sub-Header */}
-        <EditorTopBar
-          login={login}
-          isSaving={isSaving}
-          lastSavedAt={lastSavedAt}
-          activeView={activeView}
-          onViewChange={setActiveView}
-          onExport={() => setIsExportOpen(true)}
-          onCopy={handleCopy}
-          copied={copied}
-        />
-
-        {/* System State Notice (if throttle/congestion occurred during single-section regen) */}
-        {activeSystemState && (
-          <div className="bg-[#141611] px-4 py-3 border-b border-[#2B2F23] relative z-20">
-            <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-              <div className="flex-1">
-                <SystemStateBanner
-                  state={activeSystemState}
-                  retryAfterSeconds={systemStatePayload.retryAfterSeconds}
-                  resetsAtFormatted={systemStatePayload.resetsAtFormatted}
-                  onOpenByok={() => setIsByokOpen(true)}
-                  onDismiss={() => setActiveSystemState(null)}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveSystemState(null)}
-                className="text-[#7A7E72] hover:text-white p-1 rounded hover:bg-white/5 transition-colors shrink-0"
-                title="Dismiss"
-              >
-                <FiX className="w-5 h-5" />
-              </button>
+      {/* System State Notice (if throttle/congestion occurred during single-section regen) */}
+      {activeSystemState && (
+        <div className="bg-[#141611] px-4 py-3 border-b border-[#2B2F23] relative z-20 shrink-0">
+          <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+            <div className="flex-1">
+              <SystemStateBanner
+                state={activeSystemState}
+                retryAfterSeconds={systemStatePayload.retryAfterSeconds}
+                resetsAtFormatted={systemStatePayload.resetsAtFormatted}
+                onOpenByok={() => setIsByokOpen(true)}
+                onDismiss={() => setActiveSystemState(null)}
+              />
             </div>
+            <button
+              type="button"
+              onClick={() => setActiveSystemState(null)}
+              className="text-[#7A7E72] hover:text-white p-1 rounded hover:bg-white/5 transition-colors shrink-0 cursor-pointer"
+              title="Dismiss"
+            >
+              <FiX className="w-5 h-5" />
+            </button>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* 3-Column Workspace Canvas */}
-        <div className="flex-1 flex overflow-hidden w-full">
-          {/* Column 1: Sections Manager */}
+      {/* 2. 3-Pane Workspace: Zero page scrolling, each pane scrolls independently */}
+      <main className="flex-1 min-h-0 flex overflow-hidden relative w-full pb-14 sm:pb-0">
+        {/* Pane 1: Sections List (260px fixed width on desktop, full width on mobile when selected) */}
+        <div
+          className={`h-full shrink-0 ${
+            mobileTab === "sections" ? "flex flex-1 w-full" : "hidden"
+          } lg:flex lg:w-[260px] lg:min-w-[260px] lg:max-w-[260px]`}
+        >
           <SectionsManager
             sections={sections}
             selectedKey={selectedKey}
-            onSelectSection={setSelectedKey}
+            onSelectSection={handleSelectSection}
             onToggleEnabled={handleToggleEnabled}
-            onRegenerateSection={handleRegenerateSection}
-            isRegenerating={isRegenerating}
             onMoveSection={handleMoveSection}
-            introConfig={introConfig}
-            onIntroConfigChange={handleIntroConfigChange}
-            aboutConfig={aboutConfig}
-            onAboutConfigChange={handleAboutConfigChange}
-            statsConfig={statsConfig}
-            onStatsConfigChange={handleStatsConfigChange}
-            techStackConfig={techStackConfig}
-            onTechStackConfigChange={handleTechStackConfigChange}
-            socialConfig={socialConfig}
-            onSocialConfigChange={handleSocialConfigChange}
-            username={login}
           />
+        </div>
 
-          {/* Column 2: Code Editor Pane */}
-          {(activeView === "split" || activeView === "editor") && (
-            <MarkdownEditor
-              value={currentSection?.markdown || ""}
-              onChange={handleEditorChange}
-              sectionTitle={currentSection?.key}
+        {/* Pane 2: Editor Pane (Visual Form / Markdown raw editor) */}
+        <div
+          className={`h-full min-w-0 ${
+            mobileTab === "editor" ? "flex flex-1 w-full" : "hidden"
+          } ${
+            activeView === "split" || activeView === "editor"
+              ? "lg:flex lg:flex-1"
+              : "lg:hidden"
+          }`}
+        >
+          {currentSection && (
+            <EditorPane
+              currentSection={currentSection}
+              markdown={currentSection.markdown || ""}
+              onMarkdownChange={handleEditorChange}
+              introConfig={introConfig}
+              onIntroConfigChange={handleIntroConfigChange}
+              aboutConfig={aboutConfig}
+              onAboutConfigChange={handleAboutConfigChange}
+              techStackConfig={techStackConfig}
+              onTechStackConfigChange={handleTechStackConfigChange}
+              statsConfig={statsConfig}
+              onStatsConfigChange={handleStatsConfigChange}
+              socialConfig={socialConfig}
+              onSocialConfigChange={handleSocialConfigChange}
+              projectsList={projectsList}
+              onProjectsListChange={handleProjectsListChange}
+              canUndo={canUndo}
+              canRedo={canRedo}
+              onUndo={handleUndo}
+              onRedo={handleRedo}
+              onResetSection={handleResetSection}
+              onRegenerateSection={handleRegenerateSection}
+              isRegenerating={isRegenerating}
+              currentTone={tone}
+              username={login}
             />
           )}
+        </div>
 
-          {/* Column 3: Live Preview Pane */}
-          {(activeView === "split" || activeView === "preview") && (
-            <MarkdownPreview markdown={fullMarkdown} username={login} />
-          )}
+        {/* Pane 3: Live Preview Pane */}
+        <div
+          className={`h-full min-w-0 ${
+            mobileTab === "preview" ? "flex flex-1 w-full" : "hidden"
+          } ${
+            activeView === "split" || activeView === "preview"
+              ? "lg:flex lg:flex-1"
+              : "lg:hidden"
+          }`}
+        >
+          <MarkdownPreview
+            markdown={fullMarkdown}
+            username={login}
+            selectedKey={selectedKey}
+            onSelectSection={handleSelectSection}
+          />
         </div>
       </main>
+
+      {/* 3. Mobile Bottom Tab Bar (< 640px) */}
+      <MobileBottomNav
+        activeTab={mobileTab}
+        onTabChange={setMobileTab}
+        activeSectionsCount={sections.filter((s) => s.enabled).length}
+        totalSectionsCount={sections.length}
+      />
 
       {/* Export Modal Dialog */}
       <ExportDialog

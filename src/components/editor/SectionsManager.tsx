@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -13,37 +12,14 @@ import {
 } from "react-icons/fi";
 import { LuGripVertical } from "react-icons/lu";
 import { SectionItem } from "@/lib/db/collections";
-import { SectionKey, Tone } from "@/lib/config";
-import { IntroConfig, getDefaultIntroConfig } from "@/lib/introConfig";
-import { IntroSectionControls } from "./IntroSectionControls";
-import { AboutConfig, DEFAULT_ABOUT_CONFIG, getDefaultAboutConfig } from "@/lib/aboutConfig";
-import { AboutSectionControls } from "./AboutSectionControls";
-import { StatsConfig, getDefaultStatsConfig } from "@/lib/statsConfig";
-import { StatsSectionControls } from "./StatsSectionControls";
-import { TechStackConfig, getDefaultSkillsConfig } from "@/lib/techStackConfig";
-import { TechStackSectionControls } from "./TechStackSectionControls";
-import { SocialConfig, getDefaultSocialConfig } from "@/lib/socialConfig";
-import { ConnectSectionControls } from "./ConnectSectionControls";
+import { SectionKey } from "@/lib/config";
 
 interface SectionsManagerProps {
   sections: SectionItem[];
   selectedKey: SectionKey;
   onSelectSection: (key: SectionKey) => void;
   onToggleEnabled: (key: SectionKey) => void;
-  onRegenerateSection?: (key: SectionKey, tone: Tone) => Promise<void>;
-  isRegenerating?: boolean;
   onMoveSection?: (key: SectionKey, direction: "up" | "down") => void;
-  introConfig?: IntroConfig;
-  onIntroConfigChange?: (updated: IntroConfig) => void;
-  aboutConfig?: AboutConfig;
-  onAboutConfigChange?: (updated: AboutConfig) => void;
-  statsConfig?: StatsConfig;
-  onStatsConfigChange?: (updated: StatsConfig) => void;
-  techStackConfig?: TechStackConfig;
-  onTechStackConfigChange?: (updated: TechStackConfig) => void;
-  socialConfig?: SocialConfig;
-  onSocialConfigChange?: (updated: SocialConfig) => void;
-  username?: string;
 }
 
 const SECTION_LABELS: Record<SectionKey, string> = {
@@ -69,205 +45,126 @@ export function SectionsManager({
   selectedKey,
   onSelectSection,
   onToggleEnabled,
-  onRegenerateSection,
-  isRegenerating,
   onMoveSection,
-  introConfig,
-  onIntroConfigChange,
-  aboutConfig,
-  onAboutConfigChange,
-  statsConfig,
-  onStatsConfigChange,
-  techStackConfig,
-  onTechStackConfigChange,
-  socialConfig,
-  onSocialConfigChange,
-  username = "",
 }: SectionsManagerProps) {
   const activeCount = sections.filter((s) => s.enabled).length;
 
   return (
-    <div className="w-[300px] sm:w-[320px] shrink-0 bg-surface border-r border-border flex flex-col justify-between select-none h-full overflow-hidden">
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        {/* Header */}
-        <div className="h-10 px-3.5 flex items-center justify-between border-b border-border bg-surface-raised/30 shrink-0">
-          <span className="font-mono text-eyebrow font-medium text-text-muted tracking-[0.04em] uppercase">
-            SECTIONS
-          </span>
-          <span className="font-mono text-meta text-text-secondary">
-            {activeCount}/{sections.length} ACTIVE
-          </span>
-        </div>
+    <aside className="w-[260px] min-w-[260px] max-w-[260px] shrink-0 bg-[#FBFBFA] border-r border-[#E2E3DC] flex flex-col select-none h-full overflow-hidden">
+      {/* Header: Title and Active Count shown once */}
+      <div className="h-12 px-4 flex items-center justify-between border-b border-[#E2E3DC] bg-[#FAFAF8] shrink-0">
+        <span className="text-xs font-mono font-semibold text-[#52534C] uppercase tracking-wider">
+          Sections
+        </span>
+        <span className="text-xs font-mono font-medium text-[#171815] bg-[#F0F1EA] px-2 py-0.5 rounded-md border border-[#E2E3DC]">
+          {activeCount} of {sections.length} active
+        </span>
+      </div>
 
-        {/* Section Rows */}
-        <div className="flex flex-col py-2 gap-1.5 px-2">
-          {sections.map((section, idx) => {
-            const isSelected = section.key === selectedKey;
-            const label = SECTION_LABELS[section.key as SectionKey] || section.key;
-            const SectionIcon = SECTION_ICONS[section.key as SectionKey] || FiFolder;
-            const hasControls =
-              (section.key === "intro" && !!onIntroConfigChange) ||
-              (section.key === "about" && !!onAboutConfigChange) ||
-              (section.key === "skills" && !!onTechStackConfigChange) ||
-              (section.key === "stats" && !!onStatsConfigChange) ||
-              (section.key === "contact" && !!onSocialConfigChange);
+      {/* Single Scrollable Section List (No nested scrollbars) */}
+      <div className="flex-1 overflow-y-auto thin-scrollbar p-2 flex flex-col gap-1">
+        {sections.map((section, idx) => {
+          const isSelected = section.key === selectedKey;
+          const label = SECTION_LABELS[section.key as SectionKey] || section.key;
+          const SectionIcon = SECTION_ICONS[section.key as SectionKey] || FiFolder;
+          const isFirst = idx === 0;
+          const isLast = idx === sections.length - 1;
 
-            return (
-              <div
-                key={section.key}
-                className={`rounded-md transition-all ${isSelected
-                    ? "bg-surface-raised border border-border shadow-xs"
-                    : "hover:bg-surface-raised/50 border border-transparent"
-                  }`}
-              >
-                {/* Row Header */}
-                <div
-                  onClick={() => onSelectSection(section.key as SectionKey)}
-                  className="p-2.5 flex items-center justify-between cursor-pointer relative"
-                >
-                  {/* Left Active Indicator Bar */}
-                  {isSelected && (
-                    <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-accent rounded-r"></div>
-                  )}
+          return (
+            <div
+              key={section.key}
+              onClick={() => onSelectSection(section.key as SectionKey)}
+              className={`h-11 px-2.5 flex items-center justify-between rounded-lg transition-all cursor-pointer relative border ${
+                isSelected
+                  ? "bg-[#EAEBE4] border-[#D6D7CE] text-[#171815] font-medium shadow-xs"
+                  : "bg-transparent hover:bg-[#F0F1EA] border-transparent text-[#52534C] hover:text-[#171815]"
+              }`}
+            >
+              {/* Left Accent Bar on Selected Row */}
+              {isSelected && (
+                <div className="absolute left-0 top-2 bottom-2 w-[3px] bg-accent rounded-r" />
+              )}
 
-                  <div className="flex items-center gap-1.5 pl-1 overflow-hidden">
-                    {/* Reorder Arrows */}
-                    {onMoveSection ? (
-                      <div className="flex flex-col -space-y-1 mr-0.5" onClick={(e) => e.stopPropagation()}>
-                        <button
-                          type="button"
-                          disabled={idx === 0}
-                          onClick={() => onMoveSection(section.key as SectionKey, "up")}
-                          className="text-text-muted hover:text-text-primary disabled:opacity-20 cursor-pointer p-0.5"
-                          title="Move section up"
-                        >
-                          <FiArrowUp className="w-2.5 h-2.5" />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={idx === sections.length - 1}
-                          onClick={() => onMoveSection(section.key as SectionKey, "down")}
-                          className="text-text-muted hover:text-text-primary disabled:opacity-20 cursor-pointer p-0.5"
-                          title="Move section down"
-                        >
-                          <FiArrowDown className="w-2.5 h-2.5" />
-                        </button>
-                      </div>
-                    ) : (
-                      <LuGripVertical className="w-3.5 h-3.5 text-text-muted cursor-grab shrink-0" />
-                    )}
-
-                    <SectionIcon
-                      className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-text-primary" : "text-text-secondary"
-                        }`}
-                    />
-                    <span
-                      className={`text-nav truncate ${isSelected
-                          ? "font-medium text-text-primary"
-                          : section.enabled
-                            ? "text-text-primary"
-                            : "text-text-muted line-through"
-                        }`}
-                    >
-                      {label}
-                    </span>
-                    {section.source === "user" && (
-                      <span className="font-mono text-[9px] bg-surface text-text-secondary px-1 py-0.2 rounded-sm border border-border font-medium shrink-0">
-                        Edited
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Toggle Switch */}
+              {/* Row Left: Reorder, Icon, Label, Edited Dot */}
+              <div className="flex items-center gap-2 pl-1 overflow-hidden min-w-0">
+                {/* Reorder Arrows */}
+                {onMoveSection ? (
                   <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleEnabled(section.key as SectionKey);
-                    }}
-                    className={`w-7 h-4 rounded-full p-[2px] transition-colors cursor-pointer shrink-0 flex items-center ${section.enabled ? "bg-text-primary justify-end" : "bg-border justify-start"
-                      }`}
+                    className="flex flex-col -space-y-1 mr-0.5 text-[#52534C]"
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <div className="w-3 h-3 bg-white rounded-full shadow-xs"></div>
+                    <button
+                      type="button"
+                      disabled={isFirst}
+                      onClick={() => onMoveSection(section.key as SectionKey, "up")}
+                      className="p-0.5 hover:text-[#171815] disabled:opacity-20 cursor-pointer disabled:cursor-default"
+                      title="Move section up"
+                    >
+                      <FiArrowUp className="w-2.5 h-2.5" />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isLast}
+                      onClick={() => onMoveSection(section.key as SectionKey, "down")}
+                      className="p-0.5 hover:text-[#171815] disabled:opacity-20 cursor-pointer disabled:cursor-default"
+                      title="Move section down"
+                    >
+                      <FiArrowDown className="w-2.5 h-2.5" />
+                    </button>
                   </div>
-                </div>
+                ) : (
+                  <LuGripVertical className="w-3.5 h-3.5 text-[#91928A] cursor-grab shrink-0" />
+                )}
 
-                {/* Selected Action Drawer */}
-                {isSelected && hasControls && (
-                  <div className="px-3 pb-3 pt-1 border-t border-border/50 flex flex-col gap-2">
-                    {/* Dedicated Intro & Bio Controls (Profile Photo, Title Animation, Color) */}
-                    {section.key === "intro" && onIntroConfigChange && (
-                      <div className="pt-1">
-                        <IntroSectionControls
-                          config={introConfig || getDefaultIntroConfig(username)}
-                          onChange={onIntroConfigChange}
-                          defaultUsername={username}
-                        />
-                      </div>
-                    )}
+                {/* Section Icon */}
+                <SectionIcon
+                  className={`w-4 h-4 shrink-0 transition-colors ${
+                    isSelected ? "text-[#171815]" : "text-[#52534C]"
+                  }`}
+                />
 
-                    {/* Dedicated About Me Controls (Hacker, Playful, Professional, Minimal) */}
-                    {section.key === "about" && onAboutConfigChange && (
-                      <div className="pt-1">
-                        <AboutSectionControls
-                          config={aboutConfig || getDefaultAboutConfig(username)}
-                          onChange={onAboutConfigChange}
-                        />
-                      </div>
-                    )}
+                {/* Section Name */}
+                <span
+                  className={`text-sm truncate transition-colors ${
+                    isSelected
+                      ? "font-semibold text-[#171815]"
+                      : section.enabled
+                      ? "text-[#171815]"
+                      : "text-[#91928A] line-through"
+                  }`}
+                >
+                  {label}
+                </span>
 
-                    {/* Dedicated Tech Stack & Badges Controls */}
-                    {section.key === "skills" && onTechStackConfigChange && (
-                      <div className="pt-1">
-                        <TechStackSectionControls
-                          config={techStackConfig || getDefaultSkillsConfig()}
-                          onChange={onTechStackConfigChange}
-                        />
-                      </div>
-                    )}
-
-                    {/* Dedicated GitHub Analytics Controls (Stats, Languages, Streak, Theme) */}
-                    {section.key === "stats" && onStatsConfigChange && (
-                      <div className="pt-1">
-                        <StatsSectionControls
-                          config={statsConfig || getDefaultStatsConfig(username)}
-                          onChange={onStatsConfigChange}
-                          username={username}
-                        />
-                      </div>
-                    )}
-
-                    {/* Dedicated Connect & Social Controls */}
-                    {section.key === "contact" && onSocialConfigChange && (
-                      <div className="pt-1">
-                        <ConnectSectionControls
-                          config={socialConfig || getDefaultSocialConfig()}
-                          onChange={onSocialConfigChange}
-                        />
-                      </div>
-                    )}
-                  </div>
+                {/* "Edited" Small Indicator Dot */}
+                {section.source === "user" && (
+                  <span
+                    className="w-2 h-2 rounded-full bg-accent ring-1 ring-[#171815]/20 shrink-0"
+                    title="Section manually edited"
+                  />
                 )}
               </div>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* Bottom Progress Bar */}
-      <div className="p-3.5 bg-surface-raised/30 border-t border-border shrink-0">
-        <div className="flex items-center justify-between text-meta text-text-secondary font-mono">
-          <span>Active Sections</span>
-          <span className="text-text-primary font-medium">
-            {activeCount} / {sections.length}
-          </span>
-        </div>
-        <div className="w-full bg-border h-1 rounded-full mt-2 overflow-hidden">
-          <div
-            className="bg-accent h-full transition-all duration-300"
-            style={{ width: `${(activeCount / Math.max(1, sections.length)) * 100}%` }}
-          ></div>
-        </div>
+              {/* Row Right: Toggle Switch */}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={section.enabled}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleEnabled(section.key as SectionKey);
+                }}
+                className={`w-8 h-4.5 rounded-full p-[2px] transition-colors cursor-pointer shrink-0 flex items-center ml-2 ${
+                  section.enabled ? "bg-[#171815] justify-end" : "bg-[#DEDFD8] justify-start"
+                }`}
+                title={section.enabled ? "Disable section" : "Enable section"}
+              >
+                <div className="w-3.5 h-3.5 bg-white rounded-full shadow-xs" />
+              </button>
+            </div>
+          );
+        })}
       </div>
-    </div>
+    </aside>
   );
 }

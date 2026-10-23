@@ -3,9 +3,7 @@ import { SectionKey } from "@/lib/config";
 import {
   IntroSection,
   AboutSection,
-  SkillsSection,
   ProjectsSection,
-  ContactSection,
 } from "../ai/schema";
 import { THEMES, type Theme, type ThemeId } from "./themes";
 import { StatsConfig, generateStatsMarkdown } from "../statsConfig";
@@ -59,25 +57,7 @@ export function resolveTheme(theme: string): ThemeId {
   return THEME_ALIASES[theme] ?? "violet";
 }
 
-// skillicons.dev ids. Spot-check against https://skillicons.dev before shipping.
-const ICONS: Record<string, string> = {
-  javascript: "js", typescript: "ts", python: "py", java: "java", "c++": "cpp",
-  "c#": "cs", c: "c", go: "go", golang: "go", rust: "rust", php: "php", ruby: "ruby",
-  kotlin: "kotlin", swift: "swift", dart: "dart", html: "html", css: "css",
-  shell: "bash", bash: "bash", powershell: "powershell", vue: "vue",
-  react: "react", nextjs: "nextjs", nodejs: "nodejs", node: "nodejs",
-  express: "express", mongodb: "mongodb", mysql: "mysql", postgresql: "postgres",
-  postgres: "postgres", docker: "docker", dockerfile: "docker",
-  tailwindcss: "tailwind", tailwind: "tailwind", firebase: "firebase",
-  flutter: "flutter", git: "git", github: "github", figma: "figma",
-  linux: "linux", aws: "aws", azure: "azure", gcp: "gcp",
-  kubernetes: "kubernetes", terraform: "terraform", redis: "redis",
-  graphql: "graphql", django: "django", flask: "flask", fastapi: "fastapi",
-  spring: "spring", svelte: "svelte", angular: "angular", laravel: "laravel",
-  jupyternotebook: "jupyter", r: "r", scala: "scala", lua: "lua",
-  vite: "vite", sass: "sass", scss: "sass", nginx: "nginx", vercel: "vercel",
-  netlify: "netlify",
-};
+
 
 // ---------- helpers ----------
 
@@ -100,8 +80,6 @@ function httpUrl(u: string | null | undefined): string | undefined {
 }
 
 const emailOk = (e?: string) => (e && /^[^\s@<>"]+@[^\s@<>"]+$/.test(e) ? e : undefined);
-
-const iconId = (item: string) => ICONS[item.toLowerCase().replace(/[\s.]+/g, "")];
 
 const shield = (item: string, accent: string) => {
   const label = encodeURIComponent(item.replace(/-/g, "--").replace(/_/g, "__"));
@@ -223,8 +201,9 @@ function renderSkills(data: unknown, c: Ctx): string {
 
   // If data has legacy groups or facts has topLanguages, map them to catalog IDs
   const legacyItems: string[] = [];
-  if (data && typeof data === "object" && "groups" in data && Array.isArray((data as any).groups)) {
-    for (const g of (data as any).groups) {
+  const maybeLegacy = data as { groups?: { items?: string[] }[] } | null;
+  if (maybeLegacy && typeof maybeLegacy === "object" && "groups" in maybeLegacy && Array.isArray(maybeLegacy.groups)) {
+    for (const g of maybeLegacy.groups) {
       if (Array.isArray(g.items)) {
         legacyItems.push(...g.items);
       }

@@ -24,11 +24,11 @@ interface AboutSectionControlsProps {
   onChange: (updated: AboutConfig) => void;
 }
 
-const STYLES: { id: AboutStyle; label: string }[] = [
-  { id: "hacker", label: "Hacker" },
-  { id: "playful", label: "Playful" },
-  { id: "professional", label: "Prof." },
-  { id: "minimal", label: "Minimal" },
+const STYLES: { id: AboutStyle; label: string; desc: string }[] = [
+  { id: "hacker", label: "Hacker", desc: "Console & code symbols" },
+  { id: "playful", label: "Playful", desc: "Dynamic badges & emojis" },
+  { id: "professional", label: "Professional", desc: "Clean markdown lists" },
+  { id: "minimal", label: "Minimal", desc: "Distraction-free text" },
 ];
 
 export function AboutSectionControls({
@@ -50,10 +50,8 @@ export function AboutSectionControls({
 
   // Style change handler: updates style, and handles emoji default rule
   const handleStyleChange = (newStyle: AboutStyle) => {
-    // Rule: Emoji toggle default on; forced off for Professional and Minimal unless the user turns it on
     let nextEmoji = config.emoji;
     if (newStyle === "professional" || newStyle === "minimal") {
-      // If moving to professional/minimal and emoji was default on, force off unless manually overridden
       nextEmoji = false;
     } else if (newStyle === "hacker" || newStyle === "playful") {
       nextEmoji = true;
@@ -102,13 +100,20 @@ export function AboutSectionControls({
   };
 
   return (
-    <div className="flex flex-col gap-3 py-1 text-text-primary text-xs">
+    <div className="flex flex-col gap-4 p-5 bg-[#FFFFFF] border border-[#E2E3DC] rounded-lg text-sm text-[#171815]">
       {/* ---------------- 1. STYLE SELECTOR ---------------- */}
-      <div className="bg-surface-raised border border-border rounded-md p-2.5 flex flex-col gap-2 shadow-xs">
-        <label className="font-mono text-eyebrow text-text-secondary uppercase">
-          Profile Style
-        </label>
-        <div className="grid grid-cols-4 gap-1 p-0.5 bg-surface border border-border rounded-md">
+      <div className="bg-[#FBFBFA] border border-[#E2E3DC] rounded-lg p-4 flex flex-col gap-3">
+        <div>
+          <h4 className="text-sm font-semibold text-[#171815]">
+            Profile Presentation Style
+          </h4>
+          <p className="text-xs text-[#52534C] mt-0.5">
+            Choose how your introductory sentences, icons, and bullets are formatted.
+          </p>
+        </div>
+
+        {/* 4 Segmented options */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-1 bg-[#F0F1EA] border border-[#E2E3DC] rounded-lg">
           {STYLES.map(({ id, label }) => {
             const isSelected = config.style === id;
             return (
@@ -116,10 +121,10 @@ export function AboutSectionControls({
                 key={id}
                 type="button"
                 onClick={() => handleStyleChange(id)}
-                className={`py-1 text-[11px] font-mono rounded transition-colors text-center cursor-pointer ${
+                className={`h-9 px-3 text-xs font-medium rounded-md transition-all text-center cursor-pointer ${
                   isSelected
-                    ? "bg-accent text-[#0D0E0C] font-semibold shadow-xs"
-                    : "text-text-secondary hover:text-text-primary"
+                    ? "bg-[#171815] text-[#FAFAF8] font-semibold shadow-xs"
+                    : "text-[#52534C] hover:text-[#171815]"
                 }`}
               >
                 {label}
@@ -131,32 +136,35 @@ export function AboutSectionControls({
         {/* Emoji Toggle */}
         <div
           onClick={() => update({ emoji: !config.emoji })}
-          className="flex items-center justify-between cursor-pointer select-none pt-1"
+          className="flex items-center justify-between cursor-pointer select-none pt-2 border-t border-[#E2E3DC]"
         >
-          <div className="flex items-center gap-1.5 text-meta text-text-secondary">
-            <FiSmile className="w-3.5 h-3.5" />
-            <span>Enable Emojis</span>
+          <div className="flex items-center gap-2 text-sm text-[#171815] font-medium">
+            <FiSmile className="w-4 h-4 text-[#52534C]" />
+            <span>Enable Emojis in Bullets</span>
           </div>
-          <div
-            className={`w-7 h-4 rounded-full p-[2px] transition-colors cursor-pointer shrink-0 flex items-center ${
-              config.emoji ? "bg-text-primary justify-end" : "bg-border justify-start"
+          <button
+            type="button"
+            role="switch"
+            aria-checked={config.emoji}
+            className={`w-8 h-4.5 rounded-full p-[2px] transition-colors cursor-pointer shrink-0 flex items-center ${
+              config.emoji ? "bg-[#171815] justify-end" : "bg-[#DEDFD8] justify-start"
             }`}
           >
-            <div className="w-3 h-3 bg-white rounded-full shadow-xs"></div>
-          </div>
+            <div className="w-3.5 h-3.5 bg-white rounded-full shadow-xs"></div>
+          </button>
         </div>
       </div>
 
       {/* ---------------- 2. BASIC PROFILE INFO ---------------- */}
-      <div className="bg-surface-raised border border-border rounded-md p-2.5 flex flex-col gap-2 shadow-xs">
-        <div className="flex items-center gap-1.5 font-medium text-text-primary border-b border-border/50 pb-1.5">
-          <FiUser className="w-3.5 h-3.5 text-text-secondary" />
-          <span className="text-nav">Identity &amp; Role</span>
+      <div className="bg-[#FBFBFA] border border-[#E2E3DC] rounded-lg p-4 flex flex-col gap-3.5">
+        <div className="flex items-center gap-2 border-b border-[#E2E3DC] pb-2">
+          <FiUser className="w-4 h-4 text-[#171815]" />
+          <h4 className="text-sm font-semibold text-[#171815]">Identity &amp; Role</h4>
         </div>
 
         {/* Full Name */}
-        <div className="flex flex-col gap-1">
-          <label className="font-mono text-eyebrow text-text-secondary uppercase">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-[#171815]">
             Full Name
           </label>
           <input
@@ -164,205 +172,215 @@ export function AboutSectionControls({
             value={config.name}
             onChange={(e) => update({ name: e.target.value })}
             placeholder="Your Name"
-            className="bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+            className="w-full h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
           />
         </div>
 
         {/* Role */}
-        <div className="flex flex-col gap-1">
-          <label className="font-mono text-eyebrow text-text-secondary uppercase">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-[#171815]">
             Headline / Role
           </label>
           <input
             type="text"
             value={config.role}
             onChange={(e) => update({ role: e.target.value })}
-            placeholder="Your Role | Your Specialty"
-            className="bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+            placeholder="Full Stack Engineer | React & Node.js"
+            className="w-full h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
           />
         </div>
 
         {/* Education */}
-        <div className="flex flex-col gap-1">
-          <label className="font-mono text-eyebrow text-text-secondary uppercase">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-[#171815]">
             Education
           </label>
           <input
             type="text"
             value={config.education}
             onChange={(e) => update({ education: e.target.value })}
-            placeholder="Your Degree @ Your University"
-            className="bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+            placeholder="B.Sc. in Computer Science @ University"
+            className="w-full h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
           />
         </div>
 
         {/* Freelance / Credentials */}
-        <div className="flex flex-col gap-1">
-          <label className="font-mono text-eyebrow text-text-secondary uppercase">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-[#171815]">
             Freelance / Status Badge
           </label>
           <input
             type="text"
             value={config.freelance}
             onChange={(e) => update({ freelance: e.target.value })}
-            placeholder="Your Freelance / Work Status"
-            className="bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+            placeholder="Open for Freelance & Contract Projects"
+            className="w-full h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
           />
         </div>
       </div>
 
       {/* ---------------- 3. TECH STACK (TAG INPUT) ---------------- */}
-      <div className="bg-surface-raised border border-border rounded-md p-2.5 flex flex-col gap-2 shadow-xs">
-        <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
-          <div className="flex items-center gap-1.5 font-medium text-text-primary">
-            <FiCode className="w-3.5 h-3.5 text-text-secondary" />
-            <span className="text-nav">Tech Stack</span>
+      <div className="bg-[#FBFBFA] border border-[#E2E3DC] rounded-lg p-4 flex flex-col gap-3">
+        <div className="flex items-center justify-between border-b border-[#E2E3DC] pb-2">
+          <div className="flex items-center gap-2">
+            <FiCode className="w-4 h-4 text-[#171815]" />
+            <h4 className="text-sm font-semibold text-[#171815]">Highlighted Tech Skills</h4>
           </div>
-          <span className="font-mono text-meta text-text-muted">
-            {config.stack.length}
+          <span className="font-mono text-xs text-[#52534C] bg-[#F0F1EA] px-2 py-0.5 rounded border border-[#E2E3DC]">
+            {config.stack.length} skills
           </span>
         </div>
 
         {/* Tag chips */}
-        <div className="flex flex-wrap gap-1 max-h-[120px] overflow-y-auto">
-          {config.stack.map((item) => (
-            <span
-              key={item}
-              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface border border-border text-[11px] font-mono text-text-primary group"
-            >
-              <span>{item}</span>
-              <button
-                type="button"
-                onClick={() => handleRemoveStackTag(item)}
-                className="text-text-muted hover:text-status-error cursor-pointer"
-                title={`Remove ${item}`}
+        <div className="flex flex-wrap gap-2 max-h-[140px] overflow-y-auto thin-scrollbar p-2.5 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg">
+          {config.stack.length === 0 ? (
+            <span className="text-xs text-[#91928A] italic">No skills added yet. Type below and press Enter.</span>
+          ) : (
+            config.stack.map((item) => (
+              <span
+                key={item}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F0F1EA] border border-[#DEDFD8] text-xs font-medium text-[#171815] group"
               >
-                <FiX className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
+                <span>{item}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveStackTag(item)}
+                  className="text-[#91928A] hover:text-[#DC2626] cursor-pointer transition-colors"
+                  title={`Remove ${item}`}
+                >
+                  <FiX className="w-3.5 h-3.5" />
+                </button>
+              </span>
+            ))
+          )}
         </div>
 
         {/* Add Tag Input */}
-        <div className="flex items-center gap-1.5 mt-1">
+        <div className="flex items-center gap-2">
           <input
             type="text"
             value={newStackTag}
             onChange={(e) => setNewStackTag(e.target.value)}
             onKeyDown={handleStackKeyDown}
-            placeholder="Add technology (e.g. Next.js)..."
-            className="flex-1 bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+            placeholder="Add technology (e.g. Next.js, GraphQL)..."
+            className="flex-1 h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
           />
           <button
             type="button"
             onClick={handleAddStackTag}
-            className="p-1.5 bg-surface border border-border hover:border-accent rounded text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-            title="Add tech"
+            className="h-10 px-4 bg-[#171815] hover:bg-[#2A2B27] text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+            title="Add technology"
           >
-            <FiPlus className="w-3.5 h-3.5" />
+            <FiPlus className="w-4 h-4" />
+            <span>Add</span>
           </button>
         </div>
       </div>
 
       {/* ---------------- 4. FOCUS AREAS (TAG INPUT) ---------------- */}
-      <div className="bg-surface-raised border border-border rounded-md p-2.5 flex flex-col gap-2 shadow-xs">
-        <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
-          <div className="flex items-center gap-1.5 font-medium text-text-primary">
-            <FiTarget className="w-3.5 h-3.5 text-text-secondary" />
-            <span className="text-nav">Focus Areas</span>
+      <div className="bg-[#FBFBFA] border border-[#E2E3DC] rounded-lg p-4 flex flex-col gap-3">
+        <div className="flex items-center justify-between border-b border-[#E2E3DC] pb-2">
+          <div className="flex items-center gap-2">
+            <FiTarget className="w-4 h-4 text-[#171815]" />
+            <h4 className="text-sm font-semibold text-[#171815]">Focus &amp; Specialization Areas</h4>
           </div>
-          <span className="font-mono text-meta text-text-muted">
-            {config.focus.length}
+          <span className="font-mono text-xs text-[#52534C] bg-[#F0F1EA] px-2 py-0.5 rounded border border-[#E2E3DC]">
+            {config.focus.length} areas
           </span>
         </div>
 
         {/* Tag chips */}
-        <div className="flex flex-wrap gap-1 max-h-[120px] overflow-y-auto">
-          {config.focus.map((item) => (
-            <span
-              key={item}
-              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface border border-border text-[11px] font-mono text-text-primary group"
-            >
-              <span>{item}</span>
-              <button
-                type="button"
-                onClick={() => handleRemoveFocusTag(item)}
-                className="text-text-muted hover:text-status-error cursor-pointer"
-                title={`Remove ${item}`}
+        <div className="flex flex-wrap gap-2 max-h-[140px] overflow-y-auto thin-scrollbar p-2.5 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg">
+          {config.focus.length === 0 ? (
+            <span className="text-xs text-[#91928A] italic">No focus areas added yet. Type below and press Enter.</span>
+          ) : (
+            config.focus.map((item) => (
+              <span
+                key={item}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F0F1EA] border border-[#DEDFD8] text-xs font-medium text-[#171815] group"
               >
-                <FiX className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
+                <span>{item}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFocusTag(item)}
+                  className="text-[#91928A] hover:text-[#DC2626] cursor-pointer transition-colors"
+                  title={`Remove ${item}`}
+                >
+                  <FiX className="w-3.5 h-3.5" />
+                </button>
+              </span>
+            ))
+          )}
         </div>
 
         {/* Add Focus Input */}
-        <div className="flex items-center gap-1.5 mt-1">
+        <div className="flex items-center gap-2">
           <input
             type="text"
             value={newFocusTag}
             onChange={(e) => setNewFocusTag(e.target.value)}
             onKeyDown={handleFocusKeyDown}
-            placeholder="Add focus (e.g. AI Engineer)..."
-            className="flex-1 bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+            placeholder="Add specialization (e.g. Distributed Systems, UI/UX)..."
+            className="flex-1 h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
           />
           <button
             type="button"
             onClick={handleAddFocusTag}
-            className="p-1.5 bg-surface border border-border hover:border-accent rounded text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-            title="Add focus"
+            className="h-10 px-4 bg-[#171815] hover:bg-[#2A2B27] text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+            title="Add focus area"
           >
-            <FiPlus className="w-3.5 h-3.5" />
+            <FiPlus className="w-4 h-4" />
+            <span>Add</span>
           </button>
         </div>
       </div>
 
       {/* ---------------- 5. STATUS & LEARNING ---------------- */}
-      <div className="bg-surface-raised border border-border rounded-md p-2.5 flex flex-col gap-2 shadow-xs">
-        <div className="flex items-center gap-1.5 font-medium text-text-primary border-b border-border/50 pb-1.5">
-          <FiBookOpen className="w-3.5 h-3.5 text-text-secondary" />
-          <span className="text-nav">Learning &amp; Availability</span>
+      <div className="bg-[#FBFBFA] border border-[#E2E3DC] rounded-lg p-4 flex flex-col gap-3.5">
+        <div className="flex items-center gap-2 border-b border-[#E2E3DC] pb-2">
+          <FiBookOpen className="w-4 h-4 text-[#171815]" />
+          <h4 className="text-sm font-semibold text-[#171815]">Learning &amp; Availability</h4>
         </div>
 
         {/* Currently Learning */}
-        <div className="flex flex-col gap-1">
-          <label className="font-mono text-eyebrow text-text-secondary uppercase">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-[#171815]">
             Currently Learning
           </label>
           <input
             type="text"
             value={config.currentlyLearning}
             onChange={(e) => update({ currentlyLearning: e.target.value })}
-            placeholder="Currently learning Your Skill"
-            className="bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+            placeholder="Currently diving deep into Rust and WebAssembly"
+            className="w-full h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
           />
         </div>
 
         {/* Current Status */}
-        <div className="flex flex-col gap-1">
-          <label className="font-mono text-eyebrow text-text-secondary uppercase">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-[#171815]">
             Current Status
           </label>
           <input
             type="text"
             value={config.status}
             onChange={(e) => update({ status: e.target.value })}
-            placeholder="Open to opportunities 🎯"
-            className="bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+            placeholder="Open to full-time and contract opportunities 🎯"
+            className="w-full h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
           />
         </div>
       </div>
 
       {/* ---------------- 6. LINKS & SOCIALS ---------------- */}
-      <div className="bg-surface-raised border border-border rounded-md p-2.5 flex flex-col gap-2 shadow-xs">
-        <div className="flex items-center gap-1.5 font-medium text-text-primary border-b border-border/50 pb-1.5">
-          <FiGlobe className="w-3.5 h-3.5 text-text-secondary" />
-          <span className="text-nav">Links</span>
+      <div className="bg-[#FBFBFA] border border-[#E2E3DC] rounded-lg p-4 flex flex-col gap-3.5">
+        <div className="flex items-center gap-2 border-b border-[#E2E3DC] pb-2">
+          <FiGlobe className="w-4 h-4 text-[#171815]" />
+          <h4 className="text-sm font-semibold text-[#171815]">Primary Profile Links</h4>
         </div>
 
         {/* Portfolio URL */}
-        <div className="flex flex-col gap-1">
-          <label className="font-mono text-eyebrow text-text-secondary uppercase">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-[#171815]">
             Portfolio URL
           </label>
           <input
@@ -370,64 +388,67 @@ export function AboutSectionControls({
             value={config.portfolio}
             onChange={(e) => update({ portfolio: e.target.value })}
             placeholder="https://your-portfolio.com"
-            className="bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+            className="w-full h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
           />
         </div>
 
         {/* LinkedIn URL */}
-        <div className="flex flex-col gap-1">
-          <label className="font-mono text-eyebrow text-text-secondary uppercase">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-[#171815]">
             LinkedIn URL
           </label>
-          <div className="flex items-center bg-surface border border-border rounded px-2 py-1 focus-within:border-accent">
-            <FiLinkedin className="w-3.5 h-3.5 text-text-muted mr-1.5 shrink-0" />
+          <div className="flex items-center bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg px-3 h-10 focus-within:border-[#171815] transition-colors">
+            <FiLinkedin className="w-4 h-4 text-[#0A66C2] mr-2 shrink-0" />
             <input
               type="text"
               value={config.linkedin}
               onChange={(e) => update({ linkedin: e.target.value })}
               placeholder="https://linkedin.com/in/your-username"
-              className="bg-transparent w-full text-xs text-text-primary focus:outline-none"
+              className="bg-transparent w-full text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none"
             />
           </div>
         </div>
       </div>
 
       {/* ---------------- 7. OPTIONAL GIF ---------------- */}
-      <div className="bg-surface-raised border border-border rounded-md p-2.5 flex flex-col gap-2 shadow-xs">
+      <div className="bg-[#FBFBFA] border border-[#E2E3DC] rounded-lg p-4 flex flex-col gap-3.5">
         {/* GIF Toggle */}
         <div
           onClick={() => update({ gifEnabled: !config.gifEnabled })}
           className="flex items-center justify-between cursor-pointer select-none group"
         >
-          <div className="flex items-center gap-1.5 font-medium">
-            <FiImage className="w-3.5 h-3.5 text-text-secondary group-hover:text-text-primary transition-colors" />
-            <span className="text-nav">Side GIF Animation</span>
+          <div className="flex items-center gap-2">
+            <FiImage className="w-4 h-4 text-accent" />
+            <h4 className="text-sm font-semibold text-[#171815]">Side GIF Animation</h4>
           </div>
-          <div
-            className={`w-7 h-4 rounded-full p-[2px] transition-colors cursor-pointer shrink-0 flex items-center ${
-              config.gifEnabled ? "bg-text-primary justify-end" : "bg-border justify-start"
+          <button
+            type="button"
+            role="switch"
+            aria-checked={config.gifEnabled}
+            className={`w-8 h-4.5 rounded-full p-[2px] transition-colors cursor-pointer shrink-0 flex items-center ${
+              config.gifEnabled ? "bg-[#171815] justify-end" : "bg-[#DEDFD8] justify-start"
             }`}
           >
-            <div className="w-3 h-3 bg-white rounded-full shadow-xs"></div>
-          </div>
+            <div className="w-3.5 h-3.5 bg-white rounded-full shadow-xs"></div>
+          </button>
         </div>
 
         {/* Enabled GIF Fields */}
         {config.gifEnabled && (
-          <div className="pt-2 border-t border-border/60 flex flex-col gap-2.5 animate-in fade-in duration-150">
+          <div className="pt-3 border-t border-[#E2E3DC] flex flex-col gap-4 animate-in fade-in duration-150">
             {/* Gender Switch Tabs (Male / Female) */}
-            <div className="flex flex-col gap-1">
-              <label className="font-mono text-eyebrow text-text-secondary uppercase">
-                Choose Character Style
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-[#171815]">
+                Character Persona
               </label>
-              <div className="grid grid-cols-2 gap-1 p-0.5 bg-surface border border-border rounded">
+              <div className="grid grid-cols-2 gap-1 p-1 bg-[#F0F1EA] border border-[#E2E3DC] rounded-lg">
                 <button
                   type="button"
                   onClick={() => setGifGender("male")}
-                  className={`py-1 text-center font-mono text-xs rounded transition-all cursor-pointer ${
+                  className={`h-9 text-center text-xs font-medium rounded-md transition-all cursor-pointer ${
                     gifGender === "male"
-                      ? "bg-accent/20 text-accent font-semibold border border-accent/40 shadow-xs"
-                      : "text-text-secondary hover:text-text-primary"
+                      ? "bg-[#171815] text-[#FAFAF8] font-semibold shadow-xs"
+                      : "text-[#52534C] hover:text-[#171815]"
                   }`}
                 >
                   👨 Male (4 GIFs)
@@ -435,10 +456,10 @@ export function AboutSectionControls({
                 <button
                   type="button"
                   onClick={() => setGifGender("female")}
-                  className={`py-1 text-center font-mono text-xs rounded transition-all cursor-pointer ${
+                  className={`h-9 text-center text-xs font-medium rounded-md transition-all cursor-pointer ${
                     gifGender === "female"
-                      ? "bg-accent/20 text-accent font-semibold border border-accent/40 shadow-xs"
-                      : "text-text-secondary hover:text-text-primary"
+                      ? "bg-[#171815] text-[#FAFAF8] font-semibold shadow-xs"
+                      : "text-[#52534C] hover:text-[#171815]"
                   }`}
                 >
                   👩 Female (4 GIFs)
@@ -447,16 +468,16 @@ export function AboutSectionControls({
             </div>
 
             {/* 4 Preset GIF Cards */}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <label className="font-mono text-eyebrow text-text-secondary uppercase">
-                  Select Animation
+                <label className="text-xs font-medium text-[#171815]">
+                  Select Preset Animation
                 </label>
-                <span className="font-mono text-[10px] text-text-muted">
-                  4 Options Available
+                <span className="font-mono text-xs text-[#52534C]">
+                  4 options
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-2 gap-2.5">
                 {GIF_PRESETS[gifGender].map((preset) => {
                   const isSelected = config.gifUrl === preset.url;
                   return (
@@ -464,13 +485,14 @@ export function AboutSectionControls({
                       key={preset.id}
                       type="button"
                       onClick={() => update({ gifUrl: preset.url, gifEnabled: true })}
-                      className={`relative rounded border p-1 flex flex-col items-center gap-1 transition-all cursor-pointer overflow-hidden ${
+                      className={`relative rounded-lg border p-1.5 flex flex-col items-center gap-1.5 transition-all cursor-pointer overflow-hidden ${
                         isSelected
-                          ? "border-accent bg-accent/15 ring-1 ring-accent shadow-xs"
-                          : "border-border bg-surface hover:border-border-hover hover:bg-surface-raised"
+                          ? "border-[#171815] ring-2 ring-accent bg-[#F0F1EA] shadow-xs"
+                          : "border-[#E2E3DC] bg-[#FFFFFF] hover:border-[#171815]"
                       }`}
                     >
-                      <div className="w-full h-14 rounded overflow-hidden bg-black/40 flex items-center justify-center relative">
+                      <div className="w-full h-20 rounded-md overflow-hidden bg-black/10 flex items-center justify-center relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={preset.url}
                           alt={preset.name}
@@ -478,12 +500,12 @@ export function AboutSectionControls({
                           loading="lazy"
                         />
                         {isSelected && (
-                          <div className="absolute top-1 right-1 bg-accent text-white p-0.5 rounded-full shadow">
-                            <FiCheck className="w-2.5 h-2.5" />
+                          <div className="absolute top-1.5 right-1.5 bg-[#171815] text-accent p-1 rounded-full shadow">
+                            <FiCheck className="w-3 h-3 stroke-[3]" />
                           </div>
                         )}
                       </div>
-                      <span className="font-mono text-[10px] text-text-primary truncate w-full text-center">
+                      <span className="text-xs font-medium text-[#171815] truncate w-full text-center">
                         {preset.name}
                       </span>
                     </button>
@@ -493,11 +515,11 @@ export function AboutSectionControls({
             </div>
 
             {/* GIF Placement (Left / Center / Right) */}
-            <div className="flex flex-col gap-1">
-              <label className="font-mono text-eyebrow text-text-secondary uppercase">
-                GIF Placement
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-[#171815]">
+                GIF Alignment in README
               </label>
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-3 gap-1 p-1 bg-[#F0F1EA] border border-[#E2E3DC] rounded-lg">
                 {(
                   [
                     { id: "left", label: "Left", icon: FiAlignLeft },
@@ -512,13 +534,13 @@ export function AboutSectionControls({
                       key={opt.id}
                       type="button"
                       onClick={() => update({ gifPlacement: opt.id })}
-                      className={`flex items-center justify-center gap-1 py-1 rounded text-xs transition-colors cursor-pointer border ${
+                      className={`h-9 flex items-center justify-center gap-1.5 rounded-md text-xs font-medium transition-all cursor-pointer ${
                         active
-                          ? "bg-accent/20 text-accent border-accent/40 font-medium"
-                          : "bg-surface border-border text-text-secondary hover:text-text-primary"
+                          ? "bg-[#171815] text-[#FAFAF8] font-semibold shadow-xs"
+                          : "text-[#52534C] hover:text-[#171815]"
                       }`}
                     >
-                      <Icon className="w-3 h-3" />
+                      <Icon className="w-3.5 h-3.5" />
                       <span>{opt.label}</span>
                     </button>
                   );
@@ -527,30 +549,30 @@ export function AboutSectionControls({
             </div>
 
             {/* Custom GIF URL input */}
-            <div className="flex flex-col gap-1">
-              <label className="font-mono text-eyebrow text-text-secondary uppercase">
-                Custom GIF URL
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-[#171815]">
+                Custom GIF Image URL
               </label>
               <input
                 type="text"
                 value={config.gifUrl}
                 onChange={(e) => update({ gifUrl: e.target.value })}
                 placeholder="https://media.giphy.com/.../giphy.gif"
-                className="bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+                className="w-full h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
               />
             </div>
 
             {/* Width Slider */}
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center justify-between">
-                <label className="font-mono text-eyebrow text-text-secondary uppercase">
-                  Width: {config.gifWidth}px
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <label className="font-medium text-[#171815]">
+                  GIF Width: {config.gifWidth}px
                 </label>
-                <span className="font-mono text-[10px] text-text-muted capitalize">
+                <span className="text-[#52534C] capitalize">
                   align=&quot;{config.gifPlacement || "right"}&quot;
                 </span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <input
                   type="range"
                   min="120"
@@ -558,7 +580,7 @@ export function AboutSectionControls({
                   step="10"
                   value={config.gifWidth}
                   onChange={(e) => update({ gifWidth: parseInt(e.target.value, 10) || 300 })}
-                  className="flex-1 accent-accent h-1.5 bg-surface rounded cursor-pointer"
+                  className="flex-1 accent-[#171815] h-2 bg-[#E2E3DC] rounded-lg cursor-pointer"
                 />
                 <input
                   type="number"
@@ -566,7 +588,7 @@ export function AboutSectionControls({
                   max="450"
                   value={config.gifWidth}
                   onChange={(e) => update({ gifWidth: parseInt(e.target.value, 10) || 300 })}
-                  className="w-14 bg-surface border border-border rounded px-1.5 py-0.5 text-center font-mono text-xs text-text-primary focus:outline-none"
+                  className="w-16 h-9 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-center text-xs font-mono text-[#171815] focus:outline-none focus:border-[#171815]"
                 />
               </div>
             </div>

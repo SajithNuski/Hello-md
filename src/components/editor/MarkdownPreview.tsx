@@ -6,10 +6,14 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { FiEye, FiBookOpen, FiMoon, FiSun } from "react-icons/fi";
 
+import { SectionKey } from "@/lib/config";
+
 interface MarkdownPreviewProps {
   markdown: string;
   username?: string;
   defaultTheme?: "dark" | "light";
+  selectedKey?: SectionKey;
+  onSelectSection?: (key: SectionKey) => void;
 }
 
 interface ExtraAttributes {
@@ -22,10 +26,33 @@ interface ExtraAttributes {
   alt?: string;
 }
 
+function extractText(node: unknown): string {
+  if (!node) return "";
+  if (typeof node === "string") return node;
+  if (typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join(" ");
+  if (typeof node === "object" && node !== null && "props" in node) {
+    return extractText((node as { props?: { children?: unknown } }).props?.children);
+  }
+  return "";
+}
+
+function detectSectionKey(text: string): SectionKey | null {
+  const t = text.toLowerCase();
+  if (t.includes("about")) return "about";
+  if (t.includes("tech") || t.includes("stack") || t.includes("skill")) return "skills";
+  if (t.includes("project")) return "projects";
+  if (t.includes("analytic") || t.includes("stat")) return "stats";
+  if (t.includes("connect") || t.includes("social")) return "contact";
+  return null;
+}
+
 export function MarkdownPreview({
   markdown,
   username = "profile",
   defaultTheme = "dark",
+  selectedKey,
+  onSelectSection,
 }: MarkdownPreviewProps) {
   const [previewTheme, setPreviewTheme] = useState<"dark" | "light">(defaultTheme);
 
@@ -34,11 +61,11 @@ export function MarkdownPreview({
   return (
     <div className="flex-1 bg-page flex flex-col overflow-hidden">
       {/* Top Header Tab Bar */}
-      <div className="h-10 px-4 flex items-center justify-between border-b border-border bg-surface select-none shrink-0">
-        <div className="flex items-center gap-2 text-text-secondary">
-          <FiEye className="w-4 h-4 stroke-[1.5]" />
-          <span className="text-nav font-medium text-text-primary">Rendered Output</span>
-          <span className="font-mono text-eyebrow bg-surface-raised px-1.5 py-0.5 rounded-sm border border-border text-text-secondary uppercase tracking-[0.04em]">
+      <div className="h-12 px-4 flex items-center justify-between border-b border-[#E2E3DC] bg-[#FAFAF8] select-none shrink-0">
+        <div className="flex items-center gap-2 text-[#52534C]">
+          <FiEye className="w-4 h-4 text-[#171815]" />
+          <span className="text-sm font-semibold text-[#171815]">Rendered Output</span>
+          <span className="font-mono text-[11px] bg-[#F0F1EA] px-2 py-0.5 rounded-md border border-[#E2E3DC] text-[#52534C] uppercase tracking-wider">
             README.md
           </span>
         </div>
@@ -48,31 +75,31 @@ export function MarkdownPreview({
           <button
             type="button"
             onClick={() => setPreviewTheme(isDark ? "light" : "dark")}
-            className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded bg-surface-raised border border-border text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-[#FFFFFF] border border-[#E2E3DC] text-[#171815] hover:bg-[#F0F1EA] transition-colors cursor-pointer shadow-xs"
             title={`Switch to GitHub ${isDark ? "Light" : "Dark"} mode`}
           >
             {isDark ? (
               <>
-                <FiSun className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden sm:inline font-mono text-[11px]">GitHub Dark</span>
+                <FiSun className="w-3.5 h-3.5 text-amber-500" />
+                <span className="hidden sm:inline font-mono text-xs">GitHub Dark</span>
               </>
             ) : (
               <>
-                <FiMoon className="w-3.5 h-3.5 text-indigo-400" />
-                <span className="hidden sm:inline font-mono text-[11px]">GitHub Light</span>
+                <FiMoon className="w-3.5 h-3.5 text-indigo-500" />
+                <span className="hidden sm:inline font-mono text-xs">GitHub Light</span>
               </>
             )}
           </button>
 
-          <div className="flex items-center gap-2 text-meta text-text-secondary">
-            <span className="w-2 h-2 rounded-full bg-status-success animate-pulse"></span>
-            <span className="hidden sm:inline">Live Synchronized</span>
+          <div className="flex items-center gap-2 text-xs text-[#52534C]">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="hidden sm:inline font-mono text-xs">Live Synchronized</span>
           </div>
         </div>
       </div>
 
       {/* Canvas Scroll Area */}
-      <div className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto flex justify-center bg-page">
+      <div className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto thin-scrollbar flex justify-center bg-[#FAFAF8]">
         {/* GitHub Profile README Container */}
         <div
           className={`w-full max-w-[820px] rounded-lg border shadow-sm flex flex-col h-fit transition-colors duration-200 ${
@@ -110,20 +137,54 @@ export function MarkdownPreview({
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw]}
               components={{
-                h1: ({ children }) => (
-                  <div className={`flex flex-col pb-2.5 border-b mt-2 mb-3 ${isDark ? "border-[#30363D]" : "border-[#D0D7DE]"}`}>
-                    <h1 className="text-2xl sm:text-[30px] font-semibold tracking-tight leading-[1.2] text-inherit">
+                h1: ({ children }) => {
+                  const isSelected = selectedKey === "intro";
+                  return (
+                    <div
+                      onClick={() => onSelectSection?.("intro")}
+                      className={`flex flex-col pb-2.5 border-b mt-2 mb-3 rounded px-2 -mx-2 transition-all ${
+                        isDark ? "border-[#30363D]" : "border-[#D0D7DE]"
+                      } ${
+                        onSelectSection
+                          ? "cursor-pointer hover:bg-accent/10"
+                          : ""
+                      } ${isSelected ? "ring-1 ring-accent" : ""}`}
+                      title={onSelectSection ? "Click to jump to Intro section in editor" : undefined}
+                    >
+                      <h1 className="text-2xl sm:text-[30px] font-semibold tracking-tight leading-[1.2] text-inherit">
+                        {children}
+                      </h1>
+                    </div>
+                  );
+                },
+                h2: ({ children }) => {
+                  const text = extractText(children);
+                  const matchedKey = detectSectionKey(text);
+                  const isSelected = matchedKey && selectedKey === matchedKey;
+                  return (
+                    <h2
+                      onClick={() => {
+                        if (matchedKey && onSelectSection) {
+                          onSelectSection(matchedKey);
+                        }
+                      }}
+                      className={`text-xl sm:text-2xl font-semibold tracking-tight pb-2 border-b mt-6 mb-3 text-inherit flex items-center gap-2 rounded px-2 -mx-2 transition-all ${
+                        isDark ? "border-[#30363D]/80" : "border-[#D0D7DE]"
+                      } ${
+                        matchedKey && onSelectSection
+                          ? "cursor-pointer hover:bg-accent/10"
+                          : ""
+                      } ${isSelected ? "ring-1 ring-accent" : ""}`}
+                      title={
+                        matchedKey && onSelectSection
+                          ? `Click to jump to ${matchedKey} in editor`
+                          : undefined
+                      }
+                    >
                       {children}
-                    </h1>
-                  </div>
-                ),
-                h2: ({ children }) => (
-                  <h2 className={`text-xl sm:text-2xl font-semibold tracking-tight pb-2 border-b mt-6 mb-3 text-inherit flex items-center gap-2 ${
-                    isDark ? "border-[#30363D]/80" : "border-[#D0D7DE]"
-                  }`}>
-                    {children}
-                  </h2>
-                ),
+                    </h2>
+                  );
+                },
                 h3: ({ children }) => (
                   <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-inherit mt-4 mb-2">
                     {children}
