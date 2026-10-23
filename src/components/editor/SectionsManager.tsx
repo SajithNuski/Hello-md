@@ -16,22 +16,18 @@ import { SectionItem } from "@/lib/db/collections";
 import { SectionKey, Tone } from "@/lib/config";
 import { IntroConfig, getDefaultIntroConfig } from "@/lib/introConfig";
 import { IntroSectionControls } from "./IntroSectionControls";
-import { AboutConfig, getDefaultAboutConfig } from "@/lib/aboutConfig";
+import { AboutConfig, DEFAULT_ABOUT_CONFIG, getDefaultAboutConfig } from "@/lib/aboutConfig";
 import { AboutSectionControls } from "./AboutSectionControls";
 import { StatsConfig, getDefaultStatsConfig } from "@/lib/statsConfig";
 import { StatsSectionControls } from "./StatsSectionControls";
-import { TechStackConfig, getDefaultSkillsConfig } from "@/lib/techStackConfig";
-import { TechStackSectionControls } from "./TechStackSectionControls";
-import { SocialConfig, getDefaultSocialConfig } from "@/lib/socialConfig";
-import { ConnectSectionControls } from "./ConnectSectionControls";
 
 interface SectionsManagerProps {
   sections: SectionItem[];
   selectedKey: SectionKey;
   onSelectSection: (key: SectionKey) => void;
   onToggleEnabled: (key: SectionKey) => void;
-  onRegenerateSection: (key: SectionKey, tone: Tone) => Promise<void>;
-  isRegenerating: boolean;
+  onRegenerateSection?: (key: SectionKey, tone: Tone) => Promise<void>;
+  isRegenerating?: boolean;
   onMoveSection?: (key: SectionKey, direction: "up" | "down") => void;
   introConfig?: IntroConfig;
   onIntroConfigChange?: (updated: IntroConfig) => void;
@@ -39,10 +35,6 @@ interface SectionsManagerProps {
   onAboutConfigChange?: (updated: AboutConfig) => void;
   statsConfig?: StatsConfig;
   onStatsConfigChange?: (updated: StatsConfig) => void;
-  techStackConfig?: TechStackConfig;
-  onTechStackConfigChange?: (updated: TechStackConfig) => void;
-  socialConfig?: SocialConfig;
-  onSocialConfigChange?: (updated: SocialConfig) => void;
   username?: string;
 }
 
@@ -78,15 +70,8 @@ export function SectionsManager({
   onAboutConfigChange,
   statsConfig,
   onStatsConfigChange,
-  techStackConfig,
-  onTechStackConfigChange,
-  socialConfig,
-  onSocialConfigChange,
   username = "",
 }: SectionsManagerProps) {
-  void onRegenerateSection;
-  void isRegenerating;
-
   const activeCount = sections.filter((s) => s.enabled).length;
 
   return (
@@ -108,22 +93,18 @@ export function SectionsManager({
             const isSelected = section.key === selectedKey;
             const label = SECTION_LABELS[section.key as SectionKey] || section.key;
             const SectionIcon = SECTION_ICONS[section.key as SectionKey] || FiFolder;
-
-            const hasDrawerContent =
-              (section.key === "intro" && Boolean(onIntroConfigChange)) ||
-              (section.key === "about" && Boolean(onAboutConfigChange)) ||
-              (section.key === "skills" && Boolean(onTechStackConfigChange)) ||
-              (section.key === "stats" && Boolean(onStatsConfigChange)) ||
-              (section.key === "contact" && Boolean(onSocialConfigChange));
+            const hasControls =
+              (section.key === "intro" && !!onIntroConfigChange) ||
+              (section.key === "about" && !!onAboutConfigChange) ||
+              (section.key === "stats" && !!onStatsConfigChange);
 
             return (
               <div
                 key={section.key}
-                className={`rounded-md transition-all ${
-                  isSelected
+                className={`rounded-md transition-all ${isSelected
                     ? "bg-surface-raised border border-border shadow-xs"
                     : "hover:bg-surface-raised/50 border border-transparent"
-                }`}
+                  }`}
               >
                 {/* Row Header */}
                 <div
@@ -163,18 +144,16 @@ export function SectionsManager({
                     )}
 
                     <SectionIcon
-                      className={`w-3.5 h-3.5 shrink-0 ${
-                        isSelected ? "text-text-primary" : "text-text-secondary"
-                      }`}
+                      className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-text-primary" : "text-text-secondary"
+                        }`}
                     />
                     <span
-                      className={`text-nav truncate ${
-                        isSelected
+                      className={`text-nav truncate ${isSelected
                           ? "font-medium text-text-primary"
                           : section.enabled
-                          ? "text-text-primary"
-                          : "text-text-muted line-through"
-                      }`}
+                            ? "text-text-primary"
+                            : "text-text-muted line-through"
+                        }`}
                     >
                       {label}
                     </span>
@@ -191,16 +170,15 @@ export function SectionsManager({
                       e.stopPropagation();
                       onToggleEnabled(section.key as SectionKey);
                     }}
-                    className={`w-7 h-4 rounded-full p-[2px] transition-colors cursor-pointer shrink-0 flex items-center ${
-                      section.enabled ? "bg-text-primary justify-end" : "bg-border justify-start"
-                    }`}
+                    className={`w-7 h-4 rounded-full p-[2px] transition-colors cursor-pointer shrink-0 flex items-center ${section.enabled ? "bg-text-primary justify-end" : "bg-border justify-start"
+                      }`}
                   >
                     <div className="w-3 h-3 bg-white rounded-full shadow-xs"></div>
                   </div>
                 </div>
 
-                {/* Selected Action Drawer (only for sections with custom controls: intro, about, skills, stats) */}
-                {isSelected && hasDrawerContent && (
+                {/* Selected Action Drawer */}
+                {isSelected && hasControls && (
                   <div className="px-3 pb-3 pt-1 border-t border-border/50 flex flex-col gap-2">
                     {/* Dedicated Intro & Bio Controls (Profile Photo, Title Animation, Color) */}
                     {section.key === "intro" && onIntroConfigChange && (
@@ -223,16 +201,6 @@ export function SectionsManager({
                       </div>
                     )}
 
-                    {/* Dedicated Tech Stack & Badges Controls (Skills Catalog Picker) */}
-                    {section.key === "skills" && onTechStackConfigChange && (
-                      <div className="pt-1">
-                        <TechStackSectionControls
-                          config={techStackConfig || getDefaultSkillsConfig()}
-                          onChange={onTechStackConfigChange}
-                        />
-                      </div>
-                    )}
-
                     {/* Dedicated GitHub Analytics Controls (Stats, Languages, Streak, Theme) */}
                     {section.key === "stats" && onStatsConfigChange && (
                       <div className="pt-1">
@@ -240,16 +208,6 @@ export function SectionsManager({
                           config={statsConfig || getDefaultStatsConfig(username)}
                           onChange={onStatsConfigChange}
                           username={username}
-                        />
-                      </div>
-                    )}
-
-                    {/* Dedicated Connect & Social Controls */}
-                    {section.key === "contact" && onSocialConfigChange && (
-                      <div className="pt-1">
-                        <ConnectSectionControls
-                          config={socialConfig || getDefaultSocialConfig()}
-                          onChange={onSocialConfigChange}
                         />
                       </div>
                     )}

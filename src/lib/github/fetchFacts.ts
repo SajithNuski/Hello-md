@@ -59,26 +59,26 @@ async function fetchViaRest(login: string): Promise<GitHubRawUserResponse> {
 
   const rawRepos = Array.isArray(reposData)
     ? reposData
-        .filter((r) => !r.fork && !r.archived)
-        .map((r) => ({
-          name: r.name,
-          description: r.description,
-          url: r.html_url,
-          stargazerCount: r.stargazers_count ?? 0,
-          pushedAt: r.pushed_at,
-          isArchived: Boolean(r.archived),
-          primaryLanguage: r.language ? { name: r.language } : null,
-          languages: r.language
-            ? {
-                edges: [{ size: 1000, node: { name: r.language } }],
-              }
-            : undefined,
-          repositoryTopics: Array.isArray(r.topics)
-            ? {
-                nodes: r.topics.map((topic: string) => ({ topic: { name: topic } })),
-              }
-            : undefined,
-        }))
+      .filter((r) => !r.fork && !r.archived)
+      .map((r) => ({
+        name: r.name,
+        description: r.description,
+        url: r.html_url,
+        stargazerCount: r.stargazers_count ?? 0,
+        pushedAt: r.pushed_at,
+        isArchived: Boolean(r.archived),
+        primaryLanguage: r.language ? { name: r.language } : null,
+        languages: r.language
+          ? {
+            edges: [{ size: 1000, node: { name: r.language } }],
+          }
+          : undefined,
+        repositoryTopics: Array.isArray(r.topics)
+          ? {
+            nodes: r.topics.map((topic: string) => ({ topic: { name: topic } })),
+          }
+          : undefined,
+      }))
     : [];
 
   return {

@@ -9,12 +9,6 @@ import {
 } from "../ai/schema";
 import { THEMES, type Theme, type ThemeId } from "./themes";
 import { StatsConfig, generateStatsMarkdown } from "../statsConfig";
-import { TechStackConfig, generateSkillsMarkdown } from "../techStackConfig";
-import {
-  SocialConfig,
-  generateContactMarkdown,
-  normalizeSocialUrl,
-} from "../socialConfig";
 
 /**
  * Deterministic Markdown/HTML builder. The AI supplies plain text only; every
@@ -206,49 +200,32 @@ function renderAbout(d: AboutSection, c: Ctx): string {
   return parts.join("\n\n");
 }
 
-function renderSkills(data: unknown, c: Ctx): string {
-  const isTechStackConfig =
-    data &&
-    typeof data === "object" &&
-    ("selected" in data || "style" in data);
+function renderSkills(d: SkillsSection, c: Ctx): string {
+  const groups = d.groups?.length
+    ? d.groups
+    : c.facts.topLanguages.length
+      ? [{ title: "Languages", items: c.facts.topLanguages.map((l) => l.name) }]
+      : [];
 
-  if (isTechStackConfig) {
-    return generateSkillsMarkdown(data as TechStackConfig);
-  }
+  const blocks = groups
+    .filter((g) => g.items.length)
+    .map((g) => {
+      const icons = Array.from(new Set(g.items.map(iconId).filter(Boolean) as string[]));
+      const rest = g.items.filter((i) => !iconId(i));
+      // No blank lines inside the <p>: a blank line ends the HTML block on GitHub.
+      const inner = [
+        icons.length
+          ? `<img src="https://skillicons.dev/icons?i=${icons.join(",")}&theme=dark" alt="${safe(g.title)}"/>`
+          : "",
+        ...rest.map((i) => shield(i, c.t.accent)),
+      ]
+        .filter(Boolean)
+        .join("\n  ");
+      return `**${safe(g.title)}**\n\n<p>\n  ${inner}\n</p>`;
+    });
 
-  const d = data as SkillsSection;
-  // If AI generated groups, extract skill ids and generate via generateSkillsMarkdown
-  if (d?.groups?.length) {
-    const ids: string[] = [];
-    for (const group of d.groups) {
-      for (const item of group.items) {
-        const id = iconId(item);
-        if (id && !ids.includes(id)) {
-          ids.push(id);
-        }
-      }
-    }
-    if (ids.length > 0) {
-      return generateSkillsMarkdown({ selected: ids, style: "icons" });
-    }
-  }
-
-  // Fallback to topLanguages from facts
-  if (c.facts.topLanguages && c.facts.topLanguages.length > 0) {
-    const ids: string[] = [];
-    for (const l of c.facts.topLanguages) {
-      const id = iconId(l.name);
-      if (id && !ids.includes(id)) {
-        ids.push(id);
-      }
-    }
-    if (ids.length > 0) {
-      return generateSkillsMarkdown({ selected: ids, style: "icons" });
-    }
-  }
-
-  // If nothing is selected or detected, generate default sample
-  return generateSkillsMarkdown({ selected: [], style: "icons" });
+  if (!blocks.length) return "";
+  return `${heading(c, "🛠️", "Tech Stack")}\n\n${blocks.join("\n\n")}`;
 }
 
 function renderProjects(d: ProjectsSection, c: Ctx): string {
@@ -256,10 +233,10 @@ function renderProjects(d: ProjectsSection, c: Ctx): string {
   const items: ProjectsSection = d?.length
     ? d
     : facts.topRepos.slice(0, 4).map((r) => ({
-        repo: r.name,
-        pitch: r.description ?? "",
-        highlights: [],
-      }));
+      repo: r.name,
+      pitch: r.description ?? "",
+      highlights: [],
+    }));
   if (!items.length) return "";
 
   const lookup = new Map(facts.topRepos.map((r) => [r.name.toLowerCase(), r]));
@@ -306,26 +283,46 @@ function renderStats(data: unknown, c: Ctx): string {
   return generateStatsMarkdown(statsConfig, c.facts.login);
 }
 
-function renderContact(data: unknown, c: Ctx): string {
-  const isSocialConfig =
-    data &&
-    typeof data === "object" &&
-    ("linkedin" in data || "x" in data || "portfolio" in data || "email" in data || "extra" in data);
+function renderContact(d: ContactSection, c: Ctx): string {
+  const { facts, t, opts } = c;
+  const l = opts.links ?? {};
+  const btn = (label: string, href: string, logo: string, color: string) =>
+    `  <a href="${href}"><img src="https://img.shields.io/badge/${label}-${color}?style=for-the-badge&logo=${logo}&logoColor=white" alt="${label}"/></a>`;
 
-  if (isSocialConfig) {
-    return generateContactMarkdown(data as SocialConfig);
-  }
+  const site = httpUrl(facts.websiteUrl);
+  const linkedin = httpUrl(l.linkedin);
+  const twitter = httpUrl(l.twitter);
+  const fiverr = httpUrl(l.fiverr);
+  const email = emailOk(l.email);
 
-  const l = c.opts.links ?? {};
-  const cfg: SocialConfig = {
-    linkedin: l.linkedin ? normalizeSocialUrl("linkedin", l.linkedin) : "",
-    x: l.twitter ? normalizeSocialUrl("x", l.twitter) : "",
-    portfolio: c.facts.websiteUrl ? normalizeSocialUrl("portfolio", c.facts.websiteUrl) : "",
-    email: l.email && emailOk(l.email) ? l.email : "",
-    extra: [],
-  };
+  const buttons = [
+    btn("GitHub", `https://github.com/${c.user}`, "github", "181717"),
+    site && btn("Website", site, "googlechrome", t.accent),
+    linkedin && btn("LinkedIn", linkedin, "linkedin", "0A66C2"),
+    fiverr && btn("Fiverr", fiverr, "fiverr", "1DBF73"),
+    twitter && btn("X", twitter, "x", "000000"),
+    email && btn("Email", `mailto:${email}`, "gmail", "EA4335"),
+  ].filter(Boolean);
 
-  return generateContactMarkdown(cfg);
+  const closing = safe(d.closing);
+  const location = facts.location
+    ? `${c.emoji ? "📍 " : "Location: "}${safe(facts.location)}`
+    : "";
+  const footerImg =
+    t.header === "wave"
+      ? `<img src="https://capsule-render.vercel.app/api?type=waving&color=0:${t.to},100:${t.from}&height=90&section=footer" width="100%" alt=""/>`
+      : "";
+  const extras = [location, footerImg].filter(Boolean).join("\n\n");
+
+  return `${heading(c, "🤝", "Connect With Me")}
+
+<div align="center">
+${closing ? `\n${closing}\n` : ""}
+<p>
+${buttons.join("\n")}
+</p>
+${extras ? `\n${extras}\n` : ""}
+</div>`;
 }
 
 /**
@@ -354,13 +351,13 @@ export function formatSection(
     case "about":
       return renderAbout(data as AboutSection, c);
     case "skills":
-      return renderSkills(data, c);
+      return renderSkills(data as SkillsSection, c);
     case "projects":
       return renderProjects(data as ProjectsSection, c);
     case "stats":
       return renderStats(data, c);
     case "contact":
-      return renderContact(data, c);
+      return renderContact(data as ContactSection, c);
     default:
       return "";
   }

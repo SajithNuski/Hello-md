@@ -17,8 +17,6 @@ import { AIError } from "@/lib/ai/types";
 import { getDefaultAboutConfig } from "@/lib/aboutConfig";
 import { getDefaultIntroConfig } from "@/lib/introConfig";
 import { getDefaultStatsConfig } from "@/lib/statsConfig";
-import { getDefaultSkillsConfig, parseSkillsMarkdown, TechStackConfig } from "@/lib/techStackConfig";
-import { getDefaultSocialConfig, SocialConfig } from "@/lib/socialConfig";
 
 export const runtime = "nodejs";
 
@@ -154,22 +152,17 @@ export async function POST(req: NextRequest) {
         const initialIntroConfig = getDefaultIntroConfig(facts.login, facts, validOutput.intro.roles);
         const initialAboutConfig = getDefaultAboutConfig(facts.login, facts);
         const initialStatsConfig = getDefaultStatsConfig(facts.login);
-        const initialSkillsConfig: TechStackConfig = {
-          ...getDefaultSkillsConfig(),
-          ...(parseSkillsMarkdown(skillsMd) || {}),
-        };
 
         const statsMd = formatSection("stats", initialStatsConfig, facts, theme);
-        const initialSocialConfig: SocialConfig = getDefaultSocialConfig();
-        const contactMd = formatSection("contact", initialSocialConfig, facts, theme);
+        const contactMd = formatSection("contact", validOutput.contact, facts, theme);
 
         const sections: SectionItem[] = [
           { key: "intro", markdown: introMd, source: "ai", enabled: true, order: 0, config: { intro: initialIntroConfig } },
           { key: "about", markdown: aboutMd, source: "ai", enabled: true, order: 1, config: { about: initialAboutConfig } },
-          { key: "skills", markdown: skillsMd, source: "ai", enabled: true, order: 2, config: { skills: initialSkillsConfig } },
+          { key: "skills", markdown: skillsMd, source: "ai", enabled: true, order: 2 },
           { key: "projects", markdown: projectsMd, source: "ai", enabled: true, order: 3 },
           { key: "stats", markdown: statsMd, source: "ai", enabled: true, order: 4, config: { stats: initialStatsConfig } },
-          { key: "contact", markdown: contactMd, source: "ai", enabled: true, order: 5, config: { contact: initialSocialConfig } },
+          { key: "contact", markdown: contactMd, source: "ai", enabled: true, order: 5 },
         ];
 
         const fullMarkdown = assemble(sections, theme, facts);

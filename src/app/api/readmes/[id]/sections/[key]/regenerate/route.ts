@@ -103,9 +103,6 @@ export async function POST(
     let newMarkdown = "";
     if (sectionKey === "stats") {
       newMarkdown = formatSection("stats", {}, facts, doc.theme || "minimal");
-    } else if (sectionKey === "contact") {
-      const existing = doc.sections.find((s: SectionItem) => s.key === "contact");
-      newMarkdown = formatSection("contact", existing?.config?.contact || {}, facts, doc.theme || "minimal");
     } else {
       const systemPrompt = buildSystemPrompt(activeTone);
       const userPrompt = buildSectionRegenPrompt(sectionKey, facts, instruction);
