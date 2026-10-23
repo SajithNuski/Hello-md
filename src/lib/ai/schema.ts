@@ -38,7 +38,7 @@ export const ProjectItemSchema = z.object({
 });
 export type ProjectItem = z.infer<typeof ProjectItemSchema>;
 
-export const ProjectsSectionSchema = z.array(ProjectItemSchema).max(10);
+export const ProjectsSectionSchema = z.array(ProjectItemSchema).max(4);
 export type ProjectsSection = z.infer<typeof ProjectsSectionSchema>;
 
 export const ContactSectionSchema = z.object({

@@ -71,7 +71,7 @@ Produce a JSON object matching this schema:
 }
 
 Grounding constraints:
-- "projects" MUST ONLY contain repo names found in FACTS.topRepos. Pick the 4-6 most substantial ones.
+- "projects" MUST ONLY contain repo names found in FACTS.topRepos. Pick up to 4 of the most substantial ones.
 - "skills" items MUST ONLY be languages, frameworks or topics found in FACTS. Group them (Languages, Frameworks, Tools, ...) and skip empty groups.
 - "roles" describe real activity evident in FACTS (for example "Building web apps with TypeScript"). Use a job title only if FACTS.bio states one.
 - Never invent numbers, years, employers, or statistics that are not in FACTS.

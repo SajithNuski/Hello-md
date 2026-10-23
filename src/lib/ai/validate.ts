@@ -344,7 +344,7 @@ function cleanProjects(d: ProjectsSection, c: Ctx): ProjectsSection {
         ).slice(0, 2),
       };
     })
-    .slice(0, 6);
+    .slice(0, 4);
 }
 
 function cleanContact(d: ContactSection, c: Ctx): ContactSection {

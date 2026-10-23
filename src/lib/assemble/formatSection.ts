@@ -235,13 +235,14 @@ function renderSkills(d: SkillsSection, c: Ctx): string {
 
 function renderProjects(d: ProjectsSection, c: Ctx): string {
   const { facts, t } = c;
-  const items: ProjectsSection = d?.length
+  const rawItems = d?.length
     ? d
-    : facts.topRepos.slice(0, 4).map((r) => ({
+    : facts.topRepos.map((r) => ({
       repo: r.name,
       pitch: r.description ?? "",
       highlights: [],
     }));
+  const items: ProjectsSection = rawItems.slice(0, 4);
   if (!items.length) return "";
 
   const lookup = new Map(facts.topRepos.map((r) => [r.name.toLowerCase(), r]));
