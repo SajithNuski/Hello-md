@@ -33,6 +33,12 @@ import {
   parseStatsMarkdown,
 } from "@/lib/statsConfig";
 import {
+  TechStackConfig,
+  getDefaultSkillsConfig,
+  generateSkillsMarkdown,
+  parseSkillsMarkdown,
+} from "@/lib/techStackConfig";
+import {
   SocialConfig,
   getDefaultSocialConfig,
   generateContactMarkdown,
@@ -131,6 +137,21 @@ export default function EditorPage() {
                 },
               };
             }
+            if (s.key === "skills" && !s.config?.skills) {
+              const parsed = s.markdown ? parseSkillsMarkdown(s.markdown) : null;
+              const cfg = {
+                ...getDefaultSkillsConfig(),
+                ...(parsed || {}),
+              };
+              return {
+                ...s,
+                markdown: s.markdown || generateSkillsMarkdown(cfg),
+                config: {
+                  ...(s.config || {}),
+                  skills: cfg,
+                },
+              };
+            }
             if (s.key === "contact" && !s.config?.contact && !s.config?.social) {
               const parsed = s.markdown ? parseContactMarkdown(s.markdown) : null;
               const cfg = {
@@ -224,6 +245,22 @@ export default function EditorPage() {
     };
   }, [statsSection, login]);
 
+  // Tech Stack & Badges section & config
+  const skillsSection = useMemo(() => {
+    return sections.find((s) => s.key === "skills");
+  }, [sections]);
+
+  const techStackConfig: TechStackConfig = useMemo(() => {
+    if (skillsSection?.config?.skills) {
+      return skillsSection.config.skills as TechStackConfig;
+    }
+    const parsed = skillsSection ? parseSkillsMarkdown(skillsSection.markdown) : null;
+    return {
+      ...getDefaultSkillsConfig(),
+      ...(parsed || {}),
+    };
+  }, [skillsSection]);
+
   // Connect & Social links section & config
   const contactSection = useMemo(() => {
     return sections.find((s) => s.key === "contact");
@@ -281,6 +318,13 @@ export default function EditorPage() {
       const updated = prev.map((s) => {
         if (s.key === selectedKey) {
           const configUpdates: Record<string, unknown> = { ...(s.config || {}) };
+          if (s.key === "skills") {
+            const parsed = parseSkillsMarkdown(newText);
+            configUpdates.skills = {
+              ...getDefaultSkillsConfig(),
+              ...(parsed || {}),
+            };
+          }
           if (s.key === "contact") {
             const parsed = parseContactMarkdown(newText);
             configUpdates.contact = {
@@ -395,6 +439,32 @@ export default function EditorPage() {
       });
     },
     [login, triggerAutoSave]
+  );
+
+  // Handle tech stack section custom controls change
+  const handleTechStackConfigChange = useCallback(
+    (newConfig: TechStackConfig) => {
+      const newMarkdown = generateSkillsMarkdown(newConfig);
+      setSections((prev) => {
+        const updated = prev.map((s) => {
+          if (s.key === "skills") {
+            return {
+              ...s,
+              markdown: newMarkdown,
+              source: "user" as const,
+              config: {
+                ...(s.config || {}),
+                skills: newConfig,
+              },
+            };
+          }
+          return s;
+        });
+        triggerAutoSave(updated);
+        return updated;
+      });
+    },
+    [triggerAutoSave]
   );
 
   // Handle contact section custom controls change
@@ -597,6 +667,8 @@ export default function EditorPage() {
             onAboutConfigChange={handleAboutConfigChange}
             statsConfig={statsConfig}
             onStatsConfigChange={handleStatsConfigChange}
+            techStackConfig={techStackConfig}
+            onTechStackConfigChange={handleTechStackConfigChange}
             socialConfig={socialConfig}
             onSocialConfigChange={handleSocialConfigChange}
             username={login}

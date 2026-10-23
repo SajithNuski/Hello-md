@@ -23,6 +23,10 @@ import {
   generateContactMarkdown,
   normalizeSocialUrl,
 } from "@/lib/socialConfig";
+import {
+  TechStackConfig,
+  getDefaultSkillsConfig,
+} from "@/lib/techStackConfig";
 
 export const runtime = "nodejs";
 
@@ -151,9 +155,10 @@ export async function POST(req: NextRequest) {
           message: "Formatting sections and assembling Markdown...",
         });
 
+        const initialSkillsConfig: TechStackConfig = getDefaultSkillsConfig();
         const introMd = formatSection("intro", validOutput.intro, facts, theme);
         const aboutMd = formatSection("about", validOutput.about, facts, theme);
-        const skillsMd = formatSection("skills", validOutput.skills, facts, theme);
+        const skillsMd = formatSection("skills", initialSkillsConfig, facts, theme);
         const projectsMd = formatSection("projects", validOutput.projects, facts, theme);
         const initialIntroConfig = getDefaultIntroConfig(facts.login, facts, validOutput.intro.roles);
         const initialAboutConfig = getDefaultAboutConfig(facts.login, facts);
@@ -169,7 +174,7 @@ export async function POST(req: NextRequest) {
         const sections: SectionItem[] = [
           { key: "intro", markdown: introMd, source: "ai", enabled: true, order: 0, config: { intro: initialIntroConfig } },
           { key: "about", markdown: aboutMd, source: "ai", enabled: true, order: 1, config: { about: initialAboutConfig } },
-          { key: "skills", markdown: skillsMd, source: "ai", enabled: true, order: 2 },
+          { key: "skills", markdown: skillsMd, source: "ai", enabled: true, order: 2, config: { skills: initialSkillsConfig } },
           { key: "projects", markdown: projectsMd, source: "ai", enabled: true, order: 3 },
           { key: "stats", markdown: statsMd, source: "ai", enabled: true, order: 4, config: { stats: initialStatsConfig } },
           { key: "contact", markdown: contactMd, source: "ai", enabled: true, order: 5, config: { contact: initialSocialConfig } },

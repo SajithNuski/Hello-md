@@ -20,6 +20,8 @@ import { AboutConfig, DEFAULT_ABOUT_CONFIG, getDefaultAboutConfig } from "@/lib/
 import { AboutSectionControls } from "./AboutSectionControls";
 import { StatsConfig, getDefaultStatsConfig } from "@/lib/statsConfig";
 import { StatsSectionControls } from "./StatsSectionControls";
+import { TechStackConfig, getDefaultSkillsConfig } from "@/lib/techStackConfig";
+import { TechStackSectionControls } from "./TechStackSectionControls";
 import { SocialConfig, getDefaultSocialConfig } from "@/lib/socialConfig";
 import { ConnectSectionControls } from "./ConnectSectionControls";
 
@@ -37,6 +39,8 @@ interface SectionsManagerProps {
   onAboutConfigChange?: (updated: AboutConfig) => void;
   statsConfig?: StatsConfig;
   onStatsConfigChange?: (updated: StatsConfig) => void;
+  techStackConfig?: TechStackConfig;
+  onTechStackConfigChange?: (updated: TechStackConfig) => void;
   socialConfig?: SocialConfig;
   onSocialConfigChange?: (updated: SocialConfig) => void;
   username?: string;
@@ -74,6 +78,8 @@ export function SectionsManager({
   onAboutConfigChange,
   statsConfig,
   onStatsConfigChange,
+  techStackConfig,
+  onTechStackConfigChange,
   socialConfig,
   onSocialConfigChange,
   username = "",
@@ -102,6 +108,7 @@ export function SectionsManager({
             const hasControls =
               (section.key === "intro" && !!onIntroConfigChange) ||
               (section.key === "about" && !!onAboutConfigChange) ||
+              (section.key === "skills" && !!onTechStackConfigChange) ||
               (section.key === "stats" && !!onStatsConfigChange) ||
               (section.key === "contact" && !!onSocialConfigChange);
 
@@ -204,6 +211,16 @@ export function SectionsManager({
                         <AboutSectionControls
                           config={aboutConfig || getDefaultAboutConfig(username)}
                           onChange={onAboutConfigChange}
+                        />
+                      </div>
+                    )}
+
+                    {/* Dedicated Tech Stack & Badges Controls */}
+                    {section.key === "skills" && onTechStackConfigChange && (
+                      <div className="pt-1">
+                        <TechStackSectionControls
+                          config={techStackConfig || getDefaultSkillsConfig()}
+                          onChange={onTechStackConfigChange}
                         />
                       </div>
                     )}

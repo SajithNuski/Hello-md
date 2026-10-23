@@ -14,6 +14,12 @@ import {
   generateContactMarkdown,
   normalizeSocialUrl,
 } from "../socialConfig";
+import {
+  TechStackConfig,
+  generateSkillsMarkdown,
+  getDefaultSkillsConfig,
+  TECH_CATALOG,
+} from "../techStackConfig";
 
 /**
  * Deterministic Markdown/HTML builder. The AI supplies plain text only; every
@@ -205,32 +211,45 @@ function renderAbout(d: AboutSection, c: Ctx): string {
   return parts.join("\n\n");
 }
 
-function renderSkills(d: SkillsSection, c: Ctx): string {
-  const groups = d.groups?.length
-    ? d.groups
-    : c.facts.topLanguages.length
-      ? [{ title: "Languages", items: c.facts.topLanguages.map((l) => l.name) }]
-      : [];
+function renderSkills(data: unknown, c: Ctx): string {
+  const isTechStackConfig =
+    data &&
+    typeof data === "object" &&
+    ("selected" in data || "style" in data);
 
-  const blocks = groups
-    .filter((g) => g.items.length)
-    .map((g) => {
-      const icons = Array.from(new Set(g.items.map(iconId).filter(Boolean) as string[]));
-      const rest = g.items.filter((i) => !iconId(i));
-      // No blank lines inside the <p>: a blank line ends the HTML block on GitHub.
-      const inner = [
-        icons.length
-          ? `<img src="https://skillicons.dev/icons?i=${icons.join(",")}&theme=dark" alt="${safe(g.title)}"/>`
-          : "",
-        ...rest.map((i) => shield(i, c.t.accent)),
-      ]
-        .filter(Boolean)
-        .join("\n  ");
-      return `**${safe(g.title)}**\n\n<p>\n  ${inner}\n</p>`;
+  if (isTechStackConfig) {
+    return generateSkillsMarkdown(data as TechStackConfig);
+  }
+
+  // If data has legacy groups or facts has topLanguages, map them to catalog IDs
+  const legacyItems: string[] = [];
+  if (data && typeof data === "object" && "groups" in data && Array.isArray((data as any).groups)) {
+    for (const g of (data as any).groups) {
+      if (Array.isArray(g.items)) {
+        legacyItems.push(...g.items);
+      }
+    }
+  } else if (c.facts.topLanguages.length) {
+    legacyItems.push(...c.facts.topLanguages.map((l) => l.name));
+  }
+
+  const selected = legacyItems
+    .map((item) => {
+      const match = TECH_CATALOG.find(
+        (t) => t.id.toLowerCase() === item.toLowerCase() || t.label.toLowerCase() === item.toLowerCase()
+      );
+      return match ? match.id : null;
+    })
+    .filter(Boolean) as string[];
+
+  if (selected.length > 0) {
+    return generateSkillsMarkdown({
+      selected,
+      style: "icons",
     });
+  }
 
-  if (!blocks.length) return "";
-  return `${heading(c, "🛠️", "Tech Stack")}\n\n${blocks.join("\n\n")}`;
+  return generateSkillsMarkdown(getDefaultSkillsConfig());
 }
 
 function renderProjects(d: ProjectsSection, c: Ctx): string {
@@ -337,7 +356,7 @@ export function formatSection(
     case "about":
       return renderAbout(data as AboutSection, c);
     case "skills":
-      return renderSkills(data as SkillsSection, c);
+      return renderSkills(data, c);
     case "projects":
       return renderProjects(data as ProjectsSection, c);
     case "stats":
