@@ -32,6 +32,12 @@ import {
   generateStatsMarkdown,
   parseStatsMarkdown,
 } from "@/lib/statsConfig";
+import {
+  SocialConfig,
+  getDefaultSocialConfig,
+  generateContactMarkdown,
+  parseContactMarkdown,
+} from "@/lib/socialConfig";
 import { FiLoader, FiAlertCircle, FiX } from "react-icons/fi";
 
 export default function EditorPage() {
@@ -125,6 +131,21 @@ export default function EditorPage() {
                 },
               };
             }
+            if (s.key === "contact" && !s.config?.contact && !s.config?.social) {
+              const parsed = s.markdown ? parseContactMarkdown(s.markdown) : null;
+              const cfg = {
+                ...getDefaultSocialConfig(),
+                ...(parsed || {}),
+              };
+              return {
+                ...s,
+                markdown: s.markdown || generateContactMarkdown(cfg),
+                config: {
+                  ...(s.config || {}),
+                  contact: cfg,
+                },
+              };
+            }
             return s;
           });
           setSections(updatedSections);
@@ -203,6 +224,25 @@ export default function EditorPage() {
     };
   }, [statsSection, login]);
 
+  // Connect & Social links section & config
+  const contactSection = useMemo(() => {
+    return sections.find((s) => s.key === "contact");
+  }, [sections]);
+
+  const socialConfig: SocialConfig = useMemo(() => {
+    if (contactSection?.config?.contact) {
+      return contactSection.config.contact as SocialConfig;
+    }
+    if (contactSection?.config?.social) {
+      return contactSection.config.social as SocialConfig;
+    }
+    const parsed = contactSection ? parseContactMarkdown(contactSection.markdown) : null;
+    return {
+      ...getDefaultSocialConfig(),
+      ...(parsed || {}),
+    };
+  }, [contactSection]);
+
   // Debounced auto-save triggers on edits
   const triggerAutoSave = useCallback(
     (newSections: SectionItem[]) => {
@@ -240,10 +280,19 @@ export default function EditorPage() {
     setSections((prev) => {
       const updated = prev.map((s) => {
         if (s.key === selectedKey) {
+          const configUpdates: Record<string, unknown> = { ...(s.config || {}) };
+          if (s.key === "contact") {
+            const parsed = parseContactMarkdown(newText);
+            configUpdates.contact = {
+              ...getDefaultSocialConfig(),
+              ...(parsed || {}),
+            };
+          }
           return {
             ...s,
             markdown: newText,
             source: "user" as const, // Hand-edited by user
+            config: configUpdates,
           };
         }
         return s;
@@ -346,6 +395,32 @@ export default function EditorPage() {
       });
     },
     [login, triggerAutoSave]
+  );
+
+  // Handle contact section custom controls change
+  const handleSocialConfigChange = useCallback(
+    (newConfig: SocialConfig) => {
+      const newMarkdown = generateContactMarkdown(newConfig);
+      setSections((prev) => {
+        const updated = prev.map((s) => {
+          if (s.key === "contact") {
+            return {
+              ...s,
+              markdown: newMarkdown,
+              source: "user" as const,
+              config: {
+                ...(s.config || {}),
+                contact: newConfig,
+              },
+            };
+          }
+          return s;
+        });
+        triggerAutoSave(updated);
+        return updated;
+      });
+    },
+    [triggerAutoSave]
   );
 
   // Handle reordering sections
@@ -522,6 +597,8 @@ export default function EditorPage() {
             onAboutConfigChange={handleAboutConfigChange}
             statsConfig={statsConfig}
             onStatsConfigChange={handleStatsConfigChange}
+            socialConfig={socialConfig}
+            onSocialConfigChange={handleSocialConfigChange}
             username={login}
           />
 

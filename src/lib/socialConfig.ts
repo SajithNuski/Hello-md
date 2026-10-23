@@ -48,6 +48,10 @@ export function normalizeSocialUrl(
     if (/^(www\.)?linkedin\.com\/in\//i.test(trimmed)) {
       return `https://${trimmed}`;
     }
+    // If it's a URL to another domain, leave as-is so validation handles it
+    if (/^https?:\/\//i.test(trimmed)) {
+      return trimmed;
+    }
     // Clean handle (remove leading @ or /)
     const cleanHandle = trimmed.replace(/^[@/]+/, "");
     return `https://linkedin.com/in/${cleanHandle}`;
@@ -62,6 +66,10 @@ export function normalizeSocialUrl(
     }
     if (/^(www\.)?(twitter|x)\.com\//i.test(trimmed)) {
       return `https://${trimmed.replace(/twitter\.com/i, "x.com")}`;
+    }
+    // If it's a URL to another domain, leave as-is so validation handles it
+    if (/^https?:\/\//i.test(trimmed)) {
+      return trimmed;
     }
     // Clean handle
     const cleanHandle = trimmed.replace(/^[@/]+/, "");
@@ -123,6 +131,13 @@ function escapeShieldLabel(label: string): string {
 }
 
 /**
+ * Normalizes URL for deduplication checks.
+ */
+function normalizeUrlKey(url: string): string {
+  return url.trim().toLowerCase().replace(/\/$/, "");
+}
+
+/**
  * Format badge HTML according to task specifications:
  * <a href="{{URL}}"><img src="https://img.shields.io/badge/{{Label}}-{{HEX}}?style=for-the-badge&logo={{LOGO}}&logoColor=white" alt="{{Label}}" /></a>
  */
@@ -158,19 +173,23 @@ export function generateContactMarkdown(config: SocialConfig): string {
   const badges: string[] = [];
 
   // 1. LinkedIn
-  const linkedin = (config.linkedin || "").trim();
+  const rawLinkedin = (config.linkedin || "").trim();
+  const linkedin = normalizeSocialUrl("linkedin", rawLinkedin);
   if (linkedin && linkedin.startsWith("https://")) {
-    if (!seenUrls.has(linkedin)) {
-      seenUrls.add(linkedin);
+    const key = normalizeUrlKey(linkedin);
+    if (!seenUrls.has(key)) {
+      seenUrls.add(key);
       badges.push(formatBadge("LinkedIn", "0A66C2", "linkedin", linkedin));
     }
   }
 
   // 2. X (Twitter)
-  const x = (config.x || "").trim();
+  const rawX = (config.x || "").trim();
+  const x = normalizeSocialUrl("x", rawX);
   if (x && x.startsWith("https://")) {
-    if (!seenUrls.has(x)) {
-      seenUrls.add(x);
+    const key = normalizeUrlKey(x);
+    if (!seenUrls.has(key)) {
+      seenUrls.add(key);
       badges.push(formatBadge("X", "000000", "x", x));
     }
   }
@@ -178,18 +197,21 @@ export function generateContactMarkdown(config: SocialConfig): string {
   // 3. Portfolio
   const portfolio = (config.portfolio || "").trim();
   if (portfolio && portfolio.startsWith("https://")) {
-    if (!seenUrls.has(portfolio)) {
-      seenUrls.add(portfolio);
+    const key = normalizeUrlKey(portfolio);
+    if (!seenUrls.has(key)) {
+      seenUrls.add(key);
       badges.push(formatBadge("Portfolio", "FF5722", "googlechrome", portfolio));
     }
   }
 
   // 4. Email
-  const email = (config.email || "").trim();
-  if (email && email.includes("@")) {
-    const mailto = `mailto:${email}`;
-    if (!seenUrls.has(mailto)) {
-      seenUrls.add(mailto);
+  const rawEmail = (config.email || "").trim();
+  if (rawEmail && rawEmail.includes("@")) {
+    const cleanEmail = rawEmail.replace(/^mailto:/i, "").trim();
+    const mailto = `mailto:${cleanEmail}`;
+    const key = normalizeUrlKey(mailto);
+    if (!seenUrls.has(key)) {
+      seenUrls.add(key);
       badges.push(formatBadge("Email", "D14836", "gmail", mailto));
     }
   }
@@ -205,10 +227,18 @@ export function generateContactMarkdown(config: SocialConfig): string {
       continue;
     }
 
-    if (seenUrls.has(url)) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== "https:") continue;
+    } catch {
       continue;
     }
-    seenUrls.add(url);
+
+    const key = normalizeUrlKey(url);
+    if (seenUrls.has(key)) {
+      continue;
+    }
+    seenUrls.add(key);
 
     // logo = label lowercase no spaces
     const logoSlug = label.toLowerCase().replace(/\s+/g, "");

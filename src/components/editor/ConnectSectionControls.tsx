@@ -15,7 +15,6 @@ import {
   FiPlus,
   FiX,
   FiAlertCircle,
-  FiExternalLink,
 } from "react-icons/fi";
 
 interface ConnectSectionControlsProps {
@@ -49,6 +48,16 @@ export function ConnectSectionControls({
     }
   };
 
+  const handleLinkedinPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pasted = e.clipboardData.getData("text").trim();
+    if (pasted) {
+      e.preventDefault();
+      const normalized = normalizeSocialUrl("linkedin", pasted);
+      onChange({ ...config, linkedin: normalized });
+      markTouched("linkedin");
+    }
+  };
+
   const handleXChange = (val: string) => {
     onChange({ ...config, x: val });
   };
@@ -63,20 +72,30 @@ export function ConnectSectionControls({
     }
   };
 
+  const handleXPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pasted = e.clipboardData.getData("text").trim();
+    if (pasted) {
+      e.preventDefault();
+      const normalized = normalizeSocialUrl("x", pasted);
+      onChange({ ...config, x: normalized });
+      markTouched("x");
+    }
+  };
+
   const handlePortfolioChange = (val: string) => {
     onChange({ ...config, portfolio: val });
   };
 
   const handlePortfolioBlur = () => {
     markTouched("portfolio");
-    if (config.portfolio && !config.portfolio.startsWith("http://") && !config.portfolio.startsWith("https://")) {
-      const normalized = `https://${config.portfolio.trim()}`;
-      onChange({ ...config, portfolio: normalized });
-    }
   };
 
   const handleEmailChange = (val: string) => {
     onChange({ ...config, email: val });
+  };
+
+  const handleEmailBlur = () => {
+    markTouched("email");
   };
 
   // Extra links handlers
@@ -97,14 +116,6 @@ export function ConnectSectionControls({
       return item;
     });
     onChange({ ...config, extra: updated });
-  };
-
-  const handleExtraBlur = (index: number) => {
-    markTouched(`extra_${index}`);
-    const item = config.extra?.[index];
-    if (item && item.url && !item.url.startsWith("http://") && !item.url.startsWith("https://")) {
-      handleExtraChange(index, "url", `https://${item.url.trim()}`);
-    }
   };
 
   const handleRemoveExtra = (index: number) => {
@@ -150,15 +161,16 @@ export function ConnectSectionControls({
               value={config.linkedin || ""}
               onChange={(e) => handleLinkedinChange(e.target.value)}
               onBlur={handleLinkedinBlur}
+              onPaste={handleLinkedinPaste}
               placeholder="https://linkedin.com/in/your-username"
               className={`w-full h-8 px-2.5 bg-surface border rounded text-xs text-text-primary placeholder:text-text-muted focus:outline-none transition-colors ${
-                touched.linkedin && !linkedinValidation.isValid
+                touched.linkedin && !linkedinValidation.isValid && config.linkedin.trim()
                   ? "border-status-error focus:border-status-error"
                   : "border-border focus:border-border-hover"
               }`}
             />
           </div>
-          {touched.linkedin && !linkedinValidation.isValid && (
+          {touched.linkedin && !linkedinValidation.isValid && config.linkedin.trim() && (
             <span className="text-[10px] text-status-error flex items-center gap-1">
               <FiAlertCircle className="w-2.5 h-2.5 shrink-0" />
               {linkedinValidation.error}
@@ -181,15 +193,16 @@ export function ConnectSectionControls({
               value={config.x || ""}
               onChange={(e) => handleXChange(e.target.value)}
               onBlur={handleXBlur}
+              onPaste={handleXPaste}
               placeholder="https://x.com/your-handle"
               className={`w-full h-8 px-2.5 bg-surface border rounded text-xs text-text-primary placeholder:text-text-muted focus:outline-none transition-colors ${
-                touched.x && !xValidation.isValid
+                touched.x && !xValidation.isValid && config.x.trim()
                   ? "border-status-error focus:border-status-error"
                   : "border-border focus:border-border-hover"
               }`}
             />
           </div>
-          {touched.x && !xValidation.isValid && (
+          {touched.x && !xValidation.isValid && config.x.trim() && (
             <span className="text-[10px] text-status-error flex items-center gap-1">
               <FiAlertCircle className="w-2.5 h-2.5 shrink-0" />
               {xValidation.error}
@@ -214,13 +227,13 @@ export function ConnectSectionControls({
               onBlur={handlePortfolioBlur}
               placeholder="https://your-site.com"
               className={`w-full h-8 px-2.5 bg-surface border rounded text-xs text-text-primary placeholder:text-text-muted focus:outline-none transition-colors ${
-                touched.portfolio && !portfolioValidation.isValid
+                touched.portfolio && !portfolioValidation.isValid && config.portfolio.trim()
                   ? "border-status-error focus:border-status-error"
                   : "border-border focus:border-border-hover"
               }`}
             />
           </div>
-          {touched.portfolio && !portfolioValidation.isValid && (
+          {touched.portfolio && !portfolioValidation.isValid && config.portfolio.trim() && (
             <span className="text-[10px] text-status-error flex items-center gap-1">
               <FiAlertCircle className="w-2.5 h-2.5 shrink-0" />
               {portfolioValidation.error}
@@ -242,16 +255,16 @@ export function ConnectSectionControls({
               type="email"
               value={config.email || ""}
               onChange={(e) => handleEmailChange(e.target.value)}
-              onBlur={() => markTouched("email")}
+              onBlur={handleEmailBlur}
               placeholder="you@example.com"
               className={`w-full h-8 px-2.5 bg-surface border rounded text-xs text-text-primary placeholder:text-text-muted focus:outline-none transition-colors ${
-                touched.email && !emailValidation.isValid
+                touched.email && !emailValidation.isValid && config.email.trim()
                   ? "border-status-error focus:border-status-error"
                   : "border-border focus:border-border-hover"
               }`}
             />
           </div>
-          {touched.email && !emailValidation.isValid && (
+          {touched.email && !emailValidation.isValid && config.email.trim() && (
             <span className="text-[10px] text-status-error flex items-center gap-1">
               <FiAlertCircle className="w-2.5 h-2.5 shrink-0" />
               {emailValidation.error}
@@ -272,67 +285,63 @@ export function ConnectSectionControls({
         {extraCount > 0 && (
           <div
             className="flex flex-col gap-2 max-h-[200px] overflow-y-auto thin-scrollbar p-1.5 bg-surface/40 border border-border/80 rounded"
-            style={{ maxHeight: "200px" }}
+            style={{ maxHeight: "200px", overflowY: "auto" }}
           >
             {config.extra.map((item, index) => {
               const urlValidation = validateSocialField("url", item.url);
-              const isLabelMissing = Boolean(item.url) && !item.label.trim();
-              const isUrlMissing = Boolean(item.label) && !item.url.trim();
+              const isLabelMissing = Boolean(item.url.trim()) && !item.label.trim();
 
               return (
-                <div key={index} className="flex flex-col gap-1.5 p-2 bg-surface rounded border border-border/80">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-text-muted">Link #{index + 1}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveExtra(index)}
-                      className="text-text-muted hover:text-status-error p-0.5 rounded hover:bg-surface-raised transition-colors shrink-0 cursor-pointer"
-                      title="Remove extra link"
-                    >
-                      <FiX className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-
-                  <div className="flex flex-col gap-1">
+                <div key={index} className="flex flex-col gap-1 p-1.5 bg-surface rounded border border-border/70">
+                  <div className="flex items-center gap-1.5">
                     <input
                       type="text"
                       value={item.label}
                       onChange={(e) => handleExtraChange(index, "label", e.target.value)}
+                      onBlur={() => markTouched(`extra_label_${index}`)}
                       placeholder="Label (e.g. Behance)"
-                      className="w-full h-7 px-2 bg-surface-raised border border-border rounded text-[11px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-hover"
+                      className={`w-28 shrink-0 h-7 px-2 bg-surface-raised border rounded text-[11px] text-text-primary placeholder:text-text-muted focus:outline-none transition-colors ${
+                        touched[`extra_label_${index}`] && isLabelMissing
+                          ? "border-status-error focus:border-status-error"
+                          : "border-border focus:border-border-hover"
+                      }`}
                     />
 
                     <input
                       type="text"
                       value={item.url}
                       onChange={(e) => handleExtraChange(index, "url", e.target.value)}
-                      onBlur={() => handleExtraBlur(index)}
+                      onBlur={() => markTouched(`extra_url_${index}`)}
                       placeholder="https://behance.net/your-username"
-                      className={`w-full h-7 px-2 bg-surface-raised border rounded text-[11px] text-text-primary placeholder:text-text-muted focus:outline-none ${
-                        touched[`extra_${index}`] && !urlValidation.isValid
-                          ? "border-status-error"
+                      className={`flex-1 min-w-0 h-7 px-2 bg-surface-raised border rounded text-[11px] text-text-primary placeholder:text-text-muted focus:outline-none transition-colors ${
+                        touched[`extra_url_${index}`] && !urlValidation.isValid && item.url.trim()
+                          ? "border-status-error focus:border-status-error"
                           : "border-border focus:border-border-hover"
                       }`}
                     />
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveExtra(index)}
+                      className="w-6 h-7 flex items-center justify-center text-text-muted hover:text-status-error p-0.5 rounded hover:bg-surface-raised transition-colors shrink-0 cursor-pointer"
+                      title="Remove extra link"
+                      aria-label="Remove link"
+                    >
+                      <FiX className="w-3.5 h-3.5" />
+                    </button>
                   </div>
 
                   {/* Inline errors */}
-                  {touched[`extra_${index}`] && !urlValidation.isValid && item.url && (
+                  {touched[`extra_url_${index}`] && !urlValidation.isValid && item.url.trim() && (
                     <span className="text-[10px] text-status-error flex items-center gap-1 pl-1">
                       <FiAlertCircle className="w-2.5 h-2.5 shrink-0" />
                       {urlValidation.error}
                     </span>
                   )}
-                  {isLabelMissing && (
-                    <span className="text-[10px] text-status-warning flex items-center gap-1 pl-1">
+                  {touched[`extra_label_${index}`] && isLabelMissing && (
+                    <span className="text-[10px] text-status-error flex items-center gap-1 pl-1">
                       <FiAlertCircle className="w-2.5 h-2.5 shrink-0" />
-                      Label is required for this link to appear
-                    </span>
-                  )}
-                  {isUrlMissing && (
-                    <span className="text-[10px] text-status-warning flex items-center gap-1 pl-1">
-                      <FiAlertCircle className="w-2.5 h-2.5 shrink-0" />
-                      URL is required for this link to appear
+                      Label is required
                     </span>
                   )}
                 </div>

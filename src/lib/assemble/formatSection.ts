@@ -9,6 +9,11 @@ import {
 } from "../ai/schema";
 import { THEMES, type Theme, type ThemeId } from "./themes";
 import { StatsConfig, generateStatsMarkdown } from "../statsConfig";
+import {
+  SocialConfig,
+  generateContactMarkdown,
+  normalizeSocialUrl,
+} from "../socialConfig";
 
 /**
  * Deterministic Markdown/HTML builder. The AI supplies plain text only; every
@@ -283,46 +288,26 @@ function renderStats(data: unknown, c: Ctx): string {
   return generateStatsMarkdown(statsConfig, c.facts.login);
 }
 
-function renderContact(d: ContactSection, c: Ctx): string {
-  const { facts, t, opts } = c;
-  const l = opts.links ?? {};
-  const btn = (label: string, href: string, logo: string, color: string) =>
-    `  <a href="${href}"><img src="https://img.shields.io/badge/${label}-${color}?style=for-the-badge&logo=${logo}&logoColor=white" alt="${label}"/></a>`;
+function renderContact(data: unknown, c: Ctx): string {
+  const isSocialConfig =
+    data &&
+    typeof data === "object" &&
+    ("linkedin" in data || "x" in data || "portfolio" in data || "email" in data || "extra" in data);
 
-  const site = httpUrl(facts.websiteUrl);
-  const linkedin = httpUrl(l.linkedin);
-  const twitter = httpUrl(l.twitter);
-  const fiverr = httpUrl(l.fiverr);
-  const email = emailOk(l.email);
+  if (isSocialConfig) {
+    return generateContactMarkdown(data as SocialConfig);
+  }
 
-  const buttons = [
-    btn("GitHub", `https://github.com/${c.user}`, "github", "181717"),
-    site && btn("Website", site, "googlechrome", t.accent),
-    linkedin && btn("LinkedIn", linkedin, "linkedin", "0A66C2"),
-    fiverr && btn("Fiverr", fiverr, "fiverr", "1DBF73"),
-    twitter && btn("X", twitter, "x", "000000"),
-    email && btn("Email", `mailto:${email}`, "gmail", "EA4335"),
-  ].filter(Boolean);
+  const l = c.opts.links ?? {};
+  const cfg: SocialConfig = {
+    linkedin: l.linkedin ? normalizeSocialUrl("linkedin", l.linkedin) : "",
+    x: l.twitter ? normalizeSocialUrl("x", l.twitter) : "",
+    portfolio: c.facts.websiteUrl ? normalizeSocialUrl("portfolio", c.facts.websiteUrl) : "",
+    email: l.email && emailOk(l.email) ? l.email : "",
+    extra: [],
+  };
 
-  const closing = safe(d.closing);
-  const location = facts.location
-    ? `${c.emoji ? "📍 " : "Location: "}${safe(facts.location)}`
-    : "";
-  const footerImg =
-    t.header === "wave"
-      ? `<img src="https://capsule-render.vercel.app/api?type=waving&color=0:${t.to},100:${t.from}&height=90&section=footer" width="100%" alt=""/>`
-      : "";
-  const extras = [location, footerImg].filter(Boolean).join("\n\n");
-
-  return `${heading(c, "🤝", "Connect With Me")}
-
-<div align="center">
-${closing ? `\n${closing}\n` : ""}
-<p>
-${buttons.join("\n")}
-</p>
-${extras ? `\n${extras}\n` : ""}
-</div>`;
+  return generateContactMarkdown(cfg);
 }
 
 /**
@@ -357,7 +342,7 @@ export function formatSection(
     case "stats":
       return renderStats(data, c);
     case "contact":
-      return renderContact(data as ContactSection, c);
+      return renderContact(data, c);
     default:
       return "";
   }

@@ -106,4 +106,33 @@ assert(parsed.email === "hello@mysite.org", "Parsed Email");
 assert(parsed.extra?.length === 2, "Parsed 2 extra links");
 assert(parsed.extra?.[0].label === "Behance", "Parsed Behance label");
 
+console.log("\n--- 7. Testing Automatic Prepending of Usernames in generateContactMarkdown ---");
+const usernameConfig: SocialConfig = {
+  linkedin: "johndoe",
+  x: "@janedoe",
+  portfolio: "",
+  email: "",
+  extra: [],
+};
+const usernameMarkdown = generateContactMarkdown(usernameConfig);
+assert(usernameMarkdown.includes("https://linkedin.com/in/johndoe"), "LinkedIn username automatically prepended in markdown");
+assert(usernameMarkdown.includes("https://x.com/janedoe"), "X handle automatically prepended in markdown");
+
+console.log("\n--- 8. Testing Trailing Slash Deduplication & Mailto Prefix Cleaning ---");
+const dedupConfig: SocialConfig = {
+  linkedin: "https://example.com/site",
+  x: "",
+  portfolio: "https://example.com/site/", // Trailing slash duplicate
+  email: "mailto:test@example.com",
+  extra: [
+    { label: "Duplicate Site", url: "https://example.com/site" },
+    { label: "Dev-To Community", url: "https://dev.to/test" },
+  ],
+};
+const dedupMarkdown = generateContactMarkdown(dedupConfig);
+assert(!dedupMarkdown.includes("mailto:mailto:"), "No duplicate mailto: prefix in email href");
+assert(dedupMarkdown.includes("href=\"mailto:test@example.com\""), "Clean mailto href generated");
+assert((dedupMarkdown.match(/example\.com\/site/g) || []).length === 1, "Duplicate URL with trailing slash deduplicated");
+assert(dedupMarkdown.includes("badge/Dev--To%20Community-555555"), "Label dashes and spaces properly encoded for shields.io");
+
 console.log("\nALL TESTS PASSED SUCCESSFULLY! 🎉");
