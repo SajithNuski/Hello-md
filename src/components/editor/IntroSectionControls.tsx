@@ -58,7 +58,7 @@ export function IntroSectionControls({
 
   const handleAddLine = () => {
     update({
-      animationLines: [...config.animationLines, "Full Stack Developer ✨"],
+      animationLines: [...config.animationLines, "Full Stack Developer"],
     });
   };
 

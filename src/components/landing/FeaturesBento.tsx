@@ -15,12 +15,12 @@ export function FeaturesBento() {
       if (headerRef.current) {
         gsap.fromTo(
           headerRef.current,
-          { opacity: 0, y: 25 },
+          { opacity: 0, y: 16 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.7,
-            ease: "power3.out",
+            duration: 0.5,
+            ease: "power2.out",
             clearProps: "all",
             scrollTrigger: {
               trigger: headerRef.current,
@@ -34,13 +34,13 @@ export function FeaturesBento() {
       if (gridRef.current && gridRef.current.children.length > 0) {
         gsap.fromTo(
           Array.from(gridRef.current.children),
-          { opacity: 0, y: 35 },
+          { opacity: 0, y: 16 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.75,
-            stagger: 0.1,
-            ease: "power3.out",
+            duration: 0.5,
+            stagger: 0.08,
+            ease: "power2.out",
             clearProps: "all",
             scrollTrigger: {
               trigger: gridRef.current,
@@ -58,28 +58,21 @@ export function FeaturesBento() {
     <section
       id="features"
       ref={sectionRef}
-      className="w-full flex flex-col gap-12 pt-14 pb-4 border-t border-border/80 scroll-mt-24 select-none"
+      className="w-full flex flex-col gap-10 pt-12 pb-2 border-t border-[#E2E3DC] scroll-mt-20 select-none"
     >
       {/* Header */}
       <div
         ref={headerRef}
-        className="flex flex-col items-center text-center gap-3 max-w-2xl mx-auto"
+        className="flex flex-col items-center text-center gap-2 max-w-xl mx-auto"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0D0E0C] border border-[#2B2E24] shadow-xs">
-          <span className="font-mono text-xs uppercase tracking-wider font-semibold text-white">
-            Core Capabilities
-          </span>
-          <span className="text-[#3A3D33]">|</span>
-          <span className="font-mono text-xs text-accent font-semibold">
-            Precision Tooling
-          </span>
-        </div>
-
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-[-0.035em] text-[#0D0E0C]">
-          Engineered for developer precision
+        <span className="text-xs font-mono font-medium text-[#65665F] uppercase tracking-wider">
+          Capabilities
+        </span>
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#171815]">
+          Built for accuracy and control
         </h2>
-        <p className="text-base sm:text-lg text-[#262822] leading-relaxed">
-          Every component is designed to extract real metrics, prevent AI hallucination, and produce clean, ready-to-commit Markdown.
+        <p className="text-sm sm:text-base text-[#52534C] leading-relaxed">
+          Real metrics from GitHub, multi-model fallback, and deterministic Markdown assembly.
         </p>
       </div>
 
@@ -89,144 +82,144 @@ export function FeaturesBento() {
         className="grid grid-cols-1 md:grid-cols-3 gap-5"
       >
         {/* Card 1: Multi-Model AI Router (Spans 2 columns on desktop) */}
-        <div className="md:col-span-2 flex flex-col justify-between p-7 bg-white rounded-xl border border-[#0D0E0C]/15 shadow-sm hover:border-[#0D0E0C]/40 transition-all duration-300 group">
-          <div className="flex flex-col gap-4">
+        <div className="md:col-span-2 flex flex-col justify-between p-6 bg-white rounded-lg border border-[#E2E3DC] shadow-xs">
+          <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 px-2.5 py-1 rounded">
-                INTELLIGENT ROUTER
+              <span className="font-mono text-xs font-semibold text-[#65665F]">
+                MODEL ROUTING
               </span>
-              <div className="w-10 h-10 rounded-lg bg-[#171815] text-accent flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                <FiCpu className="w-5 h-5 text-accent" />
+              <div className="w-8 h-8 rounded-md bg-[#F4F4F2] border border-[#E2E3DC] flex items-center justify-center text-[#171815]">
+                <FiCpu className="w-4 h-4" />
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold tracking-[-0.02em] text-[#0D0E0C]">
-              Groq Llama 3.3 70B &amp; Gemini 2.0 Fallback
+            <h3 className="text-lg font-semibold text-[#171815]">
+              Groq Llama 3.3 with Gemini fallback
             </h3>
 
-            <p className="text-[15px] leading-relaxed text-[#262822] max-w-xl">
-              High-throughput Llama 3.3 70B processes your profile in under 1.5 seconds via Groq LPUs. If rate limits or network latency occur, the system automatically falls back to Gemini 2.0 Flash without interruption.
+            <p className="text-sm text-[#52534C] leading-relaxed max-w-xl">
+              Llama 3.3 70B runs on Groq for high-speed inference. If rate limits or network errors occur, the router fails over automatically to Gemini 1.5 Flash.
             </p>
           </div>
 
-          {/* Interactive Router Status Preview */}
-          <div className="mt-6 p-3.5 rounded-lg bg-[#0D0E0C] border border-[#262822] flex flex-wrap items-center justify-between gap-3 font-mono text-xs text-white">
+          {/* Router Status Preview */}
+          <div className="mt-5 p-3 rounded-md bg-[#F4F4F2] border border-[#E2E3DC] flex flex-wrap items-center justify-between gap-3 font-mono text-xs text-[#171815]">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-              <span className="font-semibold text-white">Primary: Groq Llama 3.3</span>
-              <span className="text-[#55584D]">·</span>
-              <span className="text-accent">&lt;1.5s latency</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span className="font-medium">Primary: Groq Llama 3.3</span>
+              <span className="text-[#91928A]">·</span>
+              <span className="text-[#52534C]">Sub-2s response</span>
             </div>
-            <span className="bg-[#1C1F16] border border-[#2E3324] text-accent px-2 py-0.5 rounded text-[11px]">
-              AUTO-FAILOVER READY
+            <span className="text-[11px] font-medium text-[#65665F] bg-white px-2 py-0.5 rounded border border-[#E2E3DC]">
+              Automatic failover
             </span>
           </div>
         </div>
 
-        {/* Card 2: Zero Hallucination Guarantee */}
-        <div className="flex flex-col justify-between p-7 bg-white rounded-xl border border-[#0D0E0C]/15 shadow-sm hover:border-[#0D0E0C]/40 transition-all duration-300 group">
-          <div className="flex flex-col gap-4">
+        {/* Card 2: Grounded Facts */}
+        <div className="flex flex-col justify-between p-6 bg-white rounded-lg border border-[#E2E3DC] shadow-xs">
+          <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 px-2.5 py-1 rounded">
-                ACCURACY
+              <span className="font-mono text-xs font-semibold text-[#65665F]">
+                DATA INTEGRITY
               </span>
-              <div className="w-10 h-10 rounded-lg bg-[#171815] text-accent flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                <FiShield className="w-5 h-5 text-accent" />
+              <div className="w-8 h-8 rounded-md bg-[#F4F4F2] border border-[#E2E3DC] flex items-center justify-center text-[#171815]">
+                <FiShield className="w-4 h-4" />
               </div>
             </div>
 
-            <h3 className="text-xl font-bold tracking-[-0.02em] text-[#0D0E0C]">
-              Zero AI Hallucinations
+            <h3 className="text-lg font-semibold text-[#171815]">
+              Verified GitHub facts
             </h3>
 
-            <p className="text-[15px] leading-relaxed text-[#262822]">
-              Unlike ChatGPT, Hello-md feeds strict GraphQL API facts into the model. The AI is strictly constrained to summarize your real projects with zero fabricated experience.
+            <p className="text-sm text-[#52534C] leading-relaxed">
+              Prose generation is constrained to data from the GitHub GraphQL API. Repositories, stars, and contribution metrics are factual and uninvented.
             </p>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-[#0D0E0C]/10 flex items-center gap-2 text-xs font-mono font-semibold text-[#0D0E0C]">
-            <FiCheck className="w-4 h-4 text-accent stroke-[3]" />
-            <span>100% Fact-Checked Against GitHub</span>
+          <div className="mt-4 pt-3 border-t border-[#E2E3DC] flex items-center gap-1.5 text-xs text-[#52534C]">
+            <FiCheck className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+            <span>100% verified against GitHub</span>
           </div>
         </div>
 
         {/* Card 3: Deterministic Shields.io Badges */}
-        <div className="flex flex-col justify-between p-7 bg-white rounded-xl border border-[#0D0E0C]/15 shadow-sm hover:border-[#0D0E0C]/40 transition-all duration-300 group">
-          <div className="flex flex-col gap-4">
+        <div className="flex flex-col justify-between p-6 bg-white rounded-lg border border-[#E2E3DC] shadow-xs">
+          <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 px-2.5 py-1 rounded">
-                VISUAL BADGES
+              <span className="font-mono text-xs font-semibold text-[#65665F]">
+                BADGES
               </span>
-              <div className="w-10 h-10 rounded-lg bg-[#171815] text-accent flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                <FiLayers className="w-5 h-5 text-accent" />
+              <div className="w-8 h-8 rounded-md bg-[#F4F4F2] border border-[#E2E3DC] flex items-center justify-center text-[#171815]">
+                <FiLayers className="w-4 h-4" />
               </div>
             </div>
 
-            <h3 className="text-xl font-bold tracking-[-0.02em] text-[#0D0E0C]">
-              Deterministic Badges
+            <h3 className="text-lg font-semibold text-[#171815]">
+              Deterministic badge builder
             </h3>
 
-            <p className="text-[15px] leading-relaxed text-[#262822]">
-              Badges and statistics are never generated by AI. They are deterministically constructed using standardized Shields.io syntax that never breaks or expires.
+            <p className="text-sm text-[#52534C] leading-relaxed">
+              Skill and tech stack badges are generated in pure code using safe URL encoding. The AI never writes URLs or image tags directly.
             </p>
           </div>
 
-          {/* Badges Display Preview */}
+          {/* Badges Preview */}
           <div className="mt-4 flex flex-wrap gap-1.5 pt-2 select-none">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#0D0E0C] text-white font-mono text-[11px]">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#F4F4F2] border border-[#E2E3DC] font-mono text-[11px] text-[#171815]">
               <SiTypescript className="w-3 h-3 text-[#3178C6]" />
               <span>TypeScript</span>
             </span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#0D0E0C] text-white font-mono text-[11px]">
-              <SiReact className="w-3 h-3 text-[#61DAFB]" />
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#F4F4F2] border border-[#E2E3DC] font-mono text-[11px] text-[#171815]">
+              <SiReact className="w-3 h-3 text-[#087EA4]" />
               <span>React</span>
             </span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#0D0E0C] text-white font-mono text-[11px]">
-              <SiNextdotjs className="w-3 h-3 text-white" />
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#F4F4F2] border border-[#E2E3DC] font-mono text-[11px] text-[#171815]">
+              <SiNextdotjs className="w-3 h-3 text-[#171815]" />
               <span>Next.js</span>
             </span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#0D0E0C] text-white font-mono text-[11px]">
-              <SiTailwindcss className="w-3 h-3 text-[#38BDF8]" />
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#F4F4F2] border border-[#E2E3DC] font-mono text-[11px] text-[#171815]">
+              <SiTailwindcss className="w-3 h-3 text-[#06B6D4]" />
               <span>Tailwind</span>
             </span>
           </div>
         </div>
 
         {/* Card 4: Live CodeMirror 6 Editor (Spans 2 columns on desktop) */}
-        <div className="md:col-span-2 flex flex-col justify-between p-7 bg-white rounded-xl border border-[#0D0E0C]/15 shadow-sm hover:border-[#0D0E0C]/40 transition-all duration-300 group">
-          <div className="flex flex-col gap-4">
+        <div className="md:col-span-2 flex flex-col justify-between p-6 bg-white rounded-lg border border-[#E2E3DC] shadow-xs">
+          <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] font-bold tracking-wider text-[#0D0E0C] bg-accent/40 px-2.5 py-1 rounded">
-                STUDIO WORKSPACE
+              <span className="font-mono text-xs font-semibold text-[#65665F]">
+                WORKSPACE
               </span>
-              <div className="w-10 h-10 rounded-lg bg-[#171815] text-accent flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                <FiCode className="w-5 h-5 text-accent" />
+              <div className="w-8 h-8 rounded-md bg-[#F4F4F2] border border-[#E2E3DC] flex items-center justify-center text-[#171815]">
+                <FiCode className="w-4 h-4" />
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold tracking-[-0.02em] text-[#0D0E0C]">
-              CodeMirror 6 In-Browser Editor with Live Preview
+            <h3 className="text-lg font-semibold text-[#171815]">
+              In-browser editor with synchronized preview
             </h3>
 
-            <p className="text-[15px] leading-relaxed text-[#262822] max-w-xl">
-              Edit the generated markdown in real-time with synchronized split view, syntax highlighting, section reordering, and individual section regeneration without losing your manual changes.
+            <p className="text-sm text-[#52534C] leading-relaxed max-w-xl">
+              CodeMirror 6 with syntax highlighting, live GitHub Dark/Light rendered preview, section reordering, and autosave to local state.
             </p>
           </div>
 
           {/* Mini Editor Mockup */}
-          <div className="mt-5 p-3 rounded-lg bg-[#0D0E0C] border border-[#262822] font-mono text-xs text-white/90 overflow-hidden flex flex-col gap-1">
-            <div className="flex items-center justify-between text-[#787B70] border-b border-[#21231D] pb-1.5 mb-1 text-[11px]">
+          <div className="mt-4 p-3 rounded-md bg-[#0D0E0C] border border-[#262822] font-mono text-xs text-white/90 overflow-hidden flex flex-col gap-1">
+            <div className="flex items-center justify-between text-[#8E9285] border-b border-[#21231D] pb-1.5 mb-1 text-[11px]">
               <span className="flex items-center gap-1.5 text-white">
-                <span className="w-2 h-2 rounded-full bg-accent"></span>
-                <span>profile.md</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>README.md</span>
               </span>
-              <span className="text-accent">SYNCHRONIZED PREVIEW</span>
+              <span className="text-[#8E9285]">Live synchronized</span>
             </div>
             <div className="text-[#A5A89D]">
-              <span className="text-accent font-bold"># Hi, I&apos;m Developer 👋</span>
+              <span className="text-accent font-semibold"># Hi, I&apos;m Developer</span>
             </div>
             <div className="text-white/80">
-              Passionate software engineer building resilient, high-throughput systems.
+              Software engineer building web applications and developer tools.
             </div>
           </div>
         </div>

@@ -5,9 +5,6 @@ import {
   STATS_THEMES,
 } from "@/lib/statsConfig";
 import {
-  FiBarChart2,
-  FiCode,
-  FiZap,
   FiCheck,
   FiInfo,
 } from "react-icons/fi";
@@ -46,8 +43,7 @@ export function StatsSectionControls({
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-[#E2E3DC]">
         <div>
-          <h3 className="text-base font-semibold text-[#171815] flex items-center gap-2">
-            <FiBarChart2 className="w-4 h-4 text-accent" />
+          <h3 className="text-base font-semibold text-[#171815]">
             GitHub Analytics
           </h3>
           <p className="text-xs text-[#52534C] mt-0.5">
@@ -81,8 +77,7 @@ export function StatsSectionControls({
           />
           <div className="flex flex-col flex-1 leading-snug">
             <div className="flex items-center justify-between">
-              <span className={`font-semibold text-sm flex items-center gap-2 ${config.showStats ? "text-white" : "text-[#171815]"}`}>
-                <FiBarChart2 className="w-4 h-4 text-accent" />
+              <span className={`font-semibold text-sm ${config.showStats ? "text-white" : "text-[#171815]"}`}>
                 GitHub Stats Card
               </span>
               <span className={`text-xs font-mono ${config.showStats ? "text-white/60" : "text-[#91928A]"}`}>anuraghazra</span>
@@ -109,8 +104,7 @@ export function StatsSectionControls({
           />
           <div className="flex flex-col flex-1 leading-snug">
             <div className="flex items-center justify-between">
-              <span className={`font-semibold text-sm flex items-center gap-2 ${config.showLangs ? "text-white" : "text-[#171815]"}`}>
-                <FiCode className="w-4 h-4 text-accent" />
+              <span className={`font-semibold text-sm ${config.showLangs ? "text-white" : "text-[#171815]"}`}>
                 Most Used Languages
               </span>
               <span className={`text-xs font-mono ${config.showLangs ? "text-white/60" : "text-[#91928A]"}`}>compact</span>
@@ -137,8 +131,7 @@ export function StatsSectionControls({
           />
           <div className="flex flex-col flex-1 leading-snug">
             <div className="flex items-center justify-between">
-              <span className={`font-semibold text-sm flex items-center gap-2 ${config.showStreak ? "text-white" : "text-[#171815]"}`}>
-                <FiZap className="w-4 h-4 text-accent" />
+              <span className={`font-semibold text-sm ${config.showStreak ? "text-white" : "text-[#171815]"}`}>
                 Streak Stats
               </span>
               <span className={`text-xs font-mono ${config.showStreak ? "text-white/60" : "text-[#91928A]"}`}>DenverCoder1</span>

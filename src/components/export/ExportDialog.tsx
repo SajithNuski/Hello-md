@@ -65,67 +65,67 @@ export function ExportDialog({
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={handleCopy}
-              className="h-14 p-3.5 bg-surface hover:bg-surface-raised border border-border rounded-sm transition-colors flex items-center gap-3.5 text-left cursor-pointer shadow-xs"
+              className="h-14 p-3.5 bg-surface hover:bg-surface-raised border border-border rounded-md transition-colors flex items-center gap-3.5 text-left cursor-pointer shadow-xs"
             >
-              <div className="w-8 h-8 rounded-sm bg-surface-raised border border-border flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-8 h-8 rounded-md bg-surface-raised border border-border flex items-center justify-center shrink-0 shadow-xs">
                 {copied ? <FiCheck className="w-4 h-4 text-status-success" /> : <FiCopy className="w-4 h-4 text-text-primary" />}
               </div>
               <div className="flex flex-col">
-                <span className="text-nav font-medium text-text-primary">{copied ? "Copied!" : "Copy Markdown"}</span>
+                <span className="text-nav font-medium text-text-primary">{copied ? "Copied" : "Copy markdown"}</span>
                 <span className="text-meta text-text-secondary">To clipboard</span>
               </div>
             </button>
 
             <button
               onClick={handleDownload}
-              className="h-14 p-3.5 bg-surface hover:bg-surface-raised border border-border rounded-sm transition-colors flex items-center gap-3.5 text-left cursor-pointer shadow-xs"
+              className="h-14 p-3.5 bg-surface hover:bg-surface-raised border border-border rounded-md transition-colors flex items-center gap-3.5 text-left cursor-pointer shadow-xs"
             >
-              <div className="w-8 h-8 rounded-sm bg-surface-raised border border-border flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-8 h-8 rounded-md bg-surface-raised border border-border flex items-center justify-center shrink-0 shadow-xs">
                 <FiDownload className="w-4 h-4 text-text-primary" />
               </div>
               <div className="flex flex-col">
-                <span className="text-nav font-medium text-text-primary">Download File</span>
+                <span className="text-nav font-medium text-text-primary">Download file</span>
                 <span className="text-meta text-text-secondary">README.md</span>
               </div>
             </button>
           </div>
 
           {/* Option 2: Push to GitHub */}
-          <div className="flex flex-col gap-3.5 p-5 bg-surface rounded-sm border border-border shadow-xs">
+          <div className="flex flex-col gap-3.5 p-5 bg-surface rounded-lg border border-border shadow-xs">
             <div className="flex items-center gap-2">
               <SiGithub className="w-4 h-4 text-text-primary" />
-              <span className="text-nav font-medium text-text-primary">Push directly to GitHub repo</span>
+              <span className="text-nav font-medium text-text-primary">Push directly to GitHub repository</span>
             </div>
 
             <div className="flex flex-col gap-1.5">
               <label className="text-eyebrow font-mono text-text-secondary uppercase tracking-[0.04em]">
-                Target Repository
+                Target repository
               </label>
-              <div className="h-9 px-3 bg-surface-raised rounded-sm border border-border flex items-center font-mono text-meta text-text-primary shadow-xs">
+              <div className="h-9 px-3 bg-surface-raised rounded-md border border-border flex items-center font-mono text-meta text-text-primary shadow-xs">
                 {login}/{login}
               </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
               <label className="text-eyebrow font-mono text-text-secondary uppercase tracking-[0.04em]">
-                Commit Message
+                Commit message
               </label>
               <input
                 type="text"
                 value={commitMessage}
                 onChange={(e) => setCommitMessage(e.target.value)}
-                className="h-9 px-3 bg-surface-raised rounded-sm border border-border font-mono text-meta text-text-primary focus:outline-none focus:border-text-primary shadow-xs"
+                className="h-9 px-3 bg-surface-raised rounded-md border border-border font-mono text-meta text-text-primary focus:outline-none focus:border-text-primary shadow-xs"
               />
             </div>
 
             <button
               onClick={() => {
-                alert("GitHub publishing with OAuth will be enabled in Milestone 7. You can Copy or Download your README.md right now!");
+                alert("Direct repository publishing requires GitHub OAuth. You can copy or download your README.md directly.");
               }}
-              className="h-10 w-full mt-1.5 bg-accent hover:bg-accent-hover text-text-primary font-medium text-nav rounded-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+              className="h-10 w-full mt-1.5 bg-accent hover:bg-accent-hover text-text-primary font-medium text-nav rounded-md transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
             >
               <FiGitCommit className="w-4 h-4 stroke-[2]" />
-              <span>Commit &amp; Push to {login}/{login}</span>
+              <span>Commit &amp; push to {login}/{login}</span>
             </button>
           </div>
         </div>

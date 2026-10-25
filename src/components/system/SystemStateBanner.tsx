@@ -85,12 +85,12 @@ export function SystemStateBanner({
           </div>
         </div>
 
-        <div className="bg-[#141611] border border-[#2B2F23] rounded-xl p-5 sm:p-6 shadow-[0_1px_2px_0_rgba(23,24,21,0.25)]">
+        <div className="bg-[#141611] border border-[#2B2F23] rounded-lg p-5 sm:p-6 shadow-xs">
           {/* Main Warning Banner */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-lg bg-[#191C15] border border-[#2C3024]">
             <div className="flex items-start sm:items-center gap-3.5">
               <div className="w-9 h-9 rounded-md bg-[#23271D] flex items-center justify-center shrink-0 border border-[#3A402E] text-[#F59E0B]">
-                <FiClock className="w-5 h-5 animate-pulse" />
+                <FiClock className="w-4 h-4" />
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <span className="font-medium text-sm text-white">
@@ -100,7 +100,7 @@ export function SystemStateBanner({
                   id="rate-limit-badge"
                   className="font-mono text-xs font-semibold bg-[#24281E] text-white px-2.5 py-1 rounded inline-flex items-center gap-1.5 w-fit border border-[#3A402D]"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] animate-ping" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
                   <span id="countdown-text">{formattedCountdown}</span>
                 </span>
               </div>
@@ -112,9 +112,9 @@ export function SystemStateBanner({
                 <button
                   type="button"
                   onClick={onOpenByok}
-                  className="h-9 px-3.5 bg-[#20241A] hover:bg-[#2A3022] text-white font-medium text-xs border border-[#3A402D] hover:border-accent/50 rounded-md transition-all inline-flex items-center gap-2 shadow-xs group"
+                  className="h-9 px-3.5 bg-[#20241A] hover:bg-[#2A3022] text-white font-medium text-xs border border-[#3A402D] hover:border-accent/50 rounded-md transition-colors inline-flex items-center gap-2 shadow-xs"
                 >
-                  <FiKey className="w-3.5 h-3.5 text-accent group-hover:rotate-12 transition-transform" />
+                  <FiKey className="w-3.5 h-3.5 text-accent" />
                   <span>Use your own API key</span>
                 </button>
               )}
@@ -170,12 +170,12 @@ export function SystemStateBanner({
           </div>
         </div>
 
-        <div className="bg-[#141611] border border-[#2B2F23] rounded-xl p-5 sm:p-6 shadow-[0_1px_2px_0_rgba(23,24,21,0.25)]">
+        <div className="bg-[#141611] border border-[#2B2F23] rounded-lg p-5 sm:p-6 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div className="space-y-3 max-w-2xl">
               {/* Quota Indicator Pill */}
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#20241A] text-white font-mono text-xs border border-[#3A402D]">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
                 <span className="font-semibold text-white">0 of 3 generations left today</span>
               </div>
 
@@ -273,7 +273,7 @@ export function SystemStateBanner({
         </div>
       </div>
 
-      <div className="bg-[#141611] border border-[#2B2F23] rounded-xl p-5 sm:p-6 shadow-[0_1px_2px_0_rgba(23,24,21,0.25)]">
+      <div className="bg-[#141611] border border-[#2B2F23] rounded-lg p-5 sm:p-6 shadow-xs">
         <div className="max-w-xl flex flex-col gap-3">
           <div className="flex items-center justify-between text-xs">
             <span className="font-medium text-[#C0C3BA]">GitHub username query</span>

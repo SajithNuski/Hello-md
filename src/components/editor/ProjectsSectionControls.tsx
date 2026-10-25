@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FiFolder, FiPlus, FiTrash2, FiExternalLink, FiList } from "react-icons/fi";
+import { FiFolder, FiPlus, FiTrash2, FiExternalLink, FiList, FiX } from "react-icons/fi";
 
 export interface ProjectCardItem {
   repo: string;
@@ -165,8 +165,9 @@ export function ProjectsSectionControls({
                         onClick={() => handleRemoveHighlight(idx, hIdx)}
                         className="text-[#91928A] hover:text-[#DC2626] p-0.5 cursor-pointer transition-colors"
                         title="Remove highlight"
+                        aria-label="Remove highlight"
                       >
-                        ✕
+                        <FiX className="w-3 h-3" />
                       </button>
                     </div>
                   ))}

@@ -30,7 +30,6 @@ import {
   FiBarChart2,
   FiShare2,
 } from "react-icons/fi";
-import { LuSparkles } from "react-icons/lu";
 
 interface EditorPaneProps {
   currentSection: SectionItem;
@@ -216,16 +215,16 @@ export function EditorPane({
             <span className="hidden sm:inline">Reset</span>
           </button>
 
-          {/* Regenerate Section (AI) */}
+          {/* Regenerate Section */}
           <button
             type="button"
             disabled={isRegenerating}
             onClick={handleRegenerateClick}
             className="h-7 px-2.5 rounded flex items-center gap-1.5 text-[11px] font-medium bg-[#FFFFFF] hover:bg-[#F0F1EA] text-[#171815] border border-[#DEDFD8] transition-colors cursor-pointer shadow-xs disabled:opacity-50"
-            title="Regenerate this section with AI"
+            title="Regenerate this section"
           >
-            <LuSparkles
-              className={`w-3 h-3 text-accent stroke-[2.5] ${
+            <FiRotateCw
+              className={`w-3 h-3 text-[#171815] ${
                 isRegenerating ? "animate-spin" : ""
               }`}
             />

@@ -15,7 +15,6 @@ import {
   FiKey,
 } from "react-icons/fi";
 import { SiGithub } from "react-icons/si";
-import { LuSparkles } from "react-icons/lu";
 import { Tone } from "@/lib/config";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { SystemStateBanner, SystemStateType } from "@/components/system/SystemStateBanner";
@@ -224,14 +223,14 @@ export function GeneratorForm() {
       <form
         id="generator-card"
         onSubmit={handleGenerate}
-        className="flex flex-col gap-6 bg-surface p-6 sm:p-7 rounded-xl border border-border shadow-sm transition-all duration-300 text-left"
+        className="flex flex-col gap-6 bg-surface p-6 sm:p-7 rounded-lg border border-border shadow-xs transition-colors text-left"
       >
         {/* Card Header & Quota Bar */}
         <div className="flex items-center justify-between pb-3 border-b border-border text-xs">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
             <span className="font-mono text-text-secondary text-[11px] uppercase tracking-wider font-semibold">
-              Precision Synthesizer
+              Profile generator
             </span>
           </div>
 
@@ -346,18 +345,15 @@ export function GeneratorForm() {
         <button
           type="submit"
           disabled={isGenerating}
-          className="h-11 w-full mt-1 bg-accent hover:bg-accent-hover text-text-primary font-semibold text-nav rounded-md transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed select-none"
+          className="h-10 w-full mt-1 bg-accent hover:bg-accent-hover text-text-primary font-semibold text-xs rounded-md transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed select-none"
         >
           {isGenerating ? (
             <>
-              <FiLoader className="w-4 h-4 animate-spin text-text-primary" />
-              <span>Synthesizing Profile...</span>
+              <FiLoader className="w-3.5 h-3.5 animate-spin text-text-primary" />
+              <span>Generating README...</span>
             </>
           ) : (
-            <>
-              <LuSparkles className="w-4 h-4 text-text-primary stroke-[1.8]" />
-              <span>Generate README</span>
-            </>
+            <span>Generate README</span>
           )}
         </button>
       </form>
@@ -388,7 +384,7 @@ export function GeneratorForm() {
               </div>
             </div>
 
-            {/* Step 2: Synthesis */}
+            {/* Step 2: Generation */}
             <div
               className={`flex items-center gap-3 px-4 py-3 border-b md:border-b-0 md:border-r border-border ${
                 currentStage === "writing" ? "bg-surface-raised" : ""
@@ -403,7 +399,7 @@ export function GeneratorForm() {
               )}
               <div className="flex flex-col">
                 <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
-                  2. AI SYNTHESIS
+                  2. GENERATION
                 </span>
                 <span className="text-meta text-text-secondary">Grounded prose</span>
               </div>
@@ -435,7 +431,7 @@ export function GeneratorForm() {
           <div className="p-4 bg-[#0D0E0C] text-[#FAFAF8] flex flex-col gap-2 max-h-48 overflow-y-auto font-mono text-meta">
             <div className="flex items-center gap-2 pb-2 mb-1 border-b border-[#21231D] text-text-muted text-eyebrow uppercase tracking-[0.05em]">
               <FiTerminal className="w-3.5 h-3.5 text-accent" />
-              <span>Synthesis Log Console</span>
+              <span>Generation log</span>
             </div>
 
             {logs.length === 0 && (

@@ -45,7 +45,7 @@ export function ByokDialog({ isOpen, onClose, onSaved }: ByokDialogProps) {
     const config: ClientByokConfig = { provider, apiKey: cleanKey };
     setByokConfig(config);
     setHasExisting(true);
-    setStatusMsg("API Key saved! Unmetered access activated.");
+    setStatusMsg("API key saved. Direct model access activated.");
     onSaved?.(config);
 
     setTimeout(() => {
@@ -64,7 +64,7 @@ export function ByokDialog({ isOpen, onClose, onSaved }: ByokDialogProps) {
   return (
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div
-        className="bg-[#141611] border border-[#2A2E22] rounded-xl max-w-lg w-full p-6 sm:p-7 shadow-2xl relative text-left"
+        className="bg-[#141611] border border-[#2A2E22] rounded-lg max-w-lg w-full p-6 sm:p-7 shadow-lg relative text-left"
         role="dialog"
         aria-modal="true"
         aria-labelledby="byok-title"
@@ -80,18 +80,18 @@ export function ByokDialog({ isOpen, onClose, onSaved }: ByokDialogProps) {
 
         {/* Dialog Header */}
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-9 h-9 rounded-lg bg-accent/15 border border-accent/30 flex items-center justify-center text-accent">
+          <div className="w-9 h-9 rounded-md bg-[#1D2117] border border-[#2E3524] flex items-center justify-center text-accent">
             <FiKey className="w-4 h-4" />
           </div>
           <div>
             <h2 id="byok-title" className="text-base font-semibold text-white tracking-tight flex items-center gap-2">
               <span>Bring Your Own Key</span>
-              <span className="font-mono text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-accent/20 text-accent border border-accent/40">
-                Unmetered
+              <span className="font-mono text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#181D12] text-accent border border-[#2A341E]">
+                Direct Access
               </span>
             </h2>
             <p className="text-xs text-[#95988D]">
-              Bypass shared engine queues and daily generation quotas.
+              Use your personal API key for unmetered generation requests.
             </p>
           </div>
         </div>
@@ -152,7 +152,7 @@ export function ByokDialog({ isOpen, onClose, onSaved }: ByokDialogProps) {
               rel="noopener noreferrer"
               className="text-[11px] text-accent hover:underline inline-flex items-center gap-1 font-mono"
             >
-              <span>Get Free Key</span>
+              <span>Get API key</span>
               <FiExternalLink className="w-3 h-3" />
             </a>
           </div>

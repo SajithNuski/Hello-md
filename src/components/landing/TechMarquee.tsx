@@ -123,7 +123,7 @@ const track1Items: TechItem[] = [
     icon: SiFastapi,
     color: "#009688",
     description: "Modern, high-performance async web framework for Python.",
-    badge: "Endpoints Synthesized",
+    badge: "API Framework",
   },
   {
     name: "Kotlin",
@@ -222,7 +222,7 @@ const track2Items: TechItem[] = [
     category: "Tools",
     icon: SiGithub,
     themeAdaptive: true,
-    description: "Developer collaboration platform powering Hello-md synthesis.",
+    description: "Developer collaboration platform powering Hello-md data ingestion.",
     badge: "GraphQL v4 Direct",
   },
   {
@@ -326,28 +326,21 @@ export function TechMarquee() {
   return (
     <section
       ref={containerRef}
-      className="w-full flex flex-col gap-6 pt-10 pb-6 border-t border-border/80 scroll-mt-24 select-none overflow-hidden"
+      className="w-full flex flex-col gap-8 pt-12 pb-2 border-t border-[#E2E3DC] scroll-mt-20 select-none overflow-hidden"
     >
       {/* Section Header */}
       <div
         ref={headerRef}
-        className="flex flex-col items-center text-center gap-3 max-w-2xl mx-auto px-4"
+        className="flex flex-col items-center text-center gap-2 max-w-xl mx-auto px-4"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0D0E0C] border border-[#2B2E24] shadow-xs">
-          <span className="font-mono text-xs uppercase tracking-wider font-semibold text-white">
-            Ecosystem Detection
-          </span>
-          <span className="text-[#3A3D33]">|</span>
-          <span className="font-mono text-xs text-accent font-semibold">
-            50+ Technologies
-          </span>
-        </div>
-
-        <h3 className="text-3xl sm:text-4xl font-bold tracking-[-0.035em] text-[#0D0E0C]">
-          Universal language &amp; stack support
-        </h3>
-        <p className="text-base sm:text-lg text-[#262822] leading-relaxed">
-          From byte-level language telemetry to framework manifests and database schemas, Hello-md deterministically detects your entire developer stack.
+        <span className="text-xs font-mono font-medium text-[#65665F] uppercase tracking-wider">
+          Ecosystem
+        </span>
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#171815]">
+          Supported languages and tools
+        </h2>
+        <p className="text-sm sm:text-base text-[#52534C] leading-relaxed">
+          Detected through repository language bytes, framework manifests, and configuration files.
         </p>
       </div>
 

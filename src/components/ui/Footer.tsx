@@ -4,7 +4,6 @@ import { useRef } from "react";
 import Link from "next/link";
 import { SiGithub } from "react-icons/si";
 import { FiArrowUp, FiExternalLink, FiTerminal, FiCheckCircle } from "react-icons/fi";
-import { LuSparkles } from "react-icons/lu";
 import { gsap, useGSAP } from "@/lib/animations/gsap";
 
 export function Footer() {
@@ -50,7 +49,7 @@ export function Footer() {
           <div className="lg:col-span-2 flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-2.5 group">
-                <div className="w-7 h-7 rounded-md overflow-hidden bg-black border border-[#2A2D23] flex items-center justify-center shadow-xs group-hover:border-accent/60 group-hover:shadow-[0_0_12px_rgba(197,244,103,0.3)] transition-all duration-200">
+                <div className="w-7 h-7 rounded-md overflow-hidden bg-black border border-[#2A2D23] flex items-center justify-center shadow-xs group-hover:border-[#3E4234] transition-colors">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/logo.svg"
@@ -69,7 +68,7 @@ export function Footer() {
             </div>
 
             <p className="text-body text-[#95988D] leading-[1.65] max-w-sm">
-              Precision developer GitHub profile README generator. Grounded in real GitHub facts, zero hallucinations, pure deterministic badges and stats.
+              Developer GitHub profile README generator based on public GitHub facts, metrics, and deterministic badges.
             </p>
 
             {/* Live Status Pill */}
@@ -79,8 +78,8 @@ export function Footer() {
                 className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#151712] hover:bg-[#1C1F17] border border-[#262820] text-meta font-mono text-[#D8D9D2] transition-colors"
                 title="View System States & Error Handling"
               >
-                <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-                <span>Systems Operational</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                <span>Systems operational</span>
               </Link>
               <span className="font-mono text-[11px] text-[#787B70]">v1.0.0</span>
             </div>
@@ -95,20 +94,19 @@ export function Footer() {
               <li>
                 <Link
                   href="/"
-                  className="hover:text-white transition-colors flex items-center gap-1.5"
+                  className="hover:text-white transition-colors"
                 >
-                  <LuSparkles className="w-3.5 h-3.5 text-accent" />
-                  <span>Profile Synthesizer</span>
+                  Profile generator
                 </Link>
               </li>
               <li>
                 <Link href="/templates" className="hover:text-white transition-colors">
-                  Structural Templates
+                  Templates
                 </Link>
               </li>
               <li>
                 <span className="text-[#95988D] flex items-center gap-1.5">
-                  <span>Live Markdown Editor</span>
+                  <span>Markdown editor</span>
                   <span className="font-mono text-[10px] bg-[#1C1E17] text-accent px-1.5 py-0.2 rounded-sm border border-[#2E3126]">
                     CM6
                   </span>

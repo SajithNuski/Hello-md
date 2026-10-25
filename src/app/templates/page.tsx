@@ -6,7 +6,6 @@ import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
 import { THEMES, ThemeId, PERSONA_PRESETS } from "@/lib/assemble/themes";
 import { FiLayout, FiArrowRight, FiCode } from "react-icons/fi";
-import { LuSparkles } from "react-icons/lu";
 
 export default function TemplatesPage() {
   const [selectedThemeId, setSelectedThemeId] = useState<ThemeId>("violet");
@@ -32,17 +31,17 @@ export default function TemplatesPage() {
             <div className="flex items-center gap-2.5">
               <span className="font-mono text-[11px] uppercase tracking-wider text-accent bg-[#161C10] px-2.5 py-0.5 rounded border border-[#2D3A1F] flex items-center gap-1.5 font-semibold">
                 <FiLayout className="w-3.5 h-3.5" />
-                Visual Themes &amp; Styles
+                Visual themes
               </span>
               <span className="font-mono text-xs text-[#8E9285]">
-                {themeList.length} Precision Layouts
+                {themeList.length} layouts
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              Profile README Templates
+              Profile README templates
             </h1>
             <p className="text-xs sm:text-sm text-[#95988D] max-w-2xl">
-              Choose from dynamic wave headers, retro hacker terminal aesthetics, or ultra-clean minimal monospace styles.
+              Select from wave headers, terminal aesthetics, or minimal monospace styles.
             </p>
           </div>
 
@@ -50,7 +49,6 @@ export default function TemplatesPage() {
             href="/#generator"
             className="h-10 px-4 bg-accent hover:bg-accent-hover text-[#0D0E0C] font-semibold text-xs rounded-md transition-all flex items-center gap-2 shrink-0 shadow-xs"
           >
-            <LuSparkles className="w-4 h-4" />
             <span>Generate README</span>
             <FiArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -89,9 +87,9 @@ export default function TemplatesPage() {
               <div
                 key={id}
                 onClick={() => setSelectedThemeId(id)}
-                className={`bg-[#141611] border rounded-xl p-5 flex flex-col justify-between gap-5 transition-all cursor-pointer group hover:border-[#3D4233] ${
+                className={`bg-[#141611] border rounded-lg p-5 flex flex-col justify-between gap-5 transition-colors cursor-pointer group hover:border-[#3D4233] ${
                   isSelected
-                    ? "border-accent shadow-[0_0_20px_rgba(197,244,103,0.15)] ring-1 ring-accent"
+                    ? "border-accent ring-1 ring-accent/60"
                     : "border-[#23261D]"
                 }`}
               >
@@ -123,7 +121,7 @@ export default function TemplatesPage() {
                             background: `linear-gradient(90deg, #${theme.from}, #${theme.to})`,
                           }}
                         >
-                          Hi, I&apos;m Developer 👋
+                          Hi, I&apos;m Developer
                         </div>
                         <div className="text-[10px] text-[#A5A89D]">
                           &gt; Full-stack developer building modern web apps
@@ -183,14 +181,14 @@ export default function TemplatesPage() {
                 {/* Card Action */}
                 <div className="pt-3 border-t border-[#1E2218] flex items-center justify-between">
                   <span className="text-xs text-[#8E9285] font-mono">
-                    {isSelected ? "Active Selection" : "Click to select"}
+                    {isSelected ? "Active selection" : "Click to select"}
                   </span>
 
                   <Link
                     href={`/?theme=${id}#generator`}
                     className="h-8 px-3 bg-[#1C2017] hover:bg-[#272D1E] text-accent hover:text-white font-medium text-xs rounded-md border border-[#2E3424] transition-colors flex items-center gap-1.5"
                   >
-                    <span>Use Template</span>
+                    <span>Use template</span>
                     <FiArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
@@ -200,11 +198,11 @@ export default function TemplatesPage() {
         </div>
 
         {/* Feature Banner */}
-        <div className="p-6 rounded-xl bg-[#141611] border border-[#25281E] flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="p-6 rounded-lg bg-[#141611] border border-[#25281E] flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-1">
             <h3 className="font-semibold text-base text-white flex items-center gap-2">
               <FiCode className="w-4 h-4 text-accent" />
-              <span>100% Code-Assembled &amp; Deterministic</span>
+              <span>Deterministic code templates</span>
             </h3>
             <p className="text-xs text-[#8E9285] max-w-xl">
               Templates do not rely on fragile AI markdown formatting. Every wave banner, badge layout, and 2-column project grid is strictly built in code.
@@ -215,8 +213,8 @@ export default function TemplatesPage() {
             href="/#generator"
             className="h-10 px-5 bg-accent hover:bg-accent-hover text-[#0D0E0C] font-semibold text-xs rounded-md transition-all flex items-center gap-2 shrink-0 shadow-xs"
           >
-            <LuSparkles className="w-4 h-4" />
-            <span>Launch Generator</span>
+            <span>Open generator</span>
+            <FiArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </main>

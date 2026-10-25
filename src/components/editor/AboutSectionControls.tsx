@@ -365,7 +365,7 @@ export function AboutSectionControls({
             type="text"
             value={config.status}
             onChange={(e) => update({ status: e.target.value })}
-            placeholder="Open to full-time and contract opportunities 🎯"
+            placeholder="Open to full-time and contract opportunities"
             className="w-full h-10 px-3 bg-[#FFFFFF] border border-[#DEDFD8] rounded-lg text-sm text-[#171815] placeholder:text-[#91928A] focus:outline-none focus:border-[#171815] transition-colors"
           />
         </div>
@@ -451,7 +451,7 @@ export function AboutSectionControls({
                       : "text-[#52534C] hover:text-[#171815]"
                   }`}
                 >
-                  👨 Male (4 GIFs)
+                  Male (4 options)
                 </button>
                 <button
                   type="button"
@@ -462,7 +462,7 @@ export function AboutSectionControls({
                       : "text-[#52534C] hover:text-[#171815]"
                   }`}
                 >
-                  👩 Female (4 GIFs)
+                  Female (4 options)
                 </button>
               </div>
             </div>

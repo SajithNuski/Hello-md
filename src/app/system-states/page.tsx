@@ -24,8 +24,9 @@ import {
   FiExternalLink,
   FiHelpCircle,
   FiTrash2,
+  FiArrowRight,
+  FiTerminal,
 } from "react-icons/fi";
-import { LuSparkles } from "react-icons/lu";
 import { SiGoogle } from "react-icons/si";
 
 interface UsageData {
@@ -586,15 +587,15 @@ export default function SystemStatesPage() {
         </section>
 
         {/* SECTION 5: ACTION FOOTER */}
-        <div className="p-5 rounded-xl bg-[#141611] border border-[#25281E] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-5 rounded-lg bg-[#141611] border border-[#25281E] flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#1D2117] border border-[#2E3524] flex items-center justify-center text-accent shrink-0">
-              <LuSparkles className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-md bg-[#1D2117] border border-[#2E3524] flex items-center justify-center text-accent shrink-0">
+              <FiTerminal className="w-4 h-4" />
             </div>
             <div>
               <h4 className="font-semibold text-sm text-white">Ready to create your README?</h4>
               <p className="text-xs text-[#8E9285]">
-                Generate a precision GitHub profile with deterministic stats and zero hallucinations.
+                Generate a GitHub profile README with real metrics and deterministic stats.
               </p>
             </div>
           </div>
@@ -604,14 +605,14 @@ export default function SystemStatesPage() {
               href="/templates"
               className="h-9 px-4 bg-[#1C1F17] hover:bg-[#262B1F] text-[#D8D9D2] hover:text-white font-medium text-xs rounded-md border border-[#2E3324] transition-colors flex items-center gap-1.5"
             >
-              <span>Explore Templates</span>
+              <span>Explore templates</span>
             </Link>
             <Link
               href="/#generator"
-              className="h-9 px-4 bg-accent hover:bg-[#b0e254] text-[#0D0E0C] font-semibold text-xs rounded-md transition-all shadow-xs flex items-center gap-1.5"
+              className="h-9 px-4 bg-accent hover:bg-accent-hover text-[#0D0E0C] font-semibold text-xs rounded-md transition-all shadow-xs flex items-center gap-1.5"
             >
-              <LuSparkles className="w-3.5 h-3.5" />
-              <span>Launch Generator</span>
+              <span>Generate README</span>
+              <FiArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>

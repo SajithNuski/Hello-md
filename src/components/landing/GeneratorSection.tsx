@@ -62,13 +62,16 @@ export function GeneratorSection() {
     >
       <div
         ref={headerRef}
-        className="flex flex-col items-center text-center gap-3 max-w-xl"
+        className="flex flex-col items-center text-center gap-2 max-w-xl"
       >
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-[-0.03em] text-text-primary">
-          Synthesize Your Profile
+        <span className="text-xs font-mono font-medium text-[#65665F] uppercase tracking-wider">
+          Generator
+        </span>
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#171815]">
+          Generate profile README
         </h2>
-        <p className="text-body leading-[1.6] text-text-secondary">
-          Enter your GitHub handle to parse your real contributions and build a customized profile README.
+        <p className="text-sm sm:text-base text-[#52534C] leading-relaxed">
+          Enter your GitHub username to parse public repositories and create a structured README.
         </p>
       </div>
 

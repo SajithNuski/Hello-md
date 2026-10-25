@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { FiDownload, FiCheck, FiCopy, FiEye, FiList, FiEdit3 } from "react-icons/fi";
+import { FiDownload, FiCheck, FiCopy, FiEye, FiList, FiEdit3, FiColumns, FiCode } from "react-icons/fi";
 import { SiGithub } from "react-icons/si";
-import { VscSplitHorizontal, VscCode } from "react-icons/vsc";
 
 interface EditorTopBarProps {
   login: string;
@@ -85,8 +84,8 @@ export function EditorTopBar({
               : "text-[#65665F] hover:text-[#171815]"
           }`}
         >
-          <VscSplitHorizontal className="w-3.5 h-3.5" />
-          <span>Split View</span>
+          <FiColumns className="w-3.5 h-3.5" />
+          <span>Split</span>
         </button>
         <button
           type="button"
@@ -97,8 +96,8 @@ export function EditorTopBar({
               : "text-[#65665F] hover:text-[#171815]"
           }`}
         >
-          <VscCode className="w-3.5 h-3.5" />
-          <span>Editor Only</span>
+          <FiCode className="w-3.5 h-3.5" />
+          <span>Editor</span>
         </button>
         <button
           type="button"
@@ -110,7 +109,7 @@ export function EditorTopBar({
           }`}
         >
           <FiEye className="w-3.5 h-3.5" />
-          <span>Preview Only</span>
+          <span>Preview</span>
         </button>
       </div>
 

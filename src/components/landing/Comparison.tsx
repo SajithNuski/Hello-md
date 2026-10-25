@@ -84,73 +84,66 @@ export function Comparison() {
     <section
       id="comparison"
       ref={sectionRef}
-      className="w-full flex flex-col gap-12 pt-14 pb-4 border-t border-border/80 scroll-mt-24 select-none"
+      className="w-full flex flex-col gap-10 pt-12 pb-2 border-t border-[#E2E3DC] scroll-mt-20 select-none"
     >
       {/* Header */}
       <div
         ref={headerRef}
-        className="flex flex-col items-center text-center gap-3 max-w-2xl mx-auto"
+        className="flex flex-col items-center text-center gap-2 max-w-xl mx-auto"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0D0E0C] border border-[#2B2E24] shadow-xs">
-          <span className="font-mono text-xs uppercase tracking-wider font-semibold text-white">
-            Architecture Difference
-          </span>
-          <span className="text-[#3A3D33]">|</span>
-          <span className="font-mono text-xs text-accent font-semibold">
-            Real vs Generic
-          </span>
-        </div>
-
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-[-0.035em] text-[#0D0E0C]">
-          Why developers choose Hello-md over generic LLMs
+        <span className="text-xs font-mono font-medium text-[#65665F] uppercase tracking-wider">
+          Comparison
+        </span>
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#171815]">
+          Why developers choose Hello-md
         </h2>
-        <p className="text-base sm:text-lg text-[#262822] leading-relaxed">
-          Prompting ChatGPT to write your README results in hallucinated repositories and broken badge links. Hello-md is built specifically for GitHub profile synthesis.
+        <p className="text-sm sm:text-base text-[#52534C] leading-relaxed">
+          Comparing fact-grounded generation against ungrounded chat prompts.
         </p>
       </div>
 
-      {/* Comparison Table / Grid */}
+      {/* Comparison Table */}
       <div
         ref={tableRef}
-        className="w-full bg-white rounded-xl border border-[#0D0E0C]/15 shadow-sm overflow-hidden"
+        className="w-full bg-white rounded-lg border border-[#E2E3DC] shadow-xs overflow-hidden"
       >
         {/* Table Header */}
-        <div className="grid grid-cols-1 md:grid-cols-12 bg-[#0D0E0C] text-white p-4 sm:p-5 border-b border-[#262822] items-center">
-          <div className="md:col-span-4 font-mono text-xs uppercase tracking-wider font-semibold text-[#A5A89D]">
-            Capabilities
+        <div className="grid grid-cols-1 md:grid-cols-12 bg-[#F4F4F2] text-[#171815] p-3.5 sm:p-4 border-b border-[#E2E3DC] items-center text-xs font-mono font-semibold">
+          <div className="md:col-span-4 text-[#65665F] uppercase tracking-wider">
+            Capability
           </div>
-          <div className="hidden md:block md:col-span-4 font-mono text-xs uppercase tracking-wider font-semibold text-white/60">
-            Generic ChatGPT / Copilot
+          <div className="hidden md:block md:col-span-4 text-[#65665F] uppercase tracking-wider">
+            Generic LLM prompt
           </div>
-          <div className="hidden md:block md:col-span-4 font-mono text-xs uppercase tracking-wider font-bold text-accent">
-            Hello-md Precision Engine
+          <div className="hidden md:block md:col-span-4 text-[#171815] uppercase tracking-wider">
+            Hello-md pipeline
           </div>
         </div>
 
         {/* Comparison Rows */}
-        <div className="divide-y divide-[#0D0E0C]/10">
+        <div className="divide-y divide-[#E2E3DC]">
           {comparisons.map((item, idx) => (
             <div
               key={idx}
-              className="grid grid-cols-1 md:grid-cols-12 p-4 sm:p-5 gap-3 md:gap-4 items-center hover:bg-[#FAFAF8] transition-colors"
+              className="grid grid-cols-1 md:grid-cols-12 p-3.5 sm:p-4 gap-3 md:gap-4 items-center hover:bg-[#FAFAF8] transition-colors"
             >
               {/* Feature Title */}
-              <div className="md:col-span-4 font-bold text-sm text-[#0D0E0C]">
+              <div className="md:col-span-4 font-semibold text-xs sm:text-sm text-[#171815]">
                 {item.feature}
               </div>
 
               {/* Generic LLM */}
-              <div className="md:col-span-4 flex items-start gap-2.5 text-xs sm:text-sm text-[#31332C]">
-                <div className="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 mt-0.5">
-                  <FiX className="w-3.5 h-3.5 stroke-[3]" />
+              <div className="md:col-span-4 flex items-start gap-2 text-xs sm:text-sm text-[#65665F]">
+                <div className="w-4 h-4 rounded bg-red-50 text-red-600 flex items-center justify-center shrink-0 mt-0.5 border border-red-200">
+                  <FiX className="w-3 h-3 stroke-[2.5]" />
                 </div>
                 <span>{item.generic}</span>
               </div>
 
               {/* Hello-md Engine */}
-              <div className="md:col-span-4 flex items-start gap-2.5 text-xs sm:text-sm text-[#0D0E0C] font-medium">
-                <div className="w-5 h-5 rounded-full bg-accent/30 text-[#0D0E0C] flex items-center justify-center shrink-0 mt-0.5">
-                  <FiCheck className="w-3.5 h-3.5 text-[#0D0E0C] stroke-[3]" />
+              <div className="md:col-span-4 flex items-start gap-2 text-xs sm:text-sm text-[#171815]">
+                <div className="w-4 h-4 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-200">
+                  <FiCheck className="w-3 h-3 stroke-[2.5]" />
                 </div>
                 <span>{item.hellomd}</span>
               </div>

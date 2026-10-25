@@ -23,7 +23,7 @@ const faqs: FaqItem[] = [
   {
     question: "Can I customize the generated sections or edit the markdown?",
     answer:
-      "Yes! Once generation completes, you are redirected to the Studio Workspace powered by CodeMirror 6. You can edit the raw markdown with instant synchronized preview, reorder sections, regenerate individual blocks with different tones, and toggle dynamic stats badges.",
+      "Yes. Once generation completes, you are redirected to the Studio Workspace powered by CodeMirror 6. You can edit the raw markdown with instant synchronized preview, reorder sections, regenerate individual blocks with different tones, and toggle dynamic stats badges.",
   },
   {
     question: "Can I bring my own API keys (BYOK)?",
