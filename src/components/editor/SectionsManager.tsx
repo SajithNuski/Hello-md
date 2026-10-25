@@ -51,13 +51,13 @@ export function SectionsManager({
 
   return (
     <aside className="w-[260px] min-w-[260px] max-w-[260px] shrink-0 bg-[#FBFBFA] border-r border-[#E2E3DC] flex flex-col select-none h-full overflow-hidden">
-      {/* Header: Title and Active Count shown once */}
-      <div className="h-12 px-4 flex items-center justify-between border-b border-[#E2E3DC] bg-[#FAFAF8] shrink-0">
-        <span className="text-xs font-mono font-semibold text-[#52534C] uppercase tracking-wider">
+      {/* Header: Title and Active Count */}
+      <div className="h-10 px-3.5 flex items-center justify-between border-b border-[#E2E3DC] bg-[#FAFAF8] shrink-0">
+        <span className="text-[11px] font-mono font-semibold text-[#65665F] uppercase tracking-wider">
           Sections
         </span>
-        <span className="text-xs font-mono font-medium text-[#171815] bg-[#F0F1EA] px-2 py-0.5 rounded-md border border-[#E2E3DC]">
-          {activeCount} of {sections.length} active
+        <span className="text-[11px] font-mono text-[#52534C] bg-[#F0F1EA] px-2 py-0.5 rounded border border-[#E2E3DC]">
+          {activeCount} / {sections.length} active
         </span>
       </div>
 

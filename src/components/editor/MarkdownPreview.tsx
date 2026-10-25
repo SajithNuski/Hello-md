@@ -61,39 +61,36 @@ export function MarkdownPreview({
   return (
     <div className="flex-1 bg-page flex flex-col overflow-hidden">
       {/* Top Header Tab Bar */}
-      <div className="h-12 px-4 flex items-center justify-between border-b border-[#E2E3DC] bg-[#FAFAF8] select-none shrink-0">
-        <div className="flex items-center gap-2 text-[#52534C]">
-          <FiEye className="w-4 h-4 text-[#171815]" />
-          <span className="text-sm font-semibold text-[#171815]">Rendered Output</span>
-          <span className="font-mono text-[11px] bg-[#F0F1EA] px-2 py-0.5 rounded-md border border-[#E2E3DC] text-[#52534C] uppercase tracking-wider">
-            README.md
-          </span>
+      <div className="h-10 px-3.5 flex items-center justify-between border-b border-[#E2E3DC] bg-[#FAFAF8] select-none shrink-0">
+        <div className="flex items-center gap-2">
+          <FiEye className="w-3.5 h-3.5 text-[#52534C]" />
+          <span className="text-xs font-semibold text-[#171815]">Rendered Output</span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {/* GitHub Dark / Light preview toggle */}
           <button
             type="button"
             onClick={() => setPreviewTheme(isDark ? "light" : "dark")}
-            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-[#FFFFFF] border border-[#E2E3DC] text-[#171815] hover:bg-[#F0F1EA] transition-colors cursor-pointer shadow-xs"
+            className="h-7 px-2.5 flex items-center gap-1.5 text-[11px] font-mono rounded bg-[#FFFFFF] border border-[#E2E3DC] text-[#171815] hover:bg-[#F0F1EA] transition-colors cursor-pointer shadow-xs"
             title={`Switch to GitHub ${isDark ? "Light" : "Dark"} mode`}
           >
             {isDark ? (
               <>
-                <FiSun className="w-3.5 h-3.5 text-amber-500" />
-                <span className="hidden sm:inline font-mono text-xs">GitHub Dark</span>
+                <FiSun className="w-3 h-3 text-amber-500" />
+                <span className="hidden sm:inline">GitHub Dark</span>
               </>
             ) : (
               <>
-                <FiMoon className="w-3.5 h-3.5 text-indigo-500" />
-                <span className="hidden sm:inline font-mono text-xs">GitHub Light</span>
+                <FiMoon className="w-3 h-3 text-indigo-500" />
+                <span className="hidden sm:inline">GitHub Light</span>
               </>
             )}
           </button>
 
-          <div className="flex items-center gap-2 text-xs text-[#52534C]">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="hidden sm:inline font-mono text-xs">Live Synchronized</span>
+          <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#65665F]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="hidden sm:inline">Live</span>
           </div>
         </div>
       </div>
