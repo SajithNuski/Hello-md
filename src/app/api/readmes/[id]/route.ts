@@ -18,30 +18,24 @@ export async function GET(
   const { id } = params;
 
   try {
-    const col = await getReadmesCollection();
-    let query: Record<string, unknown> = {};
-
     if (ObjectId.isValid(id)) {
-      query = { _id: new ObjectId(id) };
-    } else {
-      query = { id };
-    }
-
-    const doc = await col.findOne(query);
-    if (doc) {
-      return new Response(
-        JSON.stringify({
-          readme: {
-            id: doc._id.toString(),
-            login: doc.login,
-            tone: doc.tone,
-            theme: doc.theme,
-            sections: doc.sections,
-            updatedAt: doc.updatedAt,
-          },
-        }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
-      );
+      const col = await getReadmesCollection();
+      const doc = await col.findOne({ _id: new ObjectId(id) });
+      if (doc) {
+        return new Response(
+          JSON.stringify({
+            readme: {
+              id: doc._id.toString(),
+              login: doc.login,
+              tone: doc.tone,
+              theme: doc.theme,
+              sections: doc.sections,
+              updatedAt: doc.updatedAt,
+            },
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
     }
   } catch (err: unknown) {
     console.warn("MongoDB read failed, checking in-memory drafts:", (err as Error).message);
@@ -113,35 +107,29 @@ export async function PATCH(
   }
 
   try {
-    const col = await getReadmesCollection();
-    let filter: Record<string, unknown> = {};
-
     if (ObjectId.isValid(id)) {
-      filter = { _id: new ObjectId(id) };
-    } else {
-      filter = { id };
-    }
-
-    const result = await col.findOneAndUpdate(
-      filter,
-      { $set: updates },
-      { returnDocument: "after" }
-    );
-
-    if (result) {
-      return new Response(
-        JSON.stringify({
-          readme: {
-            id: result._id.toString(),
-            login: result.login,
-            tone: result.tone,
-            theme: result.theme,
-            sections: result.sections,
-            updatedAt: result.updatedAt,
-          },
-        }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
+      const col = await getReadmesCollection();
+      const result = await col.findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        { $set: updates },
+        { returnDocument: "after" }
       );
+
+      if (result) {
+        return new Response(
+          JSON.stringify({
+            readme: {
+              id: result._id.toString(),
+              login: result.login,
+              tone: result.tone,
+              theme: result.theme,
+              sections: result.sections,
+              updatedAt: result.updatedAt,
+            },
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
     }
   } catch (err: unknown) {
     console.warn("MongoDB update failed, updating in-memory drafts:", (err as Error).message);

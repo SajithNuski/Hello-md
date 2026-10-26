@@ -25,3 +25,7 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data;
+
+if (!process.env.NEXTAUTH_SECRET) {
+  process.env.NEXTAUTH_SECRET = env.AUTH_SECRET;
+}

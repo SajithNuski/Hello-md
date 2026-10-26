@@ -11,6 +11,7 @@ export const UserSchema = z.object({
   avatarUrl: z.string().url(),
   encToken: z.string(),
   createdAt: z.date(),
+  updatedAt: z.date().optional(),
 });
 export type UserDoc = z.infer<typeof UserSchema>;
 

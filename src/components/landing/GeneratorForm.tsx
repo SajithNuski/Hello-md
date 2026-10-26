@@ -145,7 +145,25 @@ export function GeneratorForm() {
           const dataMatch = line.match(/^data:\s*(.+)$/m);
 
           const eventType = eventMatch ? eventMatch[1].trim() : "message";
-          const dataPayload = dataMatch ? JSON.parse(dataMatch[1].trim()) : null;
+          let dataPayload: {
+            stage?: "idle" | "fetching" | "writing" | "assembling" | "done";
+            message?: string;
+            sections?: unknown[];
+            readmeId?: string;
+            error?: {
+              code: string;
+              message: string;
+              retryAfter?: number;
+              resetTimeFormatted?: string;
+            };
+          } | null = null;
+          if (dataMatch) {
+            try {
+              dataPayload = JSON.parse(dataMatch[1].trim());
+            } catch (parseErr) {
+              console.warn("Failed to parse SSE payload line:", parseErr);
+            }
+          }
 
           if (eventType === "stage" && dataPayload) {
             setCurrentStage(dataPayload.stage);

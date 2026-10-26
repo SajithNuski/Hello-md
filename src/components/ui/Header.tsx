@@ -3,11 +3,13 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { SiGithub } from "react-icons/si";
 import { FiMenu, FiX } from "react-icons/fi";
 import { gsap, useGSAP } from "@/lib/animations/gsap";
 
 export function Header() {
+  const { data: session } = useSession();
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -118,6 +120,30 @@ export function Header() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2.5">
+          {session?.user ? (
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono text-[#A0A299] hidden sm:inline">
+                @{session.user.login || session.user.name}
+              </span>
+              <button
+                type="button"
+                onClick={() => signOut()}
+                className="h-8 px-2.5 bg-[#151712] hover:bg-[#1D2018] text-[#D0D2C9] hover:text-white border border-[#272921] rounded-md transition-colors text-xs font-medium cursor-pointer"
+              >
+                Sign out
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => signIn("github")}
+              className="h-8 px-3 bg-accent hover:bg-accent-hover text-[#0D0E0C] font-semibold rounded-md transition-colors flex items-center gap-1.5 text-xs cursor-pointer shadow-xs"
+            >
+              <SiGithub className="w-3.5 h-3.5 text-[#0D0E0C]" />
+              <span>Sign in</span>
+            </button>
+          )}
+
           <a
             href="https://github.com/SajithNuski/Hello-md"
             target="_blank"
@@ -125,7 +151,7 @@ export function Header() {
             className="h-8 px-3 bg-[#151712] hover:bg-[#1D2018] text-[#D0D2C9] hover:text-white border border-[#272921] rounded-md transition-colors flex items-center gap-2 text-xs font-medium"
           >
             <SiGithub className="w-3.5 h-3.5 text-white" />
-            <span className="hidden sm:inline">GitHub</span>
+            <span className="hidden sm:inline">Repo</span>
           </a>
 
           {/* Mobile Menu Hamburger Button */}
@@ -189,6 +215,36 @@ export function Header() {
           </nav>
 
           <div className="pt-3 border-t border-[#21231D] flex flex-col gap-2">
+            {session?.user ? (
+              <div className="flex items-center justify-between px-2 py-1">
+                <span className="text-xs font-mono text-[#A0A299]">
+                  @{session.user.login || session.user.name}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    signOut();
+                  }}
+                  className="text-xs text-red-400 hover:underline"
+                >
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  signIn("github");
+                }}
+                className="h-9 px-4 bg-[#1C2017] hover:bg-[#252B1E] border border-[#2E3524] text-white font-medium rounded-md flex items-center justify-center gap-2 text-xs"
+              >
+                <SiGithub className="w-3.5 h-3.5 text-accent" />
+                <span>Sign in with GitHub</span>
+              </button>
+            )}
+
             <Link
               href="/#generator"
               onClick={() => setMobileMenuOpen(false)}

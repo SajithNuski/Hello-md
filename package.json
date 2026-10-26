@@ -11,7 +11,8 @@
     "test:facts": "tsx scripts/test-facts.ts",
     "test:ai": "tsx scripts/test-ai.ts",
     "test:pipeline": "tsx scripts/test-milestone4.ts",
-    "test:tech-stack": "tsx scripts/test-tech-stack.ts"
+    "test:tech-stack": "tsx scripts/test-tech-stack.ts",
+    "test:milestone7": "tsx scripts/test-milestone7.ts"
   },
   "dependencies": {
     "@codemirror/lang-markdown": "^6.5.2",
@@ -19,11 +20,13 @@
     "@gsap/react": "^2.1.2",
     "@octokit/graphql": "^9.0.5",
     "@uiw/react-codemirror": "^4.25.12",
+    "diff": "^9.0.0",
     "geist": "^1.8.1",
     "gsap": "^3.15.0",
     "lucide-react": "^1.59.0",
     "mongodb": "^7.7.0",
     "next": "14.2.35",
+    "next-auth": "^4.24.15",
     "openai": "^7.38.0",
     "react": "^18",
     "react-dom": "^18",
@@ -35,6 +38,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@types/diff": "^7.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

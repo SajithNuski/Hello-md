@@ -4,21 +4,31 @@ import { env } from "@/lib/env";
 
 const uri = env.MONGODB_URI;
 
-const g = globalThis as unknown as { _mongo?: Promise<MongoClient> };
+const g = globalThis as unknown as {
+  _mongoClient?: MongoClient;
+  _mongoPromise?: Promise<MongoClient>;
+};
 
-if (!g._mongo) {
-  const client = new MongoClient(uri, {
-    serverSelectionTimeoutMS: 3000,
-  });
-  g._mongo = client.connect().catch((err) => {
-    delete g._mongo;
-    throw err;
-  });
+export async function getClient(): Promise<MongoClient> {
+  if (!g._mongoClient) {
+    g._mongoClient = new MongoClient(uri, {
+      serverSelectionTimeoutMS: 3000,
+    });
+  }
+  if (!g._mongoPromise) {
+    g._mongoPromise = g._mongoClient.connect().catch((err) => {
+      delete g._mongoPromise;
+      throw err;
+    });
+  }
+  return g._mongoPromise;
 }
 
-export const clientPromise = g._mongo;
+export const clientPromise: Promise<MongoClient> = (async () => {
+  return await getClient();
+})();
 
 export async function getDb(): Promise<Db> {
-  const client = await clientPromise;
+  const client = await getClient();
   return client.db("hellomd");
 }

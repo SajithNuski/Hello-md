@@ -923,6 +923,7 @@ export default function EditorPage() {
         onClose={() => setIsExportOpen(false)}
         markdown={fullMarkdown}
         login={login}
+        readmeId={id}
       />
 
       {/* BYOK Modal Dialog */}

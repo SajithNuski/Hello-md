@@ -70,16 +70,11 @@ export async function POST(
 
   let doc: ReadmeDoc | null | undefined = null;
   let col: Collection<ReadmeDoc> | null = null;
-  let query: Record<string, unknown> = {};
-
   try {
-    col = await getReadmesCollection();
     if (ObjectId.isValid(id)) {
-      query = { _id: new ObjectId(id) };
-    } else {
-      query = { id };
+      col = await getReadmesCollection();
+      doc = await col.findOne({ _id: new ObjectId(id) });
     }
-    doc = await col.findOne(query);
   } catch (err: unknown) {
     console.warn("MongoDB unavailable for regenerate:", (err as Error).message);
   }
@@ -140,10 +135,10 @@ export async function POST(
       return s;
     });
 
-    if (col && query) {
+    if (col && ObjectId.isValid(id)) {
       try {
         await col.updateOne(
-          query,
+          { _id: new ObjectId(id) },
           {
             $set: {
               sections: updatedSections,

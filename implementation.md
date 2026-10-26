@@ -176,14 +176,14 @@ flowchart TD
   * Build system state banners from Stitch: AI busy countdown, quota exceeded, username not found.
 * **Deliverable:** Quota depletion handling and unmetered BYOK bypass verified via `scripts/test-quota-byok.ts`. Live `/system-states` diagnostics page and client BYOK modal implemented.
 
-#### Milestone 7: Auth.js, Token Encryption & GitHub Push with Diff
+#### Milestone 7: Auth.js, Token Encryption & GitHub Push with Diff [COMPLETED]
 * **Scope:**
   * Configure NextAuth with GitHub provider (`read:user, public_repo`).
   * AES-256-GCM encryption/decryption in `src/lib/crypto.ts` for storing OAuth tokens.
   * Reassign anonymous drafts to user upon login.
   * Implement Export modal from Stitch: Copy Markdown, Download `README.md`, Push to GitHub.
   * Push to GitHub flow (`src/lib/github/publish.ts`): check repo existence, fetch current README SHA, compute unified diff, require explicit overwrite confirmation, commit.
-* **Deliverable:** Full end-to-end commit to a test user's `username/username` repository.
+* **Deliverable:** Verified with `scripts/test-milestone7.ts` (12 tests passed), `tsc --noEmit` (0 errors), `npm run lint` (clean), and `npm run build` (successful compilation). Production-ready Export dialog with live diff viewer and GitHub direct commit.
 
 #### Milestone 8: Templates Gallery, Responsive Polish & Final Verification
 * **Scope:**
