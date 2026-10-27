@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   FiTerminal,
   FiCheckCircle,
@@ -37,8 +38,9 @@ interface QuotaDisplay {
 
 export function GeneratorForm() {
   const router = useRouter();
+  const { data: session } = useSession();
 
-  const [username, setUsername] = useState("sajithnuski");
+  const [username, setUsername] = useState("");
   const [tone, setTone] = useState<Tone>("professional");
   const [theme, setTheme] = useState("minimal");
 
@@ -80,11 +82,15 @@ export function GeneratorForm() {
   useEffect(() => {
     fetchUsage();
 
-    // Initialize theme/tone from URL query parameters (e.g. from /templates)
+    // Initialize username/theme/tone from URL query parameters (e.g. from /templates)
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
+      const urlUser = params.get("username") || params.get("user");
       const urlTheme = params.get("theme");
       const urlTone = params.get("tone");
+      if (urlUser) {
+        setUsername(urlUser);
+      }
       if (urlTheme) {
         setTheme(urlTheme);
       }
@@ -106,6 +112,12 @@ export function GeneratorForm() {
     window.addEventListener("hellomd:byok-updated", handleByokUpdated);
     return () => window.removeEventListener("hellomd:byok-updated", handleByokUpdated);
   }, [fetchUsage]);
+
+  useEffect(() => {
+    if (session?.user?.login) {
+      setUsername((prev) => (prev ? prev : session.user.login || ""));
+    }
+  }, [session?.user?.login]);
 
   const addLog = (message: string, type: LogEntry["type"] = "info") => {
     const time = new Date().toTimeString().split(" ")[0];
