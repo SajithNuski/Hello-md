@@ -62,7 +62,7 @@ export function Footer() {
                 </span>
               </Link>
 
-              <span className="text-[#32352B] font-mono text-meta">/</span>
+              <span className="text-[#32352B] text-meta">/</span>
 
               
             </div>
@@ -75,19 +75,19 @@ export function Footer() {
             <div className="flex items-center gap-2.5 mt-2">
               <Link
                 href="/system-states"
-                className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#151712] hover:bg-[#1C1F17] border border-[#262820] text-meta font-mono text-[#D8D9D2] transition-colors"
+                className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#151712] hover:bg-[#1C1F17] border border-[#262820] text-meta font-medium text-[#D8D9D2] transition-colors"
                 title="View System States & Error Handling"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
                 <span>Systems operational</span>
               </Link>
-              <span className="font-mono text-[11px] text-[#787B70]">v1.0.0</span>
+              <span className="font-medium text-[11px] text-[#787B70]">v1.0.0</span>
             </div>
           </div>
 
           {/* Col 1: Product */}
           <div className="flex flex-col gap-3">
-            <span className="font-mono text-eyebrow uppercase text-[#787B70] tracking-[0.04em]">
+            <span className="font-semibold text-eyebrow uppercase text-[#787B70] tracking-[0.04em]">
               Product
             </span>
             <ul className="flex flex-col gap-2.5 text-nav text-[#95988D]">
@@ -107,7 +107,7 @@ export function Footer() {
               <li>
                 <span className="text-[#95988D] flex items-center gap-1.5">
                   <span>Markdown editor</span>
-                  <span className="font-mono text-[10px] bg-[#1C1E17] text-accent px-1.5 py-0.2 rounded-sm border border-[#2E3126]">
+                  <span className="font-semibold text-[10px] bg-[#1C1E17] text-accent px-1.5 py-0.2 rounded-sm border border-[#2E3126]">
                     CM6
                   </span>
                 </span>
@@ -123,7 +123,7 @@ export function Footer() {
 
           {/* Col 2: Architecture */}
           <div className="flex flex-col gap-3">
-            <span className="font-mono text-eyebrow uppercase text-[#787B70] tracking-[0.04em]">
+            <span className="font-semibold text-eyebrow uppercase text-[#787B70] tracking-[0.04em]">
               Architecture
             </span>
             <ul className="flex flex-col gap-2.5 text-nav text-[#95988D]">
@@ -150,7 +150,7 @@ export function Footer() {
 
           {/* Col 3: Community & Source */}
           <div className="flex flex-col gap-3">
-            <span className="font-mono text-eyebrow uppercase text-[#787B70] tracking-[0.04em]">
+            <span className="font-semibold text-eyebrow uppercase text-[#787B70] tracking-[0.04em]">
               Source & Docs
             </span>
             <ul className="flex flex-col gap-2.5 text-nav text-[#95988D]">
@@ -189,7 +189,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <span className="font-mono text-eyebrow text-[#787B70] bg-[#161813] px-2 py-0.5 rounded-sm border border-[#262820] w-fit">
+                <span className="font-medium text-eyebrow text-[#787B70] bg-[#161813] px-2 py-0.5 rounded-sm border border-[#262820] w-fit">
                   MIT License
                 </span>
               </li>
@@ -201,7 +201,7 @@ export function Footer() {
         <div className="h-[1px] w-full bg-[#1E2019]"></div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-meta text-[#787B70] font-mono">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-meta text-[#787B70] font-medium">
           <div className="flex items-center gap-2">
             <span>&copy; {new Date().getFullYear()} Hello-md | developed by SajithNuski.</span>
           </div>

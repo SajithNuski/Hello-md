@@ -86,7 +86,7 @@ export function ByokDialog({ isOpen, onClose, onSaved }: ByokDialogProps) {
           <div>
             <h2 id="byok-title" className="text-base font-semibold text-white tracking-tight flex items-center gap-2">
               <span>Bring Your Own Key</span>
-              <span className="font-mono text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#181D12] text-accent border border-[#2A341E]">
+              <span className="font-semibold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-[#181D12] text-accent border border-[#2A341E]">
                 Direct Access
               </span>
             </h2>
@@ -98,7 +98,7 @@ export function ByokDialog({ isOpen, onClose, onSaved }: ByokDialogProps) {
 
         {/* Provider Selector Tabs */}
         <div className="mt-5 mb-4">
-          <label className="text-xs font-mono uppercase tracking-wider text-[#7A7E72] block mb-2 font-medium">
+          <label className="text-xs font-semibold uppercase tracking-wider text-[#7A7E72] block mb-2">
             Select Provider
           </label>
           <div className="grid grid-cols-2 gap-2 p-1 bg-[#0D0E0C] border border-[#24271D] rounded-lg">
@@ -150,7 +150,7 @@ export function ByokDialog({ isOpen, onClose, onSaved }: ByokDialogProps) {
               }
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[11px] text-accent hover:underline inline-flex items-center gap-1 font-mono"
+              className="text-[11px] text-accent hover:underline inline-flex items-center gap-1 font-medium"
             >
               <span>Get API key</span>
               <FiExternalLink className="w-3 h-3" />
@@ -167,7 +167,7 @@ export function ByokDialog({ isOpen, onClose, onSaved }: ByokDialogProps) {
                 setStatusMsg(null);
               }}
               placeholder={provider === "groq" ? "gsk_..." : "AIzaSy..."}
-              className="w-full bg-transparent px-3 py-2 text-xs font-mono text-white placeholder-[#505447] focus:outline-none"
+              className="w-full bg-transparent px-3 py-2 text-xs font-medium text-white placeholder-[#505447] focus:outline-none"
             />
             <button
               type="button"
@@ -191,7 +191,7 @@ export function ByokDialog({ isOpen, onClose, onSaved }: ByokDialogProps) {
 
         {/* Status Message */}
         {statusMsg && (
-          <div className="mb-4 text-xs font-mono text-accent bg-[#C5F467]/10 border border-[#C5F467]/20 px-3 py-1.5 rounded flex items-center gap-2">
+          <div className="mb-4 text-xs font-medium text-accent bg-[#C5F467]/10 border border-[#C5F467]/20 px-3 py-1.5 rounded flex items-center gap-2">
             <FiCheck className="w-3.5 h-3.5 shrink-0" />
             <span>{statusMsg}</span>
           </div>

@@ -62,14 +62,14 @@ export function SystemStateBanner({
       >
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[11px] uppercase text-[#7A7E72] font-semibold tracking-wider">
+            <span className="text-[11px] uppercase text-[#7A7E72] font-semibold tracking-wider">
               State 01: Engine Congestion
             </span>
-            <span className="font-mono text-xs text-[#44473C]">/</span>
-            <span className="font-mono text-xs text-[#8E9285]">HTTP 503 AI Busy / Throttled</span>
+            <span className="text-xs text-[#44473C]">/</span>
+            <span className="text-xs font-medium text-[#8E9285]">HTTP 503 AI Busy / Throttled</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs text-[#7A7E72] hidden sm:inline">
+            <span className="text-xs font-medium text-[#7A7E72] hidden sm:inline">
               Trigger: Token-Bucket Exhaustion
             </span>
             {onDismiss && (
@@ -98,7 +98,7 @@ export function SystemStateBanner({
                 </span>
                 <span
                   id="rate-limit-badge"
-                  className="font-mono text-xs font-semibold bg-[#24281E] text-white px-2.5 py-1 rounded inline-flex items-center gap-1.5 w-fit border border-[#3A402D]"
+                  className="text-xs font-semibold bg-[#24281E] text-white px-2.5 py-1 rounded inline-flex items-center gap-1.5 w-fit border border-[#3A402D]"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
                   <span id="countdown-text">{formattedCountdown}</span>
@@ -127,7 +127,7 @@ export function SystemStateBanner({
               <FiShield className="w-4 h-4 text-accent shrink-0" />
               <span>Your current draft in the editor is preserved and will auto-resume.</span>
             </div>
-            <div className="flex items-center gap-4 font-mono text-[11px] text-[#707567]">
+            <div className="flex items-center gap-4 text-[11px] font-medium text-[#707567]">
               <span>Backoff: Exponential (Jittered)</span>
               <span>Worker Node: #edge-iad-04</span>
             </div>
@@ -147,14 +147,14 @@ export function SystemStateBanner({
       >
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[11px] uppercase text-[#7A7E72] font-semibold tracking-wider">
+            <span className="text-[11px] uppercase text-[#7A7E72] font-semibold tracking-wider">
               State 02: Generation Quota
             </span>
-            <span className="font-mono text-xs text-[#44473C]">/</span>
-            <span className="font-mono text-xs text-[#8E9285]">Anonymous Daily Throttle</span>
+            <span className="text-xs text-[#44473C]">/</span>
+            <span className="text-xs font-medium text-[#8E9285]">Anonymous Daily Throttle</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs text-[#7A7E72] hidden sm:inline">
+            <span className="text-xs font-medium text-[#7A7E72] hidden sm:inline">
               Resets 00:00 UTC
             </span>
             {onDismiss && (
@@ -174,7 +174,7 @@ export function SystemStateBanner({
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div className="space-y-3 max-w-2xl">
               {/* Quota Indicator Pill */}
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#20241A] text-white font-mono text-xs border border-[#3A402D]">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#20241A] text-white text-xs border border-[#3A402D]">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
                 <span className="font-semibold text-white">0 of 3 generations left today</span>
               </div>
@@ -186,7 +186,7 @@ export function SystemStateBanner({
                 </h3>
                 <p className="text-xs text-[#9EAA96] leading-relaxed">
                   Anonymous IP allocations reset automatically at 00:00 UTC (in{" "}
-                  <span className="font-mono text-accent font-medium">{resetsAtFormatted}</span>).
+                  <span className="text-accent font-semibold">{resetsAtFormatted}</span>).
                 </p>
               </div>
 
@@ -201,16 +201,16 @@ export function SystemStateBanner({
 
             {/* Quota Visual Progress Box */}
             <div className="w-full md:w-56 p-4 rounded-lg bg-[#191C15] border border-[#2C3024] flex flex-col justify-between gap-3 shrink-0">
-              <div className="flex items-center justify-between text-xs font-mono">
+              <div className="flex items-center justify-between text-xs font-medium">
                 <span className="text-[#8E9285]">Tier: Anonymous</span>
                 <span className="text-red-400 font-semibold">100% used</span>
               </div>
               <div className="w-full bg-[#24281E] h-2 rounded overflow-hidden">
                 <div className="bg-red-500 w-full h-full rounded transition-all duration-500" />
               </div>
-              <div className="flex items-center justify-between text-[11px] font-mono text-[#7A7E72]">
+              <div className="flex items-center justify-between text-[11px] font-medium text-[#7A7E72]">
                 <span>Free Plan</span>
-                <span className="text-white font-medium">3/3 Used</span>
+                <span className="text-white font-semibold">3/3 Used</span>
               </div>
             </div>
           </div>
@@ -250,14 +250,14 @@ export function SystemStateBanner({
     >
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[11px] uppercase text-[#7A7E72] font-semibold tracking-wider">
+          <span className="text-[11px] uppercase text-[#7A7E72] font-semibold tracking-wider">
             State 03: GitHub API Lookup
           </span>
-          <span className="font-mono text-xs text-[#44473C]">/</span>
-          <span className="font-mono text-xs text-[#8E9285]">Validation / User Not Found</span>
+          <span className="text-xs text-[#44473C]">/</span>
+          <span className="text-xs font-medium text-[#8E9285]">Validation / User Not Found</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs text-red-400 hidden sm:inline">
+          <span className="text-xs font-medium text-red-400 hidden sm:inline">
             Octokit::NotFound (404)
           </span>
           {onDismiss && (
@@ -277,15 +277,15 @@ export function SystemStateBanner({
         <div className="max-w-xl flex flex-col gap-3">
           <div className="flex items-center justify-between text-xs">
             <span className="font-medium text-[#C0C3BA]">GitHub username query</span>
-            <span className="font-mono text-[11px] text-[#7A7E72]">Resolver: REST v3</span>
+            <span className="text-[11px] font-medium text-[#7A7E72]">Resolver: REST v3</span>
           </div>
 
           {/* Input Box Visual with Error Highlighting */}
           <div className="relative flex items-center rounded-md border border-red-500 bg-[#0D0E0C] transition-all">
-            <span className="inline-flex items-center px-3 h-9 bg-[#191C15] border-r border-red-500/70 font-mono text-xs text-[#8E9285] select-none">
+            <span className="inline-flex items-center px-3 h-9 bg-[#191C15] border-r border-red-500/70 text-xs font-medium text-[#8E9285] select-none">
               @
             </span>
-            <div className="w-full h-9 px-3 flex items-center font-mono text-xs text-red-200">
+            <div className="w-full h-9 px-3 flex items-center text-xs font-medium text-red-200">
               {username}
             </div>
             <div className="pr-3 text-red-400 flex items-center">
@@ -297,7 +297,7 @@ export function SystemStateBanner({
           <div className="flex items-start gap-2 pt-0.5 text-xs text-red-400">
             <FiAlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
             <span className="leading-snug">
-              GitHub user &lsquo;<strong className="text-white font-mono">@{username}</strong>&rsquo; not found.
+              GitHub user &lsquo;<strong className="text-white font-semibold">@{username}</strong>&rsquo; not found.
               Please verify spelling or check if the account is private.
             </span>
           </div>
@@ -309,12 +309,12 @@ export function SystemStateBanner({
               <button
                 type="button"
                 onClick={() => onSelectSuggestion?.(suggestion)}
-                className="font-mono text-accent font-semibold hover:underline inline-flex items-center gap-1"
+                className="text-accent font-semibold hover:underline inline-flex items-center gap-1"
               >
                 <span>@{suggestion}</span>
               </button>
             </div>
-            <span className="font-mono text-[10px] text-[#7A7E72] uppercase tracking-wider">
+            <span className="text-[10px] font-semibold text-[#7A7E72] uppercase tracking-wider">
               Match: Levenshtein {score}
             </span>
           </div>

@@ -43,7 +43,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
+        mono: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
+        code: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
       },
       fontSize: {
         hero: ["64px", { lineHeight: "1.15", letterSpacing: "-0.03em", fontWeight: "600" }],

@@ -104,7 +104,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
           </button>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-xs text-[#52534C]">
+        <div className="flex items-center gap-2 font-medium text-xs text-[#52534C]">
           {sectionTitle && (
             <span className="bg-[#F0F1EA] text-[#171815] px-2 py-0.5 rounded-md border border-[#E2E3DC] text-[11px] font-semibold uppercase tracking-wider">
               {sectionTitle}
@@ -115,7 +115,7 @@ export function MarkdownEditor({ value, onChange, sectionTitle }: MarkdownEditor
       </div>
 
       {/* CodeMirror Surface with Word Wrap & Line Numbers */}
-      <div className="flex-1 overflow-auto text-sm font-mono leading-[1.65]">
+      <div className="flex-1 overflow-auto text-sm font-code leading-[1.65]">
         <CodeMirror
           value={value}
           height="100%"

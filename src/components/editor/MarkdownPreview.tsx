@@ -342,12 +342,12 @@ export function MarkdownPreview({
                     <code
                       className={
                         isInline
-                          ? `px-1.5 py-0.5 rounded font-mono text-xs border ${
+                          ? `px-1.5 py-0.5 rounded font-code text-xs border ${
                               isDark
                                 ? "bg-[#161B22] text-[#E6EDF3] border-[#30363D]"
                                 : "bg-[#F6F8FA] text-[#1F2328] border-[#D0D7DE]"
                             }`
-                          : "font-mono text-xs"
+                          : "font-code text-xs"
                       }
                       {...props}
                     >

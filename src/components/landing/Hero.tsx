@@ -80,7 +80,7 @@ export function Hero() {
         {/* Left Column: Typography and Action */}
         <div className="w-full lg:w-[50%] flex flex-col gap-5">
           {/* Tag */}
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded bg-[#F0F1EA] border border-[#E2E3DC] text-xs font-mono text-[#52534C] w-fit">
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded bg-[#F0F1EA] border border-[#E2E3DC] text-xs font-medium text-[#52534C] w-fit">
             <span>Free and open source · No sign-up required</span>
           </div>
 
@@ -147,11 +147,11 @@ export function Hero() {
                 <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]/80"></span>
               </div>
 
-              <div className="flex items-center gap-2 text-xs font-mono text-[#8E9285]">
+              <div className="flex items-center gap-2 text-xs font-medium text-[#8E9285]">
                 <span>github.com/profile</span>
               </div>
 
-              <span className="text-[11px] font-mono text-accent bg-[#181A14] px-1.5 py-0.5 rounded border border-[#2A2E22]">
+              <span className="text-[11px] font-medium text-accent bg-[#181A14] px-1.5 py-0.5 rounded border border-[#2A2E22]">
                 README.md
               </span>
             </div>

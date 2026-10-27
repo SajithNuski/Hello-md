@@ -65,7 +65,7 @@ export function HowItWorks() {
         ref={headerRef}
         className="flex flex-col items-center text-center gap-2 max-w-xl mx-auto"
       >
-        <span className="text-xs font-mono font-medium text-[#65665F] uppercase tracking-wider">
+        <span className="text-xs font-semibold text-[#65665F] uppercase tracking-wider">
           Process
         </span>
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#171815]">
@@ -82,7 +82,7 @@ export function HowItWorks() {
         <div className="flex flex-col justify-between gap-5 p-6 bg-white rounded-lg border border-[#E2E3DC] shadow-xs">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-semibold text-[#65665F]">
+              <span className="text-xs font-bold text-[#65665F]">
                 01
               </span>
               <div className="w-8 h-8 rounded-md bg-[#F4F4F2] border border-[#E2E3DC] flex items-center justify-center text-[#171815]">
@@ -109,7 +109,7 @@ export function HowItWorks() {
         <div className="flex flex-col justify-between gap-5 p-6 bg-white rounded-lg border border-[#E2E3DC] shadow-xs">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-semibold text-[#65665F]">
+              <span className="text-xs font-bold text-[#65665F]">
                 02
               </span>
               <div className="w-8 h-8 rounded-md bg-[#F4F4F2] border border-[#E2E3DC] flex items-center justify-center text-[#171815]">
@@ -136,7 +136,7 @@ export function HowItWorks() {
         <div className="flex flex-col justify-between gap-5 p-6 bg-white rounded-lg border border-[#E2E3DC] shadow-xs">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-semibold text-[#65665F]">
+              <span className="text-xs font-bold text-[#65665F]">
                 03
               </span>
               <div className="w-8 h-8 rounded-md bg-[#F4F4F2] border border-[#E2E3DC] flex items-center justify-center text-[#171815]">

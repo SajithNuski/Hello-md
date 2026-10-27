@@ -281,14 +281,14 @@ export function GeneratorForm() {
         <div className="flex items-center justify-between pb-3 border-b border-border text-xs">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-            <span className="font-mono text-text-secondary text-[11px] uppercase tracking-wider font-semibold">
+            <span className="text-text-secondary text-[11px] uppercase tracking-wider font-semibold">
               Profile generator
             </span>
           </div>
 
           <div className="flex items-center gap-2.5">
             {quotaInfo && (
-              <span className="font-mono text-[11px] text-text-muted bg-surface-raised px-2 py-0.5 rounded border border-border">
+              <span className="text-[11px] font-medium text-text-muted bg-surface-raised px-2 py-0.5 rounded border border-border">
                 {quotaInfo.isByok ? (
                   <span className="text-accent font-medium">Unmetered (BYOK)</span>
                 ) : (
@@ -302,7 +302,7 @@ export function GeneratorForm() {
             <button
               type="button"
               onClick={() => setIsByokOpen(true)}
-              className="font-mono text-[11px] text-text-secondary hover:text-accent flex items-center gap-1 transition-colors"
+              className="text-[11px] font-medium text-text-secondary hover:text-accent flex items-center gap-1 transition-colors cursor-pointer"
               title="Configure Bring Your Own Key"
             >
               <FiKey className="w-3 h-3" />
@@ -338,7 +338,7 @@ export function GeneratorForm() {
               }}
               placeholder="torvalds"
               style={{ outline: "none" }}
-              className="w-full h-full px-3.5 bg-transparent font-mono text-meta text-text-primary placeholder:text-text-muted outline-none focus:outline-none focus-visible:outline-none"
+              className="w-full h-full px-3.5 bg-transparent font-medium text-meta text-text-primary placeholder:text-text-muted outline-none focus:outline-none focus-visible:outline-none"
             />
           </div>
         </div>
@@ -429,7 +429,7 @@ export function GeneratorForm() {
                 <FiDatabase className="w-4 h-4 text-text-muted shrink-0" />
               )}
               <div className="flex flex-col">
-                <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
+                <span className="text-eyebrow font-semibold text-text-primary tracking-[0.04em]">
                   1. FETCH DATA
                 </span>
                 <span className="text-meta text-text-secondary">GraphQL facts</span>
@@ -450,7 +450,7 @@ export function GeneratorForm() {
                 <FiEdit3 className="w-4 h-4 text-text-muted shrink-0" />
               )}
               <div className="flex flex-col">
-                <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
+                <span className="text-eyebrow font-semibold text-text-primary tracking-[0.04em]">
                   2. GENERATION
                 </span>
                 <span className="text-meta text-text-secondary">Grounded prose</span>
@@ -471,7 +471,7 @@ export function GeneratorForm() {
                 <FiPackage className="w-4 h-4 text-text-muted shrink-0" />
               )}
               <div className="flex flex-col">
-                <span className="font-mono text-eyebrow font-medium text-text-primary tracking-[0.04em]">
+                <span className="text-eyebrow font-semibold text-text-primary tracking-[0.04em]">
                   3. ASSEMBLY
                 </span>
                 <span className="text-meta text-text-secondary">Deterministic layout</span>
@@ -479,8 +479,8 @@ export function GeneratorForm() {
             </div>
           </div>
 
-          {/* Monospace Log Terminal Output */}
-          <div className="p-4 bg-[#0D0E0C] text-[#FAFAF8] flex flex-col gap-2 max-h-48 overflow-y-auto font-mono text-meta">
+          {/* Log Output */}
+          <div className="p-4 bg-[#0D0E0C] text-[#FAFAF8] flex flex-col gap-2 max-h-48 overflow-y-auto text-meta font-medium">
             <div className="flex items-center gap-2 pb-2 mb-1 border-b border-[#21231D] text-text-muted text-eyebrow uppercase tracking-[0.05em]">
               <FiTerminal className="w-3.5 h-3.5 text-accent" />
               <span>Generation log</span>

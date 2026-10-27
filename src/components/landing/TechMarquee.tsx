@@ -287,7 +287,7 @@ function TechCard({ item }: { item: TechItem }) {
         <span className="font-semibold text-sm text-[#0D0E0C] dark:text-[#EDEDEB] tracking-[-0.01em] whitespace-nowrap">
           {item.name}
         </span>
-        <span className="text-[10px] font-mono uppercase tracking-wider text-[#73756C] dark:text-[#8D9085]">
+        <span className="text-[10px] font-medium uppercase tracking-wider text-[#73756C] dark:text-[#8D9085]">
           {item.category}
         </span>
       </div>
@@ -333,7 +333,7 @@ export function TechMarquee() {
         ref={headerRef}
         className="flex flex-col items-center text-center gap-2 max-w-xl mx-auto px-4"
       >
-        <span className="text-xs font-mono font-medium text-[#65665F] uppercase tracking-wider">
+        <span className="text-xs font-semibold text-[#65665F] uppercase tracking-wider">
           Ecosystem
         </span>
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#171815]">

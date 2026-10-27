@@ -122,7 +122,7 @@ export function Header() {
         <div className="flex items-center gap-2.5">
           {session?.user ? (
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono text-[#A0A299] hidden sm:inline">
+              <span className="text-xs font-medium text-[#A0A299] hidden sm:inline">
                 @{session.user.login || session.user.name}
               </span>
               <button
@@ -217,7 +217,7 @@ export function Header() {
           <div className="pt-3 border-t border-[#21231D] flex flex-col gap-2">
             {session?.user ? (
               <div className="flex items-center justify-between px-2 py-1">
-                <span className="text-xs font-mono text-[#A0A299]">
+                <span className="text-xs font-medium text-[#A0A299]">
                   @{session.user.login || session.user.name}
                 </span>
                 <button
