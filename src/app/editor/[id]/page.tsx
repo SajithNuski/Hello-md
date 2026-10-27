@@ -834,9 +834,12 @@ export default function EditorPage() {
       )}
 
       {/* 2. 3-Pane Workspace: Zero page scrolling, each pane scrolls independently */}
-      <main className="flex-1 min-h-0 flex overflow-hidden relative w-full pb-14 sm:pb-0">
+      <main className="flex-1 min-h-0 flex overflow-hidden relative w-full pb-14 lg:pb-0">
         {/* Pane 1: Sections List (260px fixed width on desktop, full width on mobile when selected) */}
         <div
+          id="pane-sections"
+          role="tabpanel"
+          aria-labelledby="tab-sections"
           className={`h-full shrink-0 ${
             mobileTab === "sections" ? "flex flex-1 w-full" : "hidden"
           } lg:flex lg:w-[260px] lg:min-w-[260px] lg:max-w-[260px]`}
@@ -852,6 +855,9 @@ export default function EditorPage() {
 
         {/* Pane 2: Editor Pane (Visual Form / Markdown raw editor) */}
         <div
+          id="pane-editor"
+          role="tabpanel"
+          aria-labelledby="tab-editor"
           className={`h-full min-w-0 ${
             mobileTab === "editor" ? "flex flex-1 w-full" : "hidden"
           } ${
@@ -892,6 +898,9 @@ export default function EditorPage() {
 
         {/* Pane 3: Live Preview Pane */}
         <div
+          id="pane-preview"
+          role="tabpanel"
+          aria-labelledby="tab-preview"
           className={`h-full min-w-0 ${
             mobileTab === "preview" ? "flex flex-1 w-full" : "hidden"
           } ${

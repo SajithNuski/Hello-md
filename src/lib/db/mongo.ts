@@ -24,9 +24,18 @@ export async function getClient(): Promise<MongoClient> {
   return g._mongoPromise;
 }
 
-export const clientPromise: Promise<MongoClient> = (async () => {
-  return await getClient();
-})();
+export const clientPromise: Promise<MongoClient> = {
+  then(...args: Parameters<Promise<MongoClient>["then"]>) {
+    return getClient().then(...args);
+  },
+  catch(...args: Parameters<Promise<MongoClient>["catch"]>) {
+    return getClient().catch(...args);
+  },
+  finally(...args: Parameters<Promise<MongoClient>["finally"]>) {
+    return getClient().finally(...args);
+  },
+  [Symbol.toStringTag]: "Promise",
+} as unknown as Promise<MongoClient>;
 
 export async function getDb(): Promise<Db> {
   const client = await getClient();

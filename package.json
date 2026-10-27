@@ -8,11 +8,13 @@
     "start": "next start",
     "lint": "next lint",
     "db:indexes": "tsx scripts/ensure-indexes.ts",
+    "db:seed-templates": "tsx scripts/seed-templates.ts",
     "test:facts": "tsx scripts/test-facts.ts",
     "test:ai": "tsx scripts/test-ai.ts",
     "test:pipeline": "tsx scripts/test-milestone4.ts",
     "test:tech-stack": "tsx scripts/test-tech-stack.ts",
-    "test:milestone7": "tsx scripts/test-milestone7.ts"
+    "test:milestone7": "tsx scripts/test-milestone7.ts",
+    "test:milestone8": "tsx scripts/test-milestone8.ts"
   },
   "dependencies": {
     "@codemirror/lang-markdown": "^6.5.2",

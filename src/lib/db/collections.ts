@@ -72,11 +72,19 @@ export type ProviderStateDoc = z.infer<typeof ProviderStateSchema>;
 
 export const TemplateSchema = z.object({
   name: z.string(),
+  slug: z.string().optional(),
+  role: z.string().optional(),
+  tagline: z.string().optional(),
+  persona: z.string().optional(),
   theme: z.string(),
+  accentColor: z.string().optional(),
   sectionOrder: z.array(z.string()),
   badgeStyle: z.string(),
   previewMarkdown: z.string(),
   isPublic: z.boolean(),
+  tags: z.array(z.string()).optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 export type TemplateDoc = z.infer<typeof TemplateSchema>;
 

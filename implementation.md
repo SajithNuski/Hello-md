@@ -185,13 +185,13 @@ flowchart TD
   * Push to GitHub flow (`src/lib/github/publish.ts`): check repo existence, fetch current README SHA, compute unified diff, require explicit overwrite confirmation, commit.
 * **Deliverable:** Verified with `scripts/test-milestone7.ts` (12 tests passed), `tsc --noEmit` (0 errors), `npm run lint` (clean), and `npm run build` (successful compilation). Production-ready Export dialog with live diff viewer and GitHub direct commit.
 
-#### Milestone 8: Templates Gallery, Responsive Polish & Final Verification
+#### Milestone 8: Templates Gallery, Responsive Polish & Final Verification [COMPLETED]
 * **Scope:**
-  * Seed public templates in `templates` collection.
-  * Build `/templates` page from Stitch design.
-  * Implement responsive mobile layout (tabbed Edit / Preview switch).
+  * Seed public templates in `templates` collection (`src/lib/templates/presetTemplates.ts`, `scripts/seed-templates.ts`).
+  * Build `/templates` page from Stitch design with search, role filters, style filters, and full modal preview (`src/app/templates/page.tsx`, `src/app/api/templates/route.ts`).
+  * Implement responsive mobile layout (tabbed Edit / Preview switch with WAI-ARIA tablist accessibility) (`src/components/editor/MobileBottomNav.tsx`, `src/app/editor/[id]/page.tsx`).
   * Comprehensive linting, type checks (`noImplicitAny`), and accessibility audit.
-* **Deliverable:** Complete, polished, production-ready app.
+* **Deliverable:** Verified with `scripts/test-milestone8.ts` (14 tests passed), `tsc --noEmit` (0 errors), `npm run lint` (clean), and `npm run build` (successful compilation of all 10 routes). Production-ready application.
 
 ---
 

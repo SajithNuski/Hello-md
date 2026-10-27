@@ -80,6 +80,25 @@ export function GeneratorForm() {
   useEffect(() => {
     fetchUsage();
 
+    // Initialize theme/tone from URL query parameters (e.g. from /templates)
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlTheme = params.get("theme");
+      const urlTone = params.get("tone");
+      if (urlTheme) {
+        setTheme(urlTheme);
+      }
+      if (
+        urlTone &&
+        (urlTone === "professional" ||
+          urlTone === "playful" ||
+          urlTone === "minimal" ||
+          urlTone === "hacker")
+      ) {
+        setTone(urlTone);
+      }
+    }
+
     const handleByokUpdated = () => {
       fetchUsage();
     };
@@ -166,8 +185,8 @@ export function GeneratorForm() {
           }
 
           if (eventType === "stage" && dataPayload) {
-            setCurrentStage(dataPayload.stage);
-            addLog(dataPayload.message, "info");
+            if (dataPayload.stage) setCurrentStage(dataPayload.stage);
+            if (dataPayload.message) addLog(dataPayload.message, "info");
           } else if (eventType === "done" && dataPayload) {
             setCurrentStage("done");
             addLog(`Assembled ${dataPayload.sections?.length || 5} profile sections! Redirecting to Editor...`, "success");
@@ -176,35 +195,38 @@ export function GeneratorForm() {
             fetchUsage();
 
             // Redirect to editor
-            setTimeout(() => {
-              router.push(`/editor/${dataPayload.readmeId}`);
-            }, 800);
+            if (dataPayload.readmeId) {
+              const targetId = dataPayload.readmeId;
+              setTimeout(() => {
+                router.push(`/editor/${targetId}`);
+              }, 800);
+            }
           } else if (eventType === "error" && dataPayload) {
             const err = dataPayload.error;
             setIsGenerating(false);
 
-            if (err.code === "QUOTA_EXCEEDED") {
+            if (err?.code === "QUOTA_EXCEEDED") {
               setActiveSystemState("quota");
               setStatePayload({
                 resetsAtFormatted: err.resetTimeFormatted || "4h 12m",
               });
               addLog(`Quota Exceeded: 0 of 3 generations left today.`, "warning");
               fetchUsage();
-            } else if (err.code === "AI_BUSY") {
+            } else if (err?.code === "AI_BUSY") {
               setActiveSystemState("congestion");
               setStatePayload({
                 retryAfterSeconds: err.retryAfter || 24,
               });
               addLog(`AI Busy: Throttling active. Retry in ${err.retryAfter || 24}s`, "warning");
-            } else if (err.code === "USER_NOT_FOUND") {
+            } else if (err?.code === "USER_NOT_FOUND") {
               setActiveSystemState("user_not_found");
               setStatePayload({
                 username: cleanUsername,
               });
               addLog(`GitHub user '@${cleanUsername}' not found.`, "error");
             } else {
-              setErrorMessage(err.message || "An error occurred during generation");
-              addLog(`Error [${err.code}]: ${err.message}`, "error");
+              setErrorMessage(err?.message || "An error occurred during generation");
+              addLog(`Error [${err?.code || "UNKNOWN"}]: ${err?.message || "Generation error"}`, "error");
             }
             return;
           }
