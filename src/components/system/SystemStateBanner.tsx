@@ -112,7 +112,7 @@ export function SystemStateBanner({
                 <button
                   type="button"
                   onClick={onOpenByok}
-                  className="h-9 px-3.5 bg-[#20241A] hover:bg-[#2A3022] text-white font-medium text-xs border border-[#3A402D] hover:border-accent/50 rounded-md transition-colors inline-flex items-center gap-2 shadow-xs"
+                  className="h-9 px-3.5 bg-[#20241A] hover:bg-[#2A3022] text-white font-medium text-xs border border-[#3A402D] hover:border-[#C5F467]/50 rounded-md transition-colors inline-flex items-center gap-2 shadow-xs"
                 >
                   <FiKey className="w-3.5 h-3.5 text-accent" />
                   <span>Use your own API key</span>

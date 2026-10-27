@@ -101,7 +101,7 @@ export function CustomSelect<T extends string = string>({
         className={`w-full h-11 px-3.5 bg-surface-raised rounded-md border flex items-center justify-between text-nav text-text-primary outline-none focus:outline-none focus-visible:outline-none cursor-pointer shadow-xs transition-all select-none ${
           isOpen
             ? "border-text-primary"
-            : "border-border hover:border-text-primary/40 focus:border-text-primary"
+            : "border-border hover:border-[#0D0E0C]/40 focus:border-text-primary"
         } ${className}`}
       >
         <span className="font-medium text-sm text-[#0D0E0C] truncate">
@@ -134,8 +134,8 @@ export function CustomSelect<T extends string = string>({
                 style={{ outline: "none" }}
                 className={`w-full px-3 py-2 rounded-md flex items-center justify-between text-sm transition-colors text-left outline-none focus:outline-none focus-visible:outline-none cursor-pointer select-none ${
                   isSelected
-                    ? "bg-accent text-[#0D0E0C] font-semibold shadow-xs"
-                    : "text-[#262822] hover:bg-accent/25 hover:text-[#0D0E0C]"
+                    ? "bg-accent text-[#0D0E0C] font-semibold shadow-xs hover:bg-accent-hover"
+                    : "text-[#262822] hover:bg-[#EAF7C6] hover:text-[#0D0E0C] focus:bg-[#EAF7C6] focus:text-[#0D0E0C] active:bg-[#DDF4A7]"
                 }`}
               >
                 <span className="truncate">{option.label}</span>

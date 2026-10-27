@@ -274,7 +274,7 @@ export default function SystemStatesPage() {
                   </span>
                   <div className="flex items-center gap-2">
                     {byokConfig ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono bg-accent/10 border border-accent/30 text-accent font-semibold capitalize">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono bg-[#C5F467]/10 border border-[#C5F467]/30 text-accent font-semibold capitalize">
                         {byokConfig.provider === "gemini" ? (
                           <SiGoogle className="w-3 h-3" />
                         ) : (
@@ -322,7 +322,7 @@ export default function SystemStatesPage() {
                 <button
                   type="button"
                   onClick={() => setIsByokOpen(true)}
-                  className="w-full h-8 px-3 bg-[#20251A] hover:bg-[#2A3121] text-accent font-medium text-xs rounded-md border border-[#38422A] hover:border-accent/40 transition-colors flex items-center justify-center gap-2"
+                  className="w-full h-8 px-3 bg-[#20251A] hover:bg-[#2A3121] text-accent font-medium text-xs rounded-md border border-[#38422A] hover:border-[#C5F467]/40 transition-colors flex items-center justify-center gap-2"
                 >
                   <FiKey className="w-3.5 h-3.5" />
                   <span>Add Free API Key for Unlimited</span>
@@ -484,7 +484,7 @@ export default function SystemStatesPage() {
                     value={testUsername}
                     onChange={(e) => setTestUsername(e.target.value)}
                     placeholder="Type handle..."
-                    className="h-7 px-2.5 bg-[#0D0E0C] border border-[#2D3125] focus:border-accent/60 rounded text-xs text-white font-mono outline-none w-36"
+                    className="h-7 px-2.5 bg-[#0D0E0C] border border-[#2D3125] focus:border-[#C5F467]/60 rounded text-xs text-white font-mono outline-none w-36"
                   />
                 </div>
               )}

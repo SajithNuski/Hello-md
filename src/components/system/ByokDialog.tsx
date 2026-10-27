@@ -191,7 +191,7 @@ export function ByokDialog({ isOpen, onClose, onSaved }: ByokDialogProps) {
 
         {/* Status Message */}
         {statusMsg && (
-          <div className="mb-4 text-xs font-mono text-accent bg-accent/10 border border-accent/20 px-3 py-1.5 rounded flex items-center gap-2">
+          <div className="mb-4 text-xs font-mono text-accent bg-[#C5F467]/10 border border-[#C5F467]/20 px-3 py-1.5 rounded flex items-center gap-2">
             <FiCheck className="w-3.5 h-3.5 shrink-0" />
             <span>{statusMsg}</span>
           </div>

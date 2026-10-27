@@ -143,7 +143,7 @@ export function MarkdownPreview({
                         isDark ? "border-[#30363D]" : "border-[#D0D7DE]"
                       } ${
                         onSelectSection
-                          ? "cursor-pointer hover:bg-accent/10"
+                          ? "cursor-pointer hover:bg-[#C5F467]/15"
                           : ""
                       } ${isSelected ? "ring-1 ring-accent" : ""}`}
                       title={onSelectSection ? "Click to jump to Intro section in editor" : undefined}
@@ -169,7 +169,7 @@ export function MarkdownPreview({
                         isDark ? "border-[#30363D]/80" : "border-[#D0D7DE]"
                       } ${
                         matchedKey && onSelectSection
-                          ? "cursor-pointer hover:bg-accent/10"
+                          ? "cursor-pointer hover:bg-[#C5F467]/15"
                           : ""
                       } ${isSelected ? "ring-1 ring-accent" : ""}`}
                       title={

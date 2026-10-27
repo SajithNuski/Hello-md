@@ -271,7 +271,7 @@ function TechCard({ item }: { item: TechItem }) {
   const Icon = item.icon;
 
   return (
-    <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white dark:bg-[#141512] border border-[#0D0E0C]/10 dark:border-[#262822] shadow-xs hover:border-[#0D0E0C]/40 dark:hover:border-accent/40 hover:shadow-md transition-all duration-200 cursor-pointer select-none">
+    <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white dark:bg-[#141512] border border-[#0D0E0C]/10 dark:border-[#262822] shadow-xs hover:border-[#0D0E0C]/40 dark:hover:border-[#C5F467]/40 hover:shadow-md transition-all duration-200 cursor-pointer select-none">
       {/* Icon with authentic brand color */}
       <div className="w-8 h-8 rounded-lg bg-[#0D0E0C]/5 dark:bg-white/5 flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-200">
         <Icon
