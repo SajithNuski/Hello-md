@@ -3,7 +3,7 @@ import { Tone, SectionKey } from "@/lib/config";
 import { extractFactsSlice } from "./factsSlice";
 export { extractFactsSlice };
 
-export const PROMPT_VERSION = "v1.0";
+export const PROMPT_VERSION = "v1.1";
 
 export const TONE_DIRECTIVES: Record<Tone, string> = {
   professional: "Clear, confident, no slang, no emoji",
@@ -75,9 +75,7 @@ Grounding constraints:
 - "skills" items MUST ONLY be languages, frameworks or topics found in FACTS. Group them (Languages, Frameworks, Tools, ...) and skip empty groups.
 - "roles" describe real activity evident in FACTS (for example "Building web apps with TypeScript"). Use a job title only if FACTS.bio states one.
 - Never invent numbers, years, employers, or statistics that are not in FACTS.
-
-STYLE EXAMPLE (tone and specificity only. Do not reuse its content):
-{"intro":{"headline":"Building command-line tools in Rust","tagline":"I write small, fast utilities that make everyday developer chores less tedious.","roles":["Writing CLI tools in Rust","Automating developer workflows"]}}`;
+- CRITICAL: Your JSON output MUST include ALL 5 top-level keys: "intro", "about", "skills", "projects", and "contact". Do NOT omit any section.`;
 }
 
 const SECTION_SCHEMAS: Record<string, string> = {

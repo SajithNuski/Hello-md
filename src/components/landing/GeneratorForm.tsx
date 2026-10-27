@@ -152,6 +152,17 @@ export function GeneratorForm() {
         }),
       });
 
+      if (!response.ok) {
+        let errMessage = `Generation failed (${response.status})`;
+        try {
+          const errData = await response.json();
+          errMessage = errData?.error?.message || errData?.message || errMessage;
+        } catch {
+          // fallback to status code message
+        }
+        throw new Error(errMessage);
+      }
+
       if (!response.body) {
         throw new Error("ReadableStream not supported by browser");
       }

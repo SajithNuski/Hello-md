@@ -5,7 +5,7 @@ export const APP_CONFIG = {
   dailyGenerationsLimit: 3,
   sectionRegenCost: 0.25,
   aiTimeoutMs: 20000,
-  promptVersion: "v1.0",
+  promptVersion: "v1.1",
 } as const;
 
 export const SECTION_KEYS = [

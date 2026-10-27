@@ -77,6 +77,12 @@ export async function POST(req: NextRequest) {
       };
 
       try {
+        // Immediately notify client and flush SSE response headers
+        sendEvent("stage", {
+          stage: "fetching",
+          message: `Ingesting facts for @${login} from GitHub...`,
+        });
+
         // --- QUOTA CHECK (Bypassed if BYOK is present) ---
         if (!byok) {
           const quota = await checkQuota(subjectId, 1.0);
@@ -95,12 +101,6 @@ export async function POST(req: NextRequest) {
             return;
           }
         }
-
-        // --- STAGE 1: FETCHING FACTS ---
-        sendEvent("stage", {
-          stage: "fetching",
-          message: `Ingesting facts for @${login} from GitHub...`,
-        });
 
         const facts = await fetchFacts(login);
 
@@ -256,6 +256,7 @@ export async function POST(req: NextRequest) {
     "Content-Type": "text/event-stream; charset=utf-8",
     "Cache-Control": "no-cache, no-transform",
     Connection: "keep-alive",
+    "X-Accel-Buffering": "no",
   });
 
   if (isNew) {

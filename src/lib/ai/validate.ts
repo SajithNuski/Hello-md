@@ -357,11 +357,59 @@ export function validateSections(
   rawText: string,
   facts: Facts
 ): { success: true; data: SectionsOutput } | { success: false; error: string } {
-  let parsedJson: unknown;
+  let parsedJson: any;
   try {
     parsedJson = JSON.parse(extractCleanJson(rawText));
   } catch (err: unknown) {
     return { success: false, error: `Invalid JSON format: ${(err as Error).message}` };
+  }
+
+  if (typeof parsedJson !== "object" || parsedJson === null || Array.isArray(parsedJson)) {
+    return { success: false, error: "Root AI output must be a JSON object" };
+  }
+
+  const c = buildCtx(facts);
+
+  // Auto-fill missing sections from verified GitHub facts so LLM omissions never break the pipeline
+  if (!parsedJson.intro || typeof parsedJson.intro !== "object") {
+    parsedJson.intro = {
+      headline: fallbackHeadline(facts),
+      tagline: facts.bio ? facts.bio.slice(0, 180) : "",
+      roles: facts.topLanguages.slice(0, 3).map((l) => `Building with ${l.name}`),
+    };
+  }
+
+  if (!parsedJson.about || typeof parsedJson.about !== "object" || !Array.isArray(parsedJson.about.paragraphs)) {
+    parsedJson.about = {
+      paragraphs: [fallbackAbout(facts, c)],
+      highlights: facts.topRepos.slice(0, 3).map((r) => r.name),
+      areas: facts.topLanguages.slice(0, 3).map((l) => l.name),
+    };
+  }
+
+  if (!parsedJson.skills || typeof parsedJson.skills !== "object" || !Array.isArray(parsedJson.skills.groups)) {
+    parsedJson.skills = {
+      groups: [
+        {
+          title: "Languages & Technologies",
+          items: facts.topLanguages.map((l) => l.name),
+        },
+      ],
+    };
+  }
+
+  if (!Array.isArray(parsedJson.projects)) {
+    parsedJson.projects = facts.topRepos.slice(0, 4).map((r) => ({
+      repo: r.name,
+      pitch: r.description ? r.description.slice(0, 200) : `Open source project developed in ${r.language || "code"}.`,
+      highlights: r.topics.slice(0, 2),
+    }));
+  }
+
+  if (!parsedJson.contact || typeof parsedJson.contact !== "object" || typeof parsedJson.contact.closing !== "string") {
+    parsedJson.contact = {
+      closing: "Open to collaborations, open source contributions, and discussions.",
+    };
   }
 
   const parseResult = SectionsSchema.safeParse(parsedJson);
@@ -375,7 +423,6 @@ export function validateSections(
   }
 
   const raw = parseResult.data;
-  const c = buildCtx(facts);
 
   return {
     success: true,
