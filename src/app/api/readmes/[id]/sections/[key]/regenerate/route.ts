@@ -12,6 +12,7 @@ import { SectionKey, SECTION_KEYS, TONES, Tone, APP_CONFIG } from "@/lib/config"
 import { AIError } from "@/lib/ai/types";
 import { extractByokHeaders, getSubjectId } from "@/lib/owner";
 import { checkQuota, consumeQuota } from "@/lib/quota";
+import { getAuthSession } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
@@ -34,8 +35,10 @@ export async function POST(
   }
   const sectionKey = key as SectionKey;
 
+  const session = await getAuthSession();
+  const authUserId = session?.user?.id || session?.user?.githubId;
   const byok = extractByokHeaders(req);
-  const subjectId = getSubjectId(req);
+  const subjectId = getSubjectId(req, authUserId);
 
   // Quota check (0.25 cost for single section regen) bypassed if BYOK is present
   if (!byok) {

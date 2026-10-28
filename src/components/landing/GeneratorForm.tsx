@@ -63,6 +63,7 @@ export function GeneratorForm() {
     try {
       const res = await fetch("/api/usage", {
         headers: getByokHeaders(),
+        cache: "no-store",
       });
       if (res.ok) {
         const data = await res.json();
@@ -192,6 +193,12 @@ export function GeneratorForm() {
             message?: string;
             sections?: unknown[];
             readmeId?: string;
+            quota?: {
+              used: number;
+              remaining: number;
+              limit: number;
+              resetTimeFormatted?: string;
+            };
             error?: {
               code: string;
               message: string;
@@ -214,8 +221,18 @@ export function GeneratorForm() {
             setCurrentStage("done");
             addLog(`Assembled ${dataPayload.sections?.length || 5} profile sections! Redirecting to Editor...`, "success");
 
-            // Refresh quota telemetry
-            fetchUsage();
+            // Refresh quota telemetry immediately from done payload or fetch
+            if (dataPayload.quota) {
+              setQuotaInfo({
+                used: dataPayload.quota.used,
+                remaining: dataPayload.quota.remaining,
+                limit: dataPayload.quota.limit,
+                resetsAtFormatted: dataPayload.quota.resetTimeFormatted || "4h 12m",
+                isByok: false,
+              });
+            } else {
+              fetchUsage();
+            }
 
             // Redirect to editor
             if (dataPayload.readmeId) {

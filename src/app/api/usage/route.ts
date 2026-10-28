@@ -1,10 +1,14 @@
 import { NextRequest } from "next/server";
 import { getSubjectId, extractByokHeaders, getOrCreateOwnerId, OWNER_COOKIE_NAME } from "@/lib/owner";
 import { getUsage } from "@/lib/quota";
+import { getAuthSession } from "@/lib/auth";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
+  const session = await getAuthSession();
+  const authUserId = session?.user?.id || session?.user?.githubId;
   const { ownerId, isNew } = getOrCreateOwnerId(req);
   const byok = extractByokHeaders(req);
 
@@ -22,7 +26,7 @@ export async function GET(req: NextRequest) {
       secondsUntilReset: 0,
     };
   } else {
-    const subjectId = getSubjectId(req);
+    const subjectId = getSubjectId(req, authUserId);
     const usage = await getUsage(subjectId);
     responseData = {
       unlimited: false,
@@ -33,7 +37,9 @@ export async function GET(req: NextRequest) {
 
   const headers = new Headers({
     "Content-Type": "application/json",
-    "Cache-Control": "no-store, max-age=0",
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+    Pragma: "no-cache",
+    Expires: "0",
   });
 
   if (isNew) {

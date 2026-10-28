@@ -27,7 +27,11 @@ declare module "next-auth" {
 }
 
 // In-memory fallback for user records if MongoDB is offline or unavailable
-const memoryUsers = new Map<string, { githubId: string; login: string; encToken: string }>();
+const globalForAuth = globalThis as unknown as {
+  _memoryUsers?: Map<string, { githubId: string; login: string; encToken: string }>;
+};
+
+const memoryUsers = (globalForAuth._memoryUsers ??= new Map<string, { githubId: string; login: string; encToken: string }>());
 
 export const authOptions: NextAuthOptions = {
   providers: [

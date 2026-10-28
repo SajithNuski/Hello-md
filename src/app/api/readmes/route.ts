@@ -12,6 +12,7 @@ import { assemble } from "@/lib/assemble";
 import { getReadmesCollection, SectionItem } from "@/lib/db/collections";
 import { getOrCreateOwnerId, getSubjectId, extractByokHeaders, OWNER_COOKIE_NAME } from "@/lib/owner";
 import { checkQuota, consumeQuota } from "@/lib/quota";
+import { getAuthSession } from "@/lib/auth";
 import { APP_CONFIG, TONES } from "@/lib/config";
 import { AIError } from "@/lib/ai/types";
 import { getDefaultAboutConfig } from "@/lib/aboutConfig";
@@ -62,10 +63,14 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const session = await getAuthSession();
+  const authUserId = session?.user?.id || session?.user?.githubId;
+
   const { login, tone, theme } = parsed.data;
-  const { ownerId, isNew } = getOrCreateOwnerId(req);
+  const { ownerId: anonOwnerId, isNew } = getOrCreateOwnerId(req);
+  const ownerId = authUserId ? `user_${authUserId}` : anonOwnerId;
   const byok = extractByokHeaders(req);
-  const subjectId = getSubjectId(req);
+  const subjectId = getSubjectId(req, authUserId);
 
   const encoder = new TextEncoder();
 
@@ -208,8 +213,9 @@ export async function POST(req: NextRequest) {
         memoryDrafts.set(readmeId, { ...doc, _id: readmeId });
 
         // --- CONSUME QUOTA (Only if not BYOK) ---
+        let quotaAfter = null;
         if (!byok) {
-          await consumeQuota(subjectId, 1.0, 2500);
+          quotaAfter = await consumeQuota(subjectId, 1.0, 2500);
         }
 
         // --- STAGE 4: DONE ---
@@ -220,6 +226,7 @@ export async function POST(req: NextRequest) {
           tone,
           sections,
           markdown: fullMarkdown,
+          quota: quotaAfter,
         });
 
         controller.close();

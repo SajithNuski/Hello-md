@@ -15,7 +15,11 @@ export function getOrCreateOwnerId(req: Request): { ownerId: string; isNew: bool
   const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${OWNER_COOKIE_NAME}=([^;]+)`));
 
   if (match && match[1]) {
-    return { ownerId: decodeURIComponent(match[1]), isNew: false };
+    let val = decodeURIComponent(match[1]).trim();
+    if (val.startsWith('"') && val.endsWith('"')) {
+      val = val.slice(1, -1);
+    }
+    return { ownerId: val, isNew: false };
   }
 
   const newOwnerId = `anon_${crypto.randomUUID().replace(/-/g, "")}`;

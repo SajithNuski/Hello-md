@@ -18,7 +18,14 @@ export interface QuotaCheckResult extends QuotaStatus {
 }
 
 // In-memory fallback map for offline MongoDB / local dev / CLI tests
-const memoryUsage = new Map<string, { generations: number; estTokens: number; createdAt: Date }>();
+const globalForQuota = globalThis as unknown as {
+  _memoryUsage?: Map<string, { generations: number; estTokens: number; createdAt: Date }>;
+};
+
+export const memoryUsage = (globalForQuota._memoryUsage ??= new Map<
+  string,
+  { generations: number; estTokens: number; createdAt: Date }
+>());
 
 /**
  * Reset memory quota store (used primarily in automated tests)
