@@ -353,19 +353,45 @@ function cleanContact(d: ContactSection, c: Ctx): ContactSection {
 
 // ---------- public API (same signatures as before) ----------
 
+interface RawAboutPayload {
+  paragraphs?: unknown;
+  highlights?: unknown;
+  areas?: unknown;
+  [key: string]: unknown;
+}
+
+interface RawSkillsPayload {
+  groups?: unknown;
+  [key: string]: unknown;
+}
+
+interface RawContactPayload {
+  closing?: unknown;
+  [key: string]: unknown;
+}
+
+interface RawSectionsPayload {
+  intro?: Record<string, unknown>;
+  about?: RawAboutPayload;
+  skills?: RawSkillsPayload;
+  projects?: unknown;
+  contact?: RawContactPayload;
+  [key: string]: unknown;
+}
+
 export function validateSections(
   rawText: string,
   facts: Facts
 ): { success: true; data: SectionsOutput } | { success: false; error: string } {
-  let parsedJson: any;
+  let parsedJson: RawSectionsPayload;
   try {
-    parsedJson = JSON.parse(extractCleanJson(rawText));
+    const raw = JSON.parse(extractCleanJson(rawText));
+    if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+      return { success: false, error: "Root AI output must be a JSON object" };
+    }
+    parsedJson = raw as RawSectionsPayload;
   } catch (err: unknown) {
     return { success: false, error: `Invalid JSON format: ${(err as Error).message}` };
-  }
-
-  if (typeof parsedJson !== "object" || parsedJson === null || Array.isArray(parsedJson)) {
-    return { success: false, error: "Root AI output must be a JSON object" };
   }
 
   const c = buildCtx(facts);

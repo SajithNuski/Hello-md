@@ -11,6 +11,7 @@ export function Hero() {
   const actionsRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const spotlightRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
@@ -55,6 +56,7 @@ export function Hero() {
             y: 20,
             opacity: 0,
             duration: 0.5,
+            clearProps: "all",
           },
           "-=0.3"
         );
@@ -63,13 +65,92 @@ export function Hero() {
     { scope: containerRef }
   );
 
-  const handleScrollToGenerator = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+  const handleScrollToGenerator = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement | HTMLDivElement>) => {
     e.preventDefault();
     const target = document.getElementById("generator");
     if (target) {
       target.scrollIntoView({ behavior: "smooth" });
       const input = document.getElementById("gh-username") as HTMLInputElement | null;
       input?.focus();
+    }
+  };
+
+  // Tilt + Spotlight: card tilts gently toward cursor while a very soft light follows it
+  const handleMouseEnter = () => {
+    if (!cardRef.current) return;
+
+    gsap.to(cardRef.current, {
+      scale: 1.008,
+      borderColor: "#32352B",
+      boxShadow:
+        "0 14px 28px -8px rgba(0, 0, 0, 0.55), 0 0 16px -4px rgba(197, 244, 103, 0.06)",
+      duration: 0.35,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+
+    if (spotlightRef.current) {
+      gsap.to(spotlightRef.current, {
+        opacity: 0.75,
+        duration: 0.25,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Normalized coordinates from -1 (left/top) to +1 (right/bottom)
+    const normX = (x / rect.width - 0.5) * 2;
+    const normY = (y / rect.height - 0.5) * 2;
+
+    // Subtle tilt TOWARD cursor (reduced to gentle 4.5 degrees)
+    const maxTilt = 4.5;
+    const rotateX = normY * maxTilt;
+    const rotateY = -normX * maxTilt;
+
+    gsap.to(cardRef.current, {
+      rotateX,
+      rotateY,
+      duration: 0.25,
+      ease: "power1.out",
+      overwrite: "auto",
+      transformPerspective: 1400,
+    });
+
+    // Update soft spotlight position following the cursor
+    if (spotlightRef.current) {
+      spotlightRef.current.style.background = `radial-gradient(circle 260px at ${x}px ${y}px, rgba(255, 255, 255, 0.07), rgba(197, 244, 103, 0.025) 30%, transparent 70%)`;
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!cardRef.current) return;
+
+    gsap.to(cardRef.current, {
+      rotateX: 0,
+      rotateY: 0,
+      scale: 1,
+      borderColor: "#262822",
+      boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.4)",
+      duration: 0.5,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+
+    if (spotlightRef.current) {
+      gsap.to(spotlightRef.current, {
+        opacity: 0,
+        duration: 0.35,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
     }
   };
 
@@ -133,14 +214,33 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Right Column: Hero Preview Mockup */}
-        <div className="w-full lg:w-[49%] flex flex-col">
+        {/* Right Column: Hero Preview Mockup with Tilt + Spotlight */}
+        <div className="w-full lg:w-[49%] flex flex-col" style={{ perspective: "1400px" }}>
           <div
             ref={cardRef}
-            className="w-full bg-[#0D0E0C] rounded-lg border border-[#262822] shadow-sm overflow-hidden flex flex-col"
+            onMouseEnter={handleMouseEnter}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            onClick={handleScrollToGenerator}
+            title="Click to jump to README generator"
+            className="relative w-full bg-[#0D0E0C] rounded-lg border border-[#262822] shadow-sm overflow-hidden flex flex-col cursor-pointer transition-colors duration-200 select-none"
+            style={{
+              transformStyle: "preserve-3d",
+              willChange: "transform",
+            }}
           >
+            {/* Soft Spotlight Overlay following cursor */}
+            <div
+              ref={spotlightRef}
+              className="pointer-events-none absolute inset-0 z-20 opacity-0 transition-opacity duration-200"
+              style={{
+                background:
+                  "radial-gradient(circle 260px at 50% 50%, rgba(255, 255, 255, 0.07), rgba(197, 244, 103, 0.025) 30%, transparent 70%)",
+              }}
+            />
+
             {/* Window Header Bar */}
-            <div className="h-9 px-3.5 bg-[#141611] border-b border-[#21231D] flex items-center justify-between select-none">
+            <div className="h-9 px-3.5 bg-[#141611] border-b border-[#21231D] flex items-center justify-between select-none relative z-10">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]/80"></span>
                 <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]/80"></span>
