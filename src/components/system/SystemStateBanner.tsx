@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSession, signIn } from "next-auth/react";
 import { FiClock, FiKey, FiAlertCircle, FiCheckCircle, FiShield, FiX } from "react-icons/fi";
 import { SiGithub } from "react-icons/si";
 import { suggestClosestUsername } from "@/lib/levenshtein";
@@ -28,6 +29,9 @@ export function SystemStateBanner({
   onDismiss,
   className = "",
 }: SystemStateBannerProps) {
+  const { data: session } = useSession();
+  const isAuthenticated = Boolean(session?.user);
+
   // Live countdown timer for State 01 (Engine Congestion)
   const [secondsRemaining, setSecondsRemaining] = useState(retryAfterSeconds);
 
@@ -151,7 +155,9 @@ export function SystemStateBanner({
               State 02: Generation Quota
             </span>
             <span className="text-xs text-[#44473C]">/</span>
-            <span className="text-xs font-medium text-[#8E9285]">Anonymous Daily Throttle</span>
+            <span className="text-xs font-medium text-[#8E9285]">
+              {isAuthenticated ? "GitHub Account Access" : "Anonymous Daily Throttle"}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-[#7A7E72] hidden sm:inline">
@@ -161,7 +167,7 @@ export function SystemStateBanner({
               <button
                 type="button"
                 onClick={onDismiss}
-                className="text-[#7A7E72] hover:text-white p-0.5 rounded transition-colors"
+                className="text-[#7A7E72] hover:text-white p-0.5 rounded transition-colors cursor-pointer"
                 aria-label="Dismiss banner"
               >
                 <FiX className="w-4 h-4" />
@@ -175,18 +181,32 @@ export function SystemStateBanner({
             <div className="space-y-3 max-w-2xl">
               {/* Quota Indicator Pill */}
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#20241A] text-white text-xs border border-[#3A402D]">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                <span className="font-semibold text-white">0 of 3 generations left today</span>
+                <span className={`w-1.5 h-1.5 rounded-full ${isAuthenticated ? "bg-accent" : "bg-red-500"}`} />
+                <span className="font-semibold text-white">
+                  {isAuthenticated
+                    ? `Signed in as @${session?.user?.login || session?.user?.name || "member"} · Unlimited`
+                    : "0 of 3 generations left today"}
+                </span>
               </div>
 
               {/* Primary Alert Message */}
               <div className="space-y-1">
                 <h3 className="font-semibold text-base text-white">
-                  Daily anonymous generation limit reached.
+                  {isAuthenticated
+                    ? "Unlimited profile generations active for your account."
+                    : "Daily anonymous generation limit reached."}
                 </h3>
                 <p className="text-xs text-[#9EAA96] leading-relaxed">
-                  Anonymous IP allocations reset automatically at 00:00 UTC (in{" "}
-                  <span className="text-accent font-semibold">{resetsAtFormatted}</span>).
+                  {isAuthenticated ? (
+                    <span>
+                      As an authenticated GitHub developer, you have unmetered profile generations enabled.
+                    </span>
+                  ) : (
+                    <span>
+                      Anonymous IP allocations reset automatically at 00:00 UTC (in{" "}
+                      <span className="text-accent font-semibold">{resetsAtFormatted}</span>).
+                    </span>
+                  )}
                 </p>
               </div>
 
@@ -202,28 +222,44 @@ export function SystemStateBanner({
             {/* Quota Visual Progress Box */}
             <div className="w-full md:w-56 p-4 rounded-lg bg-[#191C15] border border-[#2C3024] flex flex-col justify-between gap-3 shrink-0">
               <div className="flex items-center justify-between text-xs font-medium">
-                <span className="text-[#8E9285]">Tier: Anonymous</span>
-                <span className="text-red-400 font-semibold">100% used</span>
+                <span className="text-[#8E9285]">{isAuthenticated ? "Tier: GitHub Member" : "Tier: Anonymous"}</span>
+                <span className={isAuthenticated ? "text-accent font-semibold" : "text-red-400 font-semibold"}>
+                  {isAuthenticated ? "Unlimited" : "100% used"}
+                </span>
               </div>
               <div className="w-full bg-[#24281E] h-2 rounded overflow-hidden">
-                <div className="bg-red-500 w-full h-full rounded transition-all duration-500" />
+                <div
+                  className={`h-full rounded transition-all duration-500 ${
+                    isAuthenticated ? "bg-accent w-full" : "bg-red-500 w-full"
+                  }`}
+                />
               </div>
               <div className="flex items-center justify-between text-[11px] font-medium text-[#7A7E72]">
-                <span>Free Plan</span>
-                <span className="text-white font-semibold">3/3 Used</span>
+                <span>{isAuthenticated ? "Status" : "Free Plan"}</span>
+                <span className="text-white font-semibold">{isAuthenticated ? "Unmetered" : "3/3 Used"}</span>
               </div>
             </div>
           </div>
 
           {/* Action Buttons Group */}
           <div className="mt-6 pt-5 border-t border-[#22251C] flex flex-wrap items-center gap-3">
-            <a
-              href="https://github.com/login"
-              className="h-9 px-4 bg-accent hover:bg-[#a8d94e] text-[#0D0E0C] font-semibold text-xs rounded-md flex items-center gap-2 transition-all shadow-xs"
-            >
-              <SiGithub className="w-3.5 h-3.5" />
-              <span>Sign in with GitHub for unlimited generations</span>
-            </a>
+            {!isAuthenticated ? (
+              <button
+                type="button"
+                onClick={() => signIn("github")}
+                className="h-9 px-4 bg-accent hover:bg-[#a8d94e] text-[#0D0E0C] font-semibold text-xs rounded-md flex items-center gap-2 transition-all shadow-xs cursor-pointer"
+              >
+                <SiGithub className="w-3.5 h-3.5" />
+                <span>Sign in with GitHub for unlimited generations</span>
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#20241A] border border-[#3A402D] text-xs font-medium text-white">
+                <SiGithub className="w-3.5 h-3.5 text-accent" />
+                <span>
+                  Signed in as <strong className="text-accent">@{session?.user?.login || session?.user?.name}</strong> (Unlimited active)
+                </span>
+              </div>
+            )}
 
             {onOpenByok && (
               <button

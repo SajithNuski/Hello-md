@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
     responseData = {
       unlimited: true,
       isByok: true,
+      isAuthenticated: Boolean(authUserId),
       byokProvider: byok.provider,
       used: 0,
       remaining: 999,
@@ -25,12 +26,28 @@ export async function GET(req: NextRequest) {
       resetTimeFormatted: "Unlimited (BYOK)",
       secondsUntilReset: 0,
     };
-  } else {
+  } else if (authUserId) {
     const subjectId = getSubjectId(req, authUserId);
+    const usage = await getUsage(subjectId);
+    responseData = {
+      unlimited: true,
+      isByok: false,
+      isAuthenticated: true,
+      userLogin: session?.user?.login || session?.user?.name,
+      used: usage.used,
+      remaining: 999,
+      limit: 999,
+      resetsAt: null,
+      resetTimeFormatted: "Unlimited (Signed in)",
+      secondsUntilReset: 0,
+    };
+  } else {
+    const subjectId = getSubjectId(req);
     const usage = await getUsage(subjectId);
     responseData = {
       unlimited: false,
       isByok: false,
+      isAuthenticated: false,
       ...usage,
     };
   }

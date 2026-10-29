@@ -88,8 +88,9 @@ export async function POST(req: NextRequest) {
           message: `Ingesting facts for @${login} from GitHub...`,
         });
 
-        // --- QUOTA CHECK (Bypassed if BYOK is present) ---
-        if (!byok) {
+        // --- QUOTA CHECK (Bypassed if BYOK is present or user is signed in with GitHub) ---
+        const isUnmetered = Boolean(byok || authUserId);
+        if (!isUnmetered) {
           const quota = await checkQuota(subjectId, 1.0);
           if (!quota.allowed) {
             sendEvent("error", {

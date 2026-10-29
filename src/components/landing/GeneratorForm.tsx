@@ -34,6 +34,8 @@ interface QuotaDisplay {
   limit: number;
   resetsAtFormatted: string;
   isByok: boolean;
+  unlimited?: boolean;
+  isAuthenticated?: boolean;
 }
 
 export function GeneratorForm() {
@@ -73,6 +75,8 @@ export function GeneratorForm() {
           limit: data.limit,
           resetsAtFormatted: data.resetTimeFormatted || "4h 12m",
           isByok: Boolean(data.isByok),
+          unlimited: Boolean(data.unlimited),
+          isAuthenticated: Boolean(data.isAuthenticated),
         });
       }
     } catch {
@@ -117,6 +121,8 @@ export function GeneratorForm() {
   useEffect(() => {
     if (session?.user?.login) {
       setUsername((prev) => (prev ? prev : session.user.login || ""));
+      // Clear any anonymous quota banner when user is confirmed signed-in
+      setActiveSystemState((curr) => (curr === "quota" ? null : curr));
     }
   }, [session?.user?.login]);
 
@@ -319,6 +325,8 @@ export function GeneratorForm() {
               <span className="text-[11px] font-medium text-text-muted bg-surface-raised px-2 py-0.5 rounded border border-border">
                 {quotaInfo.isByok ? (
                   <span className="text-accent font-medium">Unmetered (BYOK)</span>
+                ) : quotaInfo.unlimited || Boolean(session?.user) ? (
+                  <span className="text-accent font-medium">Unlimited (Signed in)</span>
                 ) : (
                   <span>
                     <strong className="text-text-primary">{quotaInfo.remaining}</strong> of {quotaInfo.limit} left today

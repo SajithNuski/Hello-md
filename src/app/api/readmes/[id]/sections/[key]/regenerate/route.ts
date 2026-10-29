@@ -40,8 +40,9 @@ export async function POST(
   const byok = extractByokHeaders(req);
   const subjectId = getSubjectId(req, authUserId);
 
-  // Quota check (0.25 cost for single section regen) bypassed if BYOK is present
-  if (!byok) {
+  // Quota check (0.25 cost for single section regen) bypassed if BYOK is present or user is signed in with GitHub
+  const isUnmetered = Boolean(byok || authUserId);
+  if (!isUnmetered) {
     const quota = await checkQuota(subjectId, APP_CONFIG.sectionRegenCost);
     if (!quota.allowed) {
       return new Response(
