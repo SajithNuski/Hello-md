@@ -1,6 +1,7 @@
 import type { Facts } from "./github/types";
+import { Tone, handleTone } from "./toneConfig";
 
-export type AboutStyle = "hacker" | "playful" | "professional" | "minimal";
+export type AboutStyle = Tone;
 export type GifPlacement = "left" | "center" | "right";
 
 export interface GifPreset {
@@ -110,10 +111,12 @@ export const DEFAULT_ABOUT_CONFIG: AboutConfig = {
  */
 export function getDefaultAboutConfig(
   username: string = "",
-  facts?: Partial<Facts> | null
+  facts?: Partial<Facts> | null,
+  tone?: unknown
 ): AboutConfig {
   const cleanUsername = (username || "").trim().replace(/^@/, "");
   const name = facts?.name || cleanUsername || "Your Name";
+  const { tone: validTone, defaultEmoji } = handleTone(tone);
 
   let role = "Software Developer";
   if (facts?.bio) {
@@ -153,8 +156,8 @@ export function getDefaultAboutConfig(
     gifUrl: "https://user-images.githubusercontent.com/74038190/212750147-854a394f-fee9-4080-9770-78a4b7ece53f.gif",
     gifWidth: 300,
     gifPlacement: "right",
-    style: "hacker",
-    emoji: true,
+    style: validTone,
+    emoji: defaultEmoji,
   };
 }
 

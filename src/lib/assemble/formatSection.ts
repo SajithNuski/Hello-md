@@ -18,6 +18,12 @@ import {
   getDefaultSkillsConfig,
   TECH_CATALOG,
 } from "../techStackConfig";
+import {
+  AboutConfig,
+  generateAboutMarkdown,
+  getDefaultAboutConfig,
+} from "../aboutConfig";
+import { Tone, resolveTone } from "../toneConfig";
 
 /**
  * Deterministic Markdown/HTML builder. The AI supplies plain text only; every
@@ -36,6 +42,7 @@ export interface FormatOptions {
   /** Extra links the user typed in the form. facts has no LinkedIn or email. */
   links?: { email?: string; linkedin?: string; twitter?: string; fiverr?: string };
   widgets?: Partial<Record<WidgetKey, boolean>>;
+  tone?: Tone;
 }
 
 const DEFAULT_WIDGETS: Record<WidgetKey, boolean> = {
@@ -81,7 +88,7 @@ function httpUrl(u: string | null | undefined): string | undefined {
 
 const emailOk = (e?: string) => (e && /^[^\s@<>"]+@[^\s@<>"]+$/.test(e) ? e : undefined);
 
-const shield = (item: string, accent: string) => {
+export const shield = (item: string, accent: string) => {
   const label = encodeURIComponent(item.replace(/-/g, "--").replace(/_/g, "__"));
   return `<img src="https://img.shields.io/badge/${label}-${accent}?style=flat-square&labelColor=${CARD_BG}" alt="${safe(item)}"/>`;
 };
@@ -171,22 +178,22 @@ ${tagline ? `\n${tagline}\n` : ""}
 </div>`;
 }
 
-function renderAbout(d: AboutSection, c: Ctx): string {
-  const parts: string[] = [heading(c, "🧬", "About Me")];
-
-  const paragraphs = d.paragraphs?.length
-    ? d.paragraphs.map(safe)
-    : c.facts.bio
-      ? [safe(c.facts.bio)]
-      : [];
-  if (paragraphs.length) parts.push(paragraphs.join("\n\n"));
-
-  if (d.highlights?.length) parts.push(d.highlights.map((h) => `- ${safe(h)}`).join("\n"));
-
-  if (d.areas?.length) {
-    parts.push(`**What I work on**\n\n<p>\n  ${d.areas.map((a) => shield(a, c.t.accent)).join("\n  ")}\n</p>`);
+function renderAbout(data: unknown, c: Ctx): string {
+  if (data && typeof data === "object" && "style" in data) {
+    return generateAboutMarkdown(data as AboutConfig);
   }
-  return parts.join("\n\n");
+
+  const tone = resolveTone(c.opts.tone);
+  const cfg = getDefaultAboutConfig(c.facts.login, c.facts, tone);
+
+  const aboutSec = data as AboutSection | null;
+  if (aboutSec && typeof aboutSec === "object") {
+    if (aboutSec.areas && Array.isArray(aboutSec.areas) && aboutSec.areas.length > 0) {
+      cfg.focus = aboutSec.areas.map(safe).filter(Boolean);
+    }
+  }
+
+  return generateAboutMarkdown(cfg);
 }
 
 function renderSkills(data: unknown, c: Ctx): string {
@@ -333,7 +340,7 @@ export function formatSection(
     case "intro":
       return renderIntro(data as IntroSection, c);
     case "about":
-      return renderAbout(data as AboutSection, c);
+      return renderAbout(data, c);
     case "skills":
       return renderSkills(data, c);
     case "projects":

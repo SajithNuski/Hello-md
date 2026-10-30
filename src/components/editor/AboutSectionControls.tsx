@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, KeyboardEvent } from "react";
-import { AboutConfig, AboutStyle, GIF_PRESETS } from "@/lib/aboutConfig";
+import { AboutConfig, GIF_PRESETS } from "@/lib/aboutConfig";
+import { Tone, TONE_OPTIONS, handleTone } from "@/lib/config";
 import {
   FiUser,
   FiCode,
@@ -24,13 +25,6 @@ interface AboutSectionControlsProps {
   onChange: (updated: AboutConfig) => void;
 }
 
-const STYLES: { id: AboutStyle; label: string; desc: string }[] = [
-  { id: "hacker", label: "Hacker", desc: "Console & code symbols" },
-  { id: "playful", label: "Playful", desc: "Dynamic badges & emojis" },
-  { id: "professional", label: "Professional", desc: "Clean markdown lists" },
-  { id: "minimal", label: "Minimal", desc: "Distraction-free text" },
-];
-
 export function AboutSectionControls({
   config,
   onChange,
@@ -48,15 +42,10 @@ export function AboutSectionControls({
     onChange({ ...config, ...partial });
   };
 
-  // Style change handler: updates style, and handles emoji default rule
-  const handleStyleChange = (newStyle: AboutStyle) => {
-    let nextEmoji = config.emoji;
-    if (newStyle === "professional" || newStyle === "minimal") {
-      nextEmoji = false;
-    } else if (newStyle === "hacker" || newStyle === "playful") {
-      nextEmoji = true;
-    }
-    update({ style: newStyle, emoji: nextEmoji });
+  // Style change handler: updates style using shared tone handling
+  const handleStyleChange = (newStyle: Tone) => {
+    const { defaultEmoji } = handleTone(newStyle);
+    update({ style: newStyle, emoji: defaultEmoji });
   };
 
   // Stack tag helpers
@@ -114,13 +103,13 @@ export function AboutSectionControls({
 
         {/* 4 Segmented options */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-1 bg-[#F0F1EA] border border-[#E2E3DC] rounded-lg">
-          {STYLES.map(({ id, label }) => {
-            const isSelected = config.style === id;
+          {TONE_OPTIONS.map(({ value, label }) => {
+            const isSelected = config.style === value;
             return (
               <button
-                key={id}
+                key={value}
                 type="button"
-                onClick={() => handleStyleChange(id)}
+                onClick={() => handleStyleChange(value)}
                 className={`h-9 px-3 text-xs font-medium rounded-md transition-all text-center cursor-pointer ${
                   isSelected
                     ? "bg-[#171815] text-[#FAFAF8] font-semibold shadow-xs"

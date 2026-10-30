@@ -3,7 +3,7 @@ import { z } from "zod";
 import crypto from "crypto";
 import { fetchFacts } from "@/lib/github/fetchFacts";
 import { GitHubFactError } from "@/lib/github/types";
-import { buildSystemPrompt, buildUserPrompt, extractFactsSlice } from "@/lib/ai/prompt";
+import { buildUserPrompt, extractFactsSlice } from "@/lib/ai/prompt";
 import { routeLLMRequest } from "@/lib/ai/router";
 import { createCacheKey } from "@/lib/ai/cache";
 import { validateSections } from "@/lib/ai/validate";
@@ -13,7 +13,7 @@ import { getReadmesCollection, SectionItem } from "@/lib/db/collections";
 import { getOrCreateOwnerId, getSubjectId, extractByokHeaders, OWNER_COOKIE_NAME } from "@/lib/owner";
 import { checkQuota, consumeQuota } from "@/lib/quota";
 import { getAuthSession } from "@/lib/auth";
-import { APP_CONFIG, TONES } from "@/lib/config";
+import { APP_CONFIG, TONES, DEFAULT_TONE, handleTone } from "@/lib/config";
 import { AIError } from "@/lib/ai/types";
 import { getDefaultAboutConfig } from "@/lib/aboutConfig";
 import { getDefaultIntroConfig } from "@/lib/introConfig";
@@ -33,7 +33,7 @@ export const runtime = "nodejs";
 
 const GenerateBodySchema = z.object({
   login: z.string().trim().min(1, "GitHub username is required"),
-  tone: z.enum(TONES).default("professional"),
+  tone: z.enum(TONES).default(DEFAULT_TONE),
   theme: z.string().default("minimal"),
 });
 
@@ -66,7 +66,8 @@ export async function POST(req: NextRequest) {
   const session = await getAuthSession();
   const authUserId = session?.user?.id || session?.user?.githubId;
 
-  const { login, tone, theme } = parsed.data;
+  const { login, tone: rawTone, theme } = parsed.data;
+  const { tone, systemPrompt } = handleTone(rawTone);
   const { ownerId: anonOwnerId, isNew } = getOrCreateOwnerId(req);
   const ownerId = authUserId ? `user_${authUserId}` : anonOwnerId;
   const byok = extractByokHeaders(req);
@@ -118,7 +119,6 @@ export async function POST(req: NextRequest) {
 
         const factsSlice = extractFactsSlice(facts);
         const cacheKey = byok ? undefined : createCacheKey("all", tone, factsSlice);
-        const systemPrompt = buildSystemPrompt(tone);
         const userPrompt = buildUserPrompt(facts);
 
         const aiResult = await routeLLMRequest({
@@ -162,18 +162,21 @@ export async function POST(req: NextRequest) {
         });
 
         const initialSkillsConfig: TechStackConfig = getDefaultSkillsConfig();
-        const introMd = formatSection("intro", validOutput.intro, facts, theme);
-        const aboutMd = formatSection("about", validOutput.about, facts, theme);
-        const skillsMd = formatSection("skills", initialSkillsConfig, facts, theme);
-        const projectsMd = formatSection("projects", validOutput.projects, facts, theme);
         const initialIntroConfig = getDefaultIntroConfig(facts.login, facts, validOutput.intro.roles);
-        const initialAboutConfig = getDefaultAboutConfig(facts.login, facts);
+        const initialAboutConfig = getDefaultAboutConfig(facts.login, facts, tone);
+        if (validOutput.about?.areas?.length) {
+          initialAboutConfig.focus = validOutput.about.areas;
+        }
         const initialStatsConfig = getDefaultStatsConfig(facts.login);
         const initialSocialConfig: SocialConfig = {
           ...getDefaultSocialConfig(),
           portfolio: facts.websiteUrl ? normalizeSocialUrl("portfolio", facts.websiteUrl) : "",
         };
 
+        const introMd = formatSection("intro", validOutput.intro, facts, theme);
+        const aboutMd = formatSection("about", initialAboutConfig, facts, theme, { tone });
+        const skillsMd = formatSection("skills", initialSkillsConfig, facts, theme);
+        const projectsMd = formatSection("projects", validOutput.projects, facts, theme);
         const statsMd = formatSection("stats", initialStatsConfig, facts, theme);
         const contactMd = generateContactMarkdown(initialSocialConfig);
 

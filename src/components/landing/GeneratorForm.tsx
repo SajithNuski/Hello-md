@@ -16,7 +16,7 @@ import {
   FiKey,
 } from "react-icons/fi";
 import { SiGithub } from "react-icons/si";
-import { Tone } from "@/lib/config";
+import { Tone, TONE_OPTIONS, DEFAULT_TONE, isValidTone } from "@/lib/config";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { SystemStateBanner, SystemStateType } from "@/components/system/SystemStateBanner";
 import { ByokDialog } from "@/components/system/ByokDialog";
@@ -43,7 +43,7 @@ export function GeneratorForm() {
   const { data: session } = useSession();
 
   const [username, setUsername] = useState("");
-  const [tone, setTone] = useState<Tone>("professional");
+  const [tone, setTone] = useState<Tone>(DEFAULT_TONE);
   const [theme, setTheme] = useState("minimal");
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -99,13 +99,7 @@ export function GeneratorForm() {
       if (urlTheme) {
         setTheme(urlTheme);
       }
-      if (
-        urlTone &&
-        (urlTone === "professional" ||
-          urlTone === "playful" ||
-          urlTone === "minimal" ||
-          urlTone === "hacker")
-      ) {
+      if (isValidTone(urlTone)) {
         setTone(urlTone);
       }
     }
@@ -391,14 +385,10 @@ export function GeneratorForm() {
               id="tone-select"
               disabled={isGenerating}
               value={tone}
-              onChange={setTone}
-              options={[
-                { value: "professional", label: "Professional" },
-                { value: "playful", label: "Playful" },
-                { value: "minimal", label: "Minimal" },
-                { value: "hacker", label: "Hacker" },
-              ]}
+              onChange={(newTone) => setTone(newTone)}
+              options={TONE_OPTIONS as unknown as { value: Tone; label: string }[]}
             />
+            <input type="hidden" name="tone" value={tone} />
           </div>
 
           {/* Template Select */}

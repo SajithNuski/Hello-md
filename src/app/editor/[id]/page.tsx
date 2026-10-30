@@ -126,7 +126,7 @@ export default function EditorPage() {
               };
             }
             if (s.key === "about" && !s.config?.about) {
-              const cfg = getDefaultAboutConfig(userLogin);
+              const cfg = getDefaultAboutConfig(userLogin, null, doc.tone || "professional");
               return {
                 ...s,
                 markdown: s.markdown || generateAboutMarkdown(cfg),
@@ -632,7 +632,7 @@ export default function EditorPage() {
           };
         }
         if (s.key === "about") {
-          const cfg = getDefaultAboutConfig(login);
+          const cfg = getDefaultAboutConfig(login, null, tone);
           return {
             ...s,
             markdown: generateAboutMarkdown(cfg),
@@ -681,7 +681,7 @@ export default function EditorPage() {
     });
 
     updateSectionsState(updated);
-  }, [selectedKey, login, sections, updateSectionsState]);
+  }, [selectedKey, login, sections, updateSectionsState, tone]);
 
   // Handle reordering sections
   const handleMoveSection = useCallback(

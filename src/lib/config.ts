@@ -19,11 +19,4 @@ export const SECTION_KEYS = [
 
 export type SectionKey = (typeof SECTION_KEYS)[number];
 
-export const TONES = [
-  "professional",
-  "playful",
-  "minimal",
-  "hacker",
-] as const;
-
-export type Tone = (typeof TONES)[number];
+export * from "./toneConfig";

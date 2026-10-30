@@ -4,11 +4,12 @@ import { Collection } from "mongodb";
 import { z } from "zod";
 import { getReadmesCollection, ReadmeDoc, SectionItem } from "@/lib/db/collections";
 import { fetchFacts } from "@/lib/github/fetchFacts";
-import { buildSectionRegenPrompt, buildSystemPrompt } from "@/lib/ai/prompt";
+import { buildSectionRegenPrompt } from "@/lib/ai/prompt";
 import { routeLLMRequest } from "@/lib/ai/router";
 import { validateSingleSection } from "@/lib/ai/validate";
 import { formatSection } from "@/lib/assemble/formatSection";
-import { SectionKey, SECTION_KEYS, TONES, Tone, APP_CONFIG } from "@/lib/config";
+import { SectionKey, SECTION_KEYS, TONES, APP_CONFIG, handleTone } from "@/lib/config";
+import { AboutConfig, getDefaultAboutConfig } from "@/lib/aboutConfig";
 import { AIError } from "@/lib/ai/types";
 import { extractByokHeaders, getSubjectId } from "@/lib/owner";
 import { checkQuota, consumeQuota } from "@/lib/quota";
@@ -97,13 +98,13 @@ export async function POST(
 
   try {
     const facts = await fetchFacts(doc.login);
-    const activeTone: Tone = (userTone || doc.tone || "professional") as Tone;
+    const { tone: activeTone, systemPrompt, defaultEmoji } = handleTone(userTone || doc.tone);
 
     let newMarkdown = "";
+    let validSectionData: unknown = null;
     if (sectionKey === "stats") {
       newMarkdown = formatSection("stats", {}, facts, doc.theme || "minimal");
     } else {
-      const systemPrompt = buildSystemPrompt(activeTone);
       const userPrompt = buildSectionRegenPrompt(sectionKey, facts, instruction);
 
       const temperature = sectionKey === "intro" || sectionKey === "about" ? 0.8 : 0.4;
@@ -124,16 +125,28 @@ export async function POST(
         );
       }
 
-      newMarkdown = formatSection(sectionKey, validation.data, facts, doc.theme || "minimal");
+      validSectionData = validation.data;
+      newMarkdown = formatSection(sectionKey, validation.data, facts, doc.theme || "minimal", { tone: activeTone });
     }
 
     // Update section in document
     const updatedSections: SectionItem[] = doc.sections.map((s: SectionItem) => {
       if (s.key === sectionKey) {
+        const updatedConfig = { ...(s.config || {}) };
+        if (sectionKey === "about") {
+          const existingAbout = (s.config?.about as AboutConfig) || getDefaultAboutConfig(doc.login, facts, activeTone);
+          const nextAbout = { ...existingAbout, style: activeTone, emoji: defaultEmoji };
+          if (validSectionData && typeof validSectionData === "object" && "areas" in validSectionData) {
+            const areas = (validSectionData as { areas?: string[] }).areas;
+            if (areas?.length) nextAbout.focus = areas;
+          }
+          updatedConfig.about = nextAbout;
+        }
         return {
           ...s,
           markdown: newMarkdown,
           source: "ai",
+          config: updatedConfig,
         };
       }
       return s;
