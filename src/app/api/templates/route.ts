@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getTemplatesCollection, TemplateDoc } from "@/lib/db/collections";
-import { PRESET_TEMPLATES, PresetTemplate } from "@/lib/templates/presetTemplates";
+import { PRESET_TEMPLATES, PresetTemplate, renderTemplateMarkdown } from "@/lib/templates/presetTemplates";
 
 export const runtime = "nodejs";
 
@@ -10,41 +9,21 @@ export async function GET(req: NextRequest) {
   const theme = searchParams.get("theme")?.toLowerCase();
   const search = searchParams.get("search")?.toLowerCase();
 
-  let templates: (TemplateDoc | PresetTemplate)[] = [];
+  // Always use the deterministic single-source-of-truth templates config
+  let templates: PresetTemplate[] = PRESET_TEMPLATES.map((t) => ({
+    ...t,
+    previewMarkdown: renderTemplateMarkdown(t),
+  }));
 
-  try {
-    const col = await getTemplatesCollection();
-    const filter: Record<string, unknown> = { isPublic: true };
-
-    if (persona && persona !== "all") {
-      filter.persona = persona;
-    }
-    if (theme && theme !== "all") {
-      filter.theme = theme;
-    }
-
-    const docs = await col.find(filter).toArray();
-    if (docs && docs.length > 0) {
-      templates = docs;
-    }
-  } catch (err: unknown) {
-    console.warn("MongoDB unavailable for templates, using presets:", (err as Error).message);
+  // Apply filters if query params supplied
+  if (persona && persona !== "all") {
+    templates = templates.filter((t) => t.persona.toLowerCase() === persona);
   }
 
-  // Fallback to preset templates if MongoDB was offline or empty
-  if (templates.length === 0) {
-    templates = PRESET_TEMPLATES.filter((t) => {
-      if (persona && persona !== "all" && t.persona !== persona) {
-        return false;
-      }
-      if (theme && theme !== "all" && t.theme !== theme) {
-        return false;
-      }
-      return true;
-    });
+  if (theme && theme !== "all") {
+    templates = templates.filter((t) => t.theme.toLowerCase() === theme);
   }
 
-  // Text search filter if provided
   if (search && search.trim()) {
     const query = search.trim().toLowerCase();
     templates = templates.filter((t) => {

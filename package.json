@@ -15,7 +15,8 @@
     "test:tech-stack": "tsx scripts/test-tech-stack.ts",
     "test:milestone7": "tsx scripts/test-milestone7.ts",
     "test:milestone8": "tsx scripts/test-milestone8.ts",
-    "test:tone": "tsx scripts/test-tone-generator.ts"
+    "test:tone": "tsx scripts/test-tone-generator.ts",
+    "test:templates": "tsx scripts/test-templates.ts"
   },
   "dependencies": {
     "@codemirror/lang-markdown": "^6.5.2",
