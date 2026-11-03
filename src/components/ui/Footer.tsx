@@ -99,11 +99,7 @@ export function Footer() {
                   Profile generator
                 </Link>
               </li>
-              <li>
-                <Link href="/templates" className="hover:text-white transition-colors">
-                  Templates
-                </Link>
-              </li>
+
               <li>
                 <span className="text-[#95988D] flex items-center gap-1.5">
                   <span>Markdown editor</span>

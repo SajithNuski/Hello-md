@@ -5,7 +5,6 @@ import {
   getLlmCacheCollection,
   getUsageCollection,
   getProviderStateCollection,
-  getTemplatesCollection,
 } from "./collections";
 
 export async function ensureIndexes(): Promise<void> {
@@ -29,7 +28,4 @@ export async function ensureIndexes(): Promise<void> {
 
   const providerState = await getProviderStateCollection();
   await providerState.createIndex({ provider: 1, model: 1 }, { unique: true });
-
-  const templates = await getTemplatesCollection();
-  await templates.createIndex({ isPublic: 1, name: 1 });
 }

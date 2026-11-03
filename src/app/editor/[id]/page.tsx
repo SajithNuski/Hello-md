@@ -100,6 +100,9 @@ export default function EditorPage() {
         setLoading(true);
         const res = await fetch(`/api/readmes/${id}`);
         if (!res.ok) {
+          if (res.status === 404) {
+            throw new Error("This draft was not found or was stored in a previous temporary server session. Return to the generator to generate your README.");
+          }
           throw new Error("Could not load README draft");
         }
         const data = await res.json();

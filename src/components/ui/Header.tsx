@@ -15,7 +15,6 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isGenerator = pathname === "/";
-  const isTemplates = pathname === "/templates";
   const isSystemStates = pathname === "/system-states";
 
   useGSAP(
@@ -95,16 +94,6 @@ export function Header() {
             FAQ
           </Link>
 
-          <Link
-            href="/templates"
-            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-              isTemplates
-                ? "bg-[#23271D] text-white font-semibold"
-                : "text-[#9EAA96] hover:text-white"
-            }`}
-          >
-            Templates
-          </Link>
 
           <Link
             href="/system-states"
@@ -197,13 +186,6 @@ export function Header() {
               className="px-3 py-2 rounded-md text-xs font-medium text-[#A5A89D] hover:text-white hover:bg-white/[0.05] transition-colors"
             >
               FAQ
-            </Link>
-            <Link
-              href="/templates"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md text-xs font-medium text-[#A5A89D] hover:text-white hover:bg-white/[0.05] transition-colors"
-            >
-              Templates
             </Link>
             <Link
               href="/system-states"

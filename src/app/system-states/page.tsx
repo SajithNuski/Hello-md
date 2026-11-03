@@ -602,12 +602,6 @@ export default function SystemStatesPage() {
 
           <div className="flex items-center gap-3 shrink-0">
             <Link
-              href="/templates"
-              className="h-9 px-4 bg-[#1C1F17] hover:bg-[#262B1F] text-[#D8D9D2] hover:text-white font-medium text-xs rounded-md border border-[#2E3324] transition-colors flex items-center gap-1.5"
-            >
-              <span>Explore templates</span>
-            </Link>
-            <Link
               href="/#generator"
               className="h-9 px-4 bg-accent hover:bg-accent-hover text-[#0D0E0C] font-semibold text-xs rounded-md transition-all shadow-xs flex items-center gap-1.5"
             >

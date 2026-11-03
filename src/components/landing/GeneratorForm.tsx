@@ -9,7 +9,6 @@ import {
   FiAlertCircle,
   FiLoader,
   FiSliders,
-  FiLayout,
   FiDatabase,
   FiEdit3,
   FiPackage,
@@ -44,7 +43,6 @@ export function GeneratorForm() {
 
   const [username, setUsername] = useState("");
   const [tone, setTone] = useState<Tone>(DEFAULT_TONE);
-  const [theme, setTheme] = useState("minimal");
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentStage, setCurrentStage] = useState<"idle" | "fetching" | "writing" | "assembling" | "done">("idle");
@@ -87,17 +85,13 @@ export function GeneratorForm() {
   useEffect(() => {
     fetchUsage();
 
-    // Initialize username/theme/tone from URL query parameters (e.g. from /templates)
+    // Initialize username/tone from URL query parameters
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const urlUser = params.get("username") || params.get("user");
-      const urlTheme = params.get("theme");
       const urlTone = params.get("tone");
       if (urlUser) {
         setUsername(urlUser);
-      }
-      if (urlTheme) {
-        setTheme(urlTheme);
       }
       if (isValidTone(urlTone)) {
         setTone(urlTone);
@@ -149,7 +143,7 @@ export function GeneratorForm() {
         body: JSON.stringify({
           login: cleanUsername,
           tone,
-          theme,
+          theme: "minimal",
         }),
       });
 
@@ -373,42 +367,20 @@ export function GeneratorForm() {
           </div>
         </div>
 
-        {/* Configuration Row: Tone & Template */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Tone Select */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="tone-select" className="text-nav font-medium text-text-primary flex items-center gap-1.5">
-              <FiSliders className="w-3.5 h-3.5 text-text-secondary" />
-              <span>Editorial Tone</span>
-            </label>
-            <CustomSelect<Tone>
-              id="tone-select"
-              disabled={isGenerating}
-              value={tone}
-              onChange={(newTone) => setTone(newTone)}
-              options={TONE_OPTIONS as unknown as { value: Tone; label: string }[]}
-            />
-            <input type="hidden" name="tone" value={tone} />
-          </div>
-
-          {/* Template Select */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="template-select" className="text-nav font-medium text-text-primary flex items-center gap-1.5 ">
-              <FiLayout className="w-3.5 h-3.5 text-text-secondary" />
-              <span>Structural Template</span>
-            </label>
-            <CustomSelect<string>
-              id="template-select"
-              disabled={isGenerating}
-              value={theme}
-              onChange={setTheme}
-              options={[
-                { value: "minimal", label: "Minimal Developer" },
-                { value: "featured", label: "Featured Showcase" },
-                { value: "compact", label: "Compact Stats" },
-              ]}
-            />
-          </div>
+        {/* Configuration: Editorial Tone */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="tone-select" className="text-nav font-medium text-text-primary flex items-center gap-1.5">
+            <FiSliders className="w-3.5 h-3.5 text-text-secondary" />
+            <span>Editorial Tone</span>
+          </label>
+          <CustomSelect<Tone>
+            id="tone-select"
+            disabled={isGenerating}
+            value={tone}
+            onChange={(newTone) => setTone(newTone)}
+            options={TONE_OPTIONS as unknown as { value: Tone; label: string }[]}
+          />
+          <input type="hidden" name="tone" value={tone} />
         </div>
 
         {/* Error Banner */}

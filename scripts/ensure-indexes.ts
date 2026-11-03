@@ -35,9 +35,6 @@ async function main() {
     await db.collection("providerState").createIndex({ provider: 1, model: 1 }, { unique: true });
     console.log(" - providerState: { provider: 1, model: 1 } (unique)");
 
-    await db.collection("templates").createIndex({ isPublic: 1, name: 1 });
-    console.log(" - templates: { isPublic: 1, name: 1 }");
-
     console.log("All indexes ensured successfully!");
   } catch (error) {
     console.error("Failed to ensure indexes:", error);
