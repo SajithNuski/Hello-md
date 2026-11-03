@@ -5,7 +5,10 @@ import {
   getDefaultStatsConfig,
   generateStatsMarkdown,
   parseStatsMarkdown,
+  STREAK_HOST,
 } from "../src/lib/statsConfig";
+
+const streakHost = STREAK_HOST.replace(/\/$/, "");
 
 console.log("🚀 Running unit tests for GitHub Analytics section generator...\n");
 
@@ -30,11 +33,11 @@ console.log("Test 1: All 3 cards enabled (Side-by-side table + Streak below)");
   assert(md.includes("<tr>") && md.includes("<td>"), "Must use tr and td cells");
   assert(md.includes(`api?username=${USER}&show_icons=true&theme=dark`), "Stats card must contain correct user and theme");
   assert(md.includes(`api/top-langs/?username=${USER}&layout=compact&theme=dark`), "Langs card must contain correct user and theme");
-  assert(md.includes(`streak-stats.demolab.com/?user=${USER}&theme=dark`), "Streak card must contain correct user and theme");
+  assert(md.includes(`${streakHost}/?user=${USER}&theme=dark`), "Streak card must contain correct user and theme");
 
   // Streak card must appear after table closing tag
   const tableCloseIdx = md.indexOf("</table>");
-  const streakIdx = md.indexOf("streak-stats.demolab.com");
+  const streakIdx = md.indexOf(streakHost);
   assert(streakIdx > tableCloseIdx, "Streak card must appear below the table");
 
   // Verify URL strictness
@@ -58,7 +61,7 @@ console.log("\nTest 2: Only Stats and Languages enabled");
 
   assert(md.includes("## 📊 GitHub Analytics"), "Must include heading");
   assert(md.includes("<table>"), "Must include table");
-  assert(!md.includes("streak-stats.demolab.com"), "Must omit streak card");
+  assert(!md.includes(streakHost), "Must omit streak card");
   assert(md.includes("theme=tokyonight"), "Must respect selected theme");
   assert(md.split(USER).length - 1 === 2, "Username must appear exactly 2 times for 2 cards");
 }
@@ -80,7 +83,7 @@ console.log("\nTest 3: Only Stats and Streak enabled (No table)");
   assert(md.includes("## 📊 GitHub Analytics"), "Must include heading");
   assert(!md.includes("<table>"), "Must NOT use table when Languages is not enabled");
   assert(md.includes("api?username="), "Must include stats card");
-  assert(md.includes("streak-stats.demolab.com"), "Must include streak card");
+  assert(md.includes(streakHost), "Must include streak card");
   assert(!md.includes("api/top-langs/"), "Must omit top-langs card");
   assert(md.split(USER).length - 1 === 2, "Username must appear exactly 2 times");
 }
@@ -103,7 +106,7 @@ console.log("\nTest 4: Only Languages and Streak enabled (No table)");
   assert(!md.includes("<table>"), "Must NOT use table when Stats is not enabled");
   assert(!md.includes("api?username="), "Must omit stats card");
   assert(md.includes("api/top-langs/"), "Must include top-langs card");
-  assert(md.includes("streak-stats.demolab.com"), "Must include streak card");
+  assert(md.includes(streakHost), "Must include streak card");
   assert(md.split(USER).length - 1 === 2, "Username must appear exactly 2 times");
 }
 console.log("✅ Passed Test 4: Languages and Streak");
@@ -123,7 +126,7 @@ console.log("\nTest 5: Single Card Enabled (Centered alone)");
   assert(mdStatsOnly.includes("api?username="));
   assert(!mdStatsOnly.includes("<table>"));
   assert(!mdStatsOnly.includes("api/top-langs/"));
-  assert(!mdStatsOnly.includes("streak-stats.demolab.com"));
+  assert(!mdStatsOnly.includes(streakHost));
   assert(mdStatsOnly.split(USER).length - 1 === 1);
 
   // 5b: Only Languages
@@ -136,7 +139,7 @@ console.log("\nTest 5: Single Card Enabled (Centered alone)");
   assert(mdLangsOnly.includes("api/top-langs/"));
   assert(!mdLangsOnly.includes("<table>"));
   assert(!mdLangsOnly.includes("api?username="));
-  assert(!mdLangsOnly.includes("streak-stats.demolab.com"));
+  assert(!mdLangsOnly.includes(streakHost));
   assert(mdLangsOnly.split(USER).length - 1 === 1);
 
   // 5c: Only Streak
@@ -146,7 +149,7 @@ console.log("\nTest 5: Single Card Enabled (Centered alone)");
   );
   assert(mdStreakOnly.includes("## 📊 GitHub Analytics"));
   assert(mdStreakOnly.includes('<div align="center">'));
-  assert(mdStreakOnly.includes("streak-stats.demolab.com"));
+  assert(mdStreakOnly.includes(streakHost));
   assert(!mdStreakOnly.includes("<table>"));
   assert(!mdStreakOnly.includes("api?username="));
   assert(!mdStreakOnly.includes("api/top-langs/"));

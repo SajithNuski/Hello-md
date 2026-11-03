@@ -30,7 +30,7 @@ export function generateProjectsMarkdown(
   if (!items.length) return "";
 
   const host =
-    process.env.NEXT_PUBLIC_STATS_HOST || "https://github-readme-stats.vercel.app";
+    process.env.NEXT_PUBLIC_STATS_HOST || "https://github-readme-stats-fast.vercel.app";
   const user = encodeURIComponent(username || "user");
   const CARD_BG = "0D1117";
   const ACCENT = "C5F467";

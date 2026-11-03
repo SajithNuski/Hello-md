@@ -139,15 +139,31 @@ export default function EditorPage() {
                 },
               };
             }
-            if (s.key === "stats" && !s.config?.stats) {
-              const parsed = s.markdown ? parseStatsMarkdown(s.markdown) : null;
+            if (s.key === "stats") {
+              const upgradedMarkdown = s.markdown
+                ? s.markdown
+                    .replaceAll(
+                      "https://github-readme-stats.vercel.app",
+                      "https://github-readme-stats-fast.vercel.app"
+                    )
+                    .replaceAll(
+                      "http://github-readme-stats.vercel.app",
+                      "https://github-readme-stats-fast.vercel.app"
+                    )
+                    .replaceAll(
+                      "streak-stats.demolab.com",
+                      "streak-stats.vercel.app"
+                    )
+                : "";
+              const parsed = upgradedMarkdown ? parseStatsMarkdown(upgradedMarkdown) : null;
               const cfg = {
                 ...getDefaultStatsConfig(userLogin),
+                ...((s.config?.stats as StatsConfig) || {}),
                 ...(parsed || {}),
               };
               return {
                 ...s,
-                markdown: s.markdown || generateStatsMarkdown(cfg, userLogin),
+                markdown: upgradedMarkdown || generateStatsMarkdown(cfg, userLogin),
                 config: {
                   ...(s.config || {}),
                   stats: cfg,

@@ -105,7 +105,7 @@ function host(o: FormatOptions) {
   return (
     o.statsHost ??
     process.env.NEXT_PUBLIC_STATS_HOST ??
-    "https://github-readme-stats.vercel.app"
+    "https://github-readme-stats-fast.vercel.app"
   ).replace(/\/$/, "");
 }
 

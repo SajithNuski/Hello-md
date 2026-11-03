@@ -282,13 +282,43 @@ export function MarkdownPreview({
                   const { className, style, width, height, alt, src, align } = props as React.ImgHTMLAttributes<HTMLImageElement> & ExtraAttributes;
                   const isFull = width === "100%";
                   const isCenter = align === "center";
+
+                  // Automatically upgrade dead or rate-limited hosts to active high-speed mirrors
+                  let effectiveSrc = src || "";
+                  if (effectiveSrc.includes("github-readme-stats.vercel.app")) {
+                    effectiveSrc = effectiveSrc.replace(
+                      "github-readme-stats.vercel.app",
+                      "github-readme-stats-fast.vercel.app"
+                    );
+                  }
+                  if (effectiveSrc.includes("streak-stats.demolab.com")) {
+                    effectiveSrc = effectiveSrc.replace(
+                      "streak-stats.demolab.com",
+                      "streak-stats.vercel.app"
+                    );
+                  }
+
                   return (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={src}
+                      src={effectiveSrc}
                       alt={alt || ""}
                       width={width}
                       height={height}
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (target.src.includes("github-readme-stats-fast.vercel.app")) {
+                          target.src = target.src.replace(
+                            "github-readme-stats-fast.vercel.app",
+                            "github-readme-stats-eight-theta.vercel.app"
+                          );
+                        } else if (target.src.includes("streak-stats.demolab.com")) {
+                          target.src = target.src.replace(
+                            "streak-stats.demolab.com",
+                            "streak-stats.vercel.app"
+                          );
+                        }
+                      }}
                       style={{
                         ...(isFull ? { width: "100%" } : {}),
                         ...(height ? { height: `${height}px` } : {}),

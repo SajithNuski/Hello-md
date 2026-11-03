@@ -48,6 +48,11 @@ export function getDefaultStatsConfig(username: string = ""): StatsConfig {
   };
 }
 
+export const STATS_HOST =
+  process.env.NEXT_PUBLIC_STATS_HOST || "https://github-readme-stats-fast.vercel.app";
+export const STREAK_HOST =
+  process.env.NEXT_PUBLIC_STREAK_HOST || "https://streak-stats.vercel.app";
+
 /**
  * Generates the deterministic Markdown/HTML for the GitHub Analytics section.
  *
@@ -74,10 +79,13 @@ export function generateStatsMarkdown(
     return "";
   }
 
-  // Exact card URLs as per specification
-  const statsImg = `<img src="https://github-readme-stats.vercel.app/api?username=${user}&show_icons=true&theme=${theme}" alt="GitHub Stats" />`;
-  const langsImg = `<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=${user}&layout=compact&theme=${theme}" alt="Top Languages" />`;
-  const streakImg = `<img src="https://streak-stats.demolab.com/?user=${user}&theme=${theme}" alt="GitHub Streak" />`;
+  const host = STATS_HOST.replace(/\/$/, "");
+  const streakHost = STREAK_HOST.replace(/\/$/, "");
+
+  // Exact card URLs with high-availability mirror fallback
+  const statsImg = `<img src="${host}/api?username=${user}&show_icons=true&theme=${theme}" alt="GitHub Stats" />`;
+  const langsImg = `<img src="${host}/api/top-langs/?username=${user}&layout=compact&theme=${theme}" alt="Top Languages" />`;
+  const streakImg = `<img src="${streakHost}/?user=${user}&theme=${theme}" alt="GitHub Streak" />`;
 
   const heading = "## 📊 GitHub Analytics";
 
@@ -132,17 +140,22 @@ export function parseStatsMarkdown(markdown: string): Partial<StatsConfig> {
   }
 
   const hasStats =
+    markdown.includes("github-readme-stats-fast.vercel.app/api?") ||
     markdown.includes("github-readme-stats.vercel.app/api?") ||
+    markdown.includes("/api?username=") ||
     markdown.includes("alt=\"GitHub Stats\"") ||
     markdown.includes("![GitHub Stats]");
 
   const hasLangs =
+    markdown.includes("github-readme-stats-fast.vercel.app/api/top-langs") ||
     markdown.includes("github-readme-stats.vercel.app/api/top-langs") ||
+    markdown.includes("/api/top-langs") ||
     markdown.includes("alt=\"Top Languages\"") ||
     markdown.includes("![Top Languages]");
 
   const hasStreak =
     markdown.includes("streak-stats.demolab.com") ||
+    markdown.includes("streak-stats.vercel.app") ||
     markdown.includes("alt=\"GitHub Streak\"") ||
     markdown.includes("![GitHub Streak]");
 
