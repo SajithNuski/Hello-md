@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { FiClock, FiKey, FiAlertCircle, FiCheckCircle, FiShield, FiX } from "react-icons/fi";
 import { SiGithub } from "react-icons/si";
-import { suggestClosestUsername } from "@/lib/levenshtein";
 
 export type SystemStateType = "congestion" | "quota" | "user_not_found";
 
@@ -25,7 +24,6 @@ export function SystemStateBanner({
   username = "username",
   resetsAtFormatted = "4h 12m",
   onOpenByok,
-  onSelectSuggestion,
   onDismiss,
   className = "",
 }: SystemStateBannerProps) {
@@ -53,9 +51,6 @@ export function SystemStateBanner({
 
   const formattedCountdown = `00:${secondsRemaining < 10 ? "0" : ""}${secondsRemaining}`;
 
-  // Suggestion calculation for State 03 (User Not Found)
-  const { suggestion, score } = suggestClosestUsername(username);
-
   // --- RENDER STATE 01: ENGINE CONGESTION ---
   if (state === "congestion") {
     return (
@@ -66,27 +61,22 @@ export function SystemStateBanner({
       >
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase text-[#7A7E72] font-semibold tracking-wider">
-              State 01: Engine Congestion
+            <span className="text-xs font-semibold text-amber-400">
+              High Demand
             </span>
-            <span className="text-xs text-[#44473C]">/</span>
-            <span className="text-xs font-medium text-[#8E9285]">HTTP 503 AI Busy / Throttled</span>
+            <span className="text-xs text-[#44473C]">•</span>
+            <span className="text-xs font-medium text-[#8E9285]">Generation Engine Throttled</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-[#7A7E72] hidden sm:inline">
-              Trigger: Token-Bucket Exhaustion
-            </span>
-            {onDismiss && (
-              <button
-                type="button"
-                onClick={onDismiss}
-                className="text-[#7A7E72] hover:text-white p-0.5 rounded transition-colors"
-                aria-label="Dismiss banner"
-              >
-                <FiX className="w-4 h-4" />
-              </button>
-            )}
-          </div>
+          {onDismiss && (
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="text-[#7A7E72] hover:text-white p-0.5 rounded transition-colors"
+              aria-label="Dismiss banner"
+            >
+              <FiX className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         <div className="bg-[#141611] border border-[#2B2F23] rounded-lg p-5 sm:p-6 shadow-xs">
@@ -98,7 +88,7 @@ export function SystemStateBanner({
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <span className="font-medium text-sm text-white">
-                  High demand on generation engine. Try again in {secondsRemaining}s.
+                  High demand on generation engine. Please retry in {secondsRemaining}s.
                 </span>
                 <span
                   id="rate-limit-badge"
@@ -126,14 +116,10 @@ export function SystemStateBanner({
           </div>
 
           {/* Micro Telemetry & Preservation Note */}
-          <div className="mt-4 pt-4 border-t border-[#22251C] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#8E9285]">
+          <div className="mt-4 pt-4 border-t border-[#22251C] flex items-center justify-between gap-3 text-xs text-[#8E9285]">
             <div className="flex items-center gap-2 text-[#9EA394]">
               <FiShield className="w-4 h-4 text-accent shrink-0" />
-              <span>Your current draft in the editor is preserved and will auto-resume.</span>
-            </div>
-            <div className="flex items-center gap-4 text-[11px] font-medium text-[#707567]">
-              <span>Backoff: Exponential (Jittered)</span>
-              <span>Worker Node: #edge-iad-04</span>
+              <span>Your current draft is safely preserved and will auto-resume.</span>
             </div>
           </div>
         </div>
@@ -151,12 +137,12 @@ export function SystemStateBanner({
       >
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase text-[#7A7E72] font-semibold tracking-wider">
-              State 02: Generation Quota
+            <span className="text-xs font-semibold text-white">
+              Daily Generation Limit
             </span>
-            <span className="text-xs text-[#44473C]">/</span>
+            <span className="text-xs text-[#44473C]">•</span>
             <span className="text-xs font-medium text-[#8E9285]">
-              {isAuthenticated ? "GitHub Account Access" : "Anonymous Daily Throttle"}
+              {isAuthenticated ? "GitHub Account Access" : "Anonymous Daily Quota"}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -277,84 +263,48 @@ export function SystemStateBanner({
     );
   }
 
-  // --- RENDER STATE 03: GITHUB API LOOKUP (USER_NOT_FOUND) ---
+  // --- RENDER STATE 03: GITHUB USER NOT FOUND ---
   return (
     <div
-      className={`flex flex-col gap-2.5 w-full text-left font-sans ${className}`}
+      className={`w-full rounded-lg border border-red-500/30 bg-[#171312] p-4 sm:p-5 shadow-xs transition-all text-left font-sans ${className}`}
       role="alert"
       aria-live="assertive"
     >
-      <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] uppercase text-[#7A7E72] font-semibold tracking-wider">
-            State 03: GitHub API Lookup
-          </span>
-          <span className="text-xs text-[#44473C]">/</span>
-          <span className="text-xs font-medium text-[#8E9285]">Validation / User Not Found</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-red-400 hidden sm:inline">
-            Octokit::NotFound (404)
-          </span>
-          {onDismiss && (
-            <button
-              type="button"
-              onClick={onDismiss}
-              className="text-[#7A7E72] hover:text-white p-0.5 rounded transition-colors"
-              aria-label="Dismiss banner"
-            >
-              <FiX className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="bg-[#141611] border border-[#2B2F23] rounded-lg p-5 sm:p-6 shadow-xs">
-        <div className="max-w-xl flex flex-col gap-3">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-medium text-[#C0C3BA]">GitHub username query</span>
-            <span className="text-[11px] font-medium text-[#7A7E72]">Resolver: REST v3</span>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3.5">
+          <div className="w-9 h-9 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0 mt-0.5">
+            <FiAlertCircle className="w-4 h-4" />
           </div>
-
-          {/* Input Box Visual with Error Highlighting */}
-          <div className="relative flex items-center rounded-md border border-red-500 bg-[#0D0E0C] transition-all">
-            <span className="inline-flex items-center px-3 h-9 bg-[#191C15] border-r border-red-500/70 text-xs font-medium text-[#8E9285] select-none">
-              @
-            </span>
-            <div className="w-full h-9 px-3 flex items-center text-xs font-medium text-red-200">
-              {username}
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-white">
+                GitHub user not found
+              </h3>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/15 text-red-300 border border-red-500/20 font-medium">
+                404 Not Found
+              </span>
             </div>
-            <div className="pr-3 text-red-400 flex items-center">
-              <FiAlertCircle className="w-4 h-4" />
-            </div>
-          </div>
-
-          {/* Inline Error Details */}
-          <div className="flex items-start gap-2 pt-0.5 text-xs text-red-400">
-            <FiAlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-            <span className="leading-snug">
-              GitHub user &lsquo;<strong className="text-white font-semibold">@{username}</strong>&rsquo; not found.
-              Please verify spelling or check if the account is private.
-            </span>
-          </div>
-
-          {/* Quick Action Suggestion */}
-          <div className="mt-2 p-2.5 rounded bg-[#191C15] border border-[#2C3024] flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-[#8E9285]">Did you mean:</span>
-              <button
-                type="button"
-                onClick={() => onSelectSuggestion?.(suggestion)}
-                className="text-accent font-semibold hover:underline inline-flex items-center gap-1"
-              >
-                <span>@{suggestion}</span>
-              </button>
-            </div>
-            <span className="text-[10px] font-semibold text-[#7A7E72] uppercase tracking-wider">
-              Match: Levenshtein {score}
-            </span>
+            <p className="text-xs text-[#C5C8BD] leading-relaxed">
+              We couldn&apos;t find a public GitHub profile for{" "}
+              <strong className="text-white font-semibold">@{username}</strong>.
+              Please check the spelling or ensure the profile is public.
+            </p>
+            <p className="text-[11px] text-[#7A7E72] pt-1">
+              Tip: Enter your GitHub handle (e.g. &apos;octocat&apos;), not an email address or repo link.
+            </p>
           </div>
         </div>
+
+        {onDismiss && (
+          <button
+            type="button"
+            onClick={onDismiss}
+            className="text-[#7A7E72] hover:text-white p-1 rounded-md hover:bg-white/5 transition-colors shrink-0 cursor-pointer"
+            aria-label="Dismiss alert"
+          >
+            <FiX className="w-4 h-4" />
+          </button>
+        )}
       </div>
     </div>
   );

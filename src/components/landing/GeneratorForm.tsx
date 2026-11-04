@@ -285,10 +285,7 @@ export function GeneratorForm() {
             username={statePayload.username || username}
             resetsAtFormatted={statePayload.resetsAtFormatted}
             onOpenByok={() => setIsByokOpen(true)}
-            onSelectSuggestion={(suggested) => {
-              setUsername(suggested);
-              setActiveSystemState(null);
-            }}
+            onDismiss={() => setActiveSystemState(null)}
           />
         </div>
       )}
@@ -343,7 +340,13 @@ export function GeneratorForm() {
           >
             GitHub Profile Handle
           </label>
-          <div className="flex h-11 w-full bg-surface-raised rounded-md border border-border overflow-hidden focus-within:border-text-primary outline-none focus:outline-none transition-all shadow-xs">
+          <div
+            className={`flex h-11 w-full bg-surface-raised rounded-md border transition-all shadow-xs overflow-hidden ${
+              activeSystemState === "user_not_found"
+                ? "border-red-500/80 focus-within:border-red-500 ring-1 ring-red-500/20"
+                : "border-border focus-within:border-text-primary"
+            }`}
+          >
             <span className="inline-flex items-center justify-center px-3.5 bg-surface border-r border-border font-medium text-meta text-text-secondary select-none gap-1.5">
               <SiGithub className="w-4 h-4 text-text-secondary" />
               <span>@</span>

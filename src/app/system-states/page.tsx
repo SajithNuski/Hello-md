@@ -56,7 +56,7 @@ export default function SystemStatesPage() {
   // Simulator controls
   const [activeSimulatorTab, setActiveSimulatorTab] = useState<SystemStateType>("congestion");
   const [simulatedCountdown, setSimulatedCountdown] = useState(24);
-  const [testUsername, setTestUsername] = useState("sajithnuski-dev");
+  const [testUsername, setTestUsername] = useState("octocat-not-found");
 
   // Fetch real-time usage data
   const fetchUsageData = useCallback(async () => {
@@ -372,7 +372,7 @@ export default function SystemStatesPage() {
                 </span>
               </div>
               <p className="text-xs text-[#8E9285] leading-relaxed">
-                Octokit GraphQL v4 &amp; REST v3 profile facts ingestion with Levenshtein fuzzy matching.
+                Octokit GraphQL v4 &amp; REST v3 profile facts ingestion with automated validation.
               </p>
               <div className="pt-2 border-t border-[#1F221A] flex items-center justify-between text-[11px] font-mono text-[#72766A]">
                 <span>Resolver: Multi-Tier</span>
@@ -435,7 +435,7 @@ export default function SystemStatesPage() {
                 [
                   { id: "congestion", label: "01: Engine Congestion" },
                   { id: "quota", label: "02: Quota Limit" },
-                  { id: "user_not_found", label: "03: Typo Detection" },
+                  { id: "user_not_found", label: "03: User Not Found" },
                 ] as const
               ).map((tab) => (
                 <button
@@ -464,14 +464,14 @@ export default function SystemStatesPage() {
                     ? "HTTP 503 • AI Engine Busy"
                     : activeSimulatorTab === "quota"
                     ? "HTTP 429 • Daily Limit"
-                    : "HTTP 404 • Octokit Resolution"}
+                    : "HTTP 404 • User Not Found"}
                 </span>
                 <span>
                   {activeSimulatorTab === "congestion"
                     ? "Automatically activates when the upstream LLM throttles requests."
                     : activeSimulatorTab === "quota"
                     ? "Appears once 3 daily anonymous generations have been consumed."
-                    : "Triggers when a GitHub handle does not exist, offering typo suggestions."}
+                    : "Triggers when a GitHub handle does not exist or account is private."}
                 </span>
               </div>
 
