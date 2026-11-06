@@ -216,9 +216,9 @@ export async function POST(req: NextRequest) {
         const { memoryDrafts } = await import("@/lib/db/draftStore");
         memoryDrafts.set(readmeId, { ...doc, _id: readmeId });
 
-        // --- CONSUME QUOTA (Only if not BYOK) ---
+        // --- CONSUME QUOTA (Only if metered: not BYOK and not signed in) ---
         let quotaAfter = null;
-        if (!byok) {
+        if (!isUnmetered) {
           quotaAfter = await consumeQuota(subjectId, 1.0, 2500);
         }
 

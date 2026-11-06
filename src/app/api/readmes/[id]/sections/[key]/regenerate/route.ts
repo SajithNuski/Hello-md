@@ -175,8 +175,8 @@ export async function POST(
       updatedAt: new Date(),
     });
 
-    // Deduct fractional quota (0.25) only if not using BYOK
-    if (!byok) {
+    // Deduct fractional quota (0.25) only if metered (not BYOK and not signed in)
+    if (!isUnmetered) {
       await consumeQuota(subjectId, APP_CONFIG.sectionRegenCost, 1000);
     }
 

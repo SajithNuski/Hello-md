@@ -76,6 +76,15 @@ export function GeneratorForm() {
           unlimited: Boolean(data.unlimited),
           isAuthenticated: Boolean(data.isAuthenticated),
         });
+
+        // Proactively surface daily limit for anonymous visitors when exhausted
+        if (data.remaining <= 0 && !data.isByok && !data.unlimited && !data.isAuthenticated) {
+          setActiveSystemState((curr) => curr || "quota");
+          setStatePayload((prev) => ({
+            ...prev,
+            resetsAtFormatted: data.resetTimeFormatted || "4h 12m",
+          }));
+        }
       }
     } catch {
       // ignore telemetry fetch error
@@ -107,12 +116,15 @@ export function GeneratorForm() {
   }, [fetchUsage]);
 
   useEffect(() => {
-    if (session?.user?.login) {
-      setUsername((prev) => (prev ? prev : session.user.login || ""));
+    if (session?.user) {
+      if (session.user.login) {
+        setUsername((prev) => (prev ? prev : session.user.login || ""));
+      }
       // Clear any anonymous quota banner when user is confirmed signed-in
       setActiveSystemState((curr) => (curr === "quota" ? null : curr));
+      fetchUsage();
     }
-  }, [session?.user?.login]);
+  }, [session?.user, fetchUsage]);
 
   const addLog = (message: string, type: LogEntry["type"] = "info") => {
     const time = new Date().toTimeString().split(" ")[0];
@@ -124,6 +136,21 @@ export function GeneratorForm() {
     const cleanUsername = username.trim().replace(/^@/, "");
     if (!cleanUsername) return;
 
+    // Fast client-side quota guard for anonymous visitors
+    if (
+      quotaInfo &&
+      !quotaInfo.isByok &&
+      !quotaInfo.unlimited &&
+      !quotaInfo.isAuthenticated &&
+      quotaInfo.remaining <= 0
+    ) {
+      setActiveSystemState("quota");
+      setStatePayload({
+        resetsAtFormatted: quotaInfo.resetsAtFormatted || "4h 12m",
+      });
+      return;
+    }
+
     setIsGenerating(true);
     setErrorMessage(null);
     setActiveSystemState(null);
@@ -131,6 +158,8 @@ export function GeneratorForm() {
     setLogs([]);
 
     addLog(`Initiating generation session for @${cleanUsername}`, "info");
+
+    let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
 
     try {
       const byokHeaders = getByokHeaders();
@@ -162,115 +191,156 @@ export function GeneratorForm() {
         throw new Error("ReadableStream not supported by browser");
       }
 
-      const reader = response.body.getReader();
+      reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
       let buffer = "";
+      let isCompleted = false;
+
+      const processBlock = (block: string): boolean => {
+        if (!block.trim()) return false;
+
+        const eventMatch = block.match(/^event:\s*([^\r\n]+)/m);
+        const eventType = eventMatch ? eventMatch[1].trim() : "message";
+
+        const dataContent = block
+          .split(/\r?\n/)
+          .filter((l) => l.startsWith("data:"))
+          .map((l) => l.replace(/^data:\s*/, ""))
+          .join("\n")
+          .trim();
+
+        let dataPayload: {
+          stage?: "idle" | "fetching" | "writing" | "assembling" | "done";
+          message?: string;
+          sections?: unknown[];
+          readmeId?: string;
+          quota?: {
+            used: number;
+            remaining: number;
+            limit: number;
+            resetTimeFormatted?: string;
+          };
+          error?: {
+            code: string;
+            message: string;
+            retryAfter?: number;
+            resetTimeFormatted?: string;
+          };
+        } | null = null;
+
+        if (dataContent) {
+          try {
+            dataPayload = JSON.parse(dataContent);
+          } catch (parseErr) {
+            console.warn("Failed to parse SSE payload block:", parseErr);
+          }
+        }
+
+        if (eventType === "stage" && dataPayload) {
+          if (dataPayload.stage) setCurrentStage(dataPayload.stage);
+          if (dataPayload.message) addLog(dataPayload.message, "info");
+        } else if (eventType === "done" && dataPayload) {
+          isCompleted = true;
+          setCurrentStage("done");
+          addLog(
+            `Assembled ${dataPayload.sections?.length || 5} profile sections! Redirecting to Editor...`,
+            "success"
+          );
+
+          if (dataPayload.quota) {
+            setQuotaInfo((prev) => ({
+              used: dataPayload.quota?.used ?? prev?.used ?? 0,
+              remaining: dataPayload.quota?.remaining ?? prev?.remaining ?? 0,
+              limit: dataPayload.quota?.limit ?? prev?.limit ?? 3,
+              resetsAtFormatted:
+                dataPayload.quota?.resetTimeFormatted || prev?.resetsAtFormatted || "4h 12m",
+              isByok: prev?.isByok ?? false,
+              unlimited: prev?.unlimited,
+              isAuthenticated: prev?.isAuthenticated,
+            }));
+          }
+          fetchUsage();
+
+          if (dataPayload.readmeId) {
+            const targetId = dataPayload.readmeId;
+            setTimeout(() => {
+              router.push(`/editor/${targetId}`);
+            }, 800);
+          }
+          return true;
+        } else if (eventType === "error" && dataPayload) {
+          isCompleted = true;
+          setIsGenerating(false);
+
+          const err = dataPayload.error;
+          if (err?.code === "QUOTA_EXCEEDED") {
+            setActiveSystemState("quota");
+            setStatePayload({
+              resetsAtFormatted: err.resetTimeFormatted || "4h 12m",
+            });
+            addLog(`Quota Exceeded: 0 of 3 generations left today.`, "warning");
+            fetchUsage();
+          } else if (err?.code === "AI_BUSY") {
+            setActiveSystemState("congestion");
+            setStatePayload({
+              retryAfterSeconds: err.retryAfter || 24,
+            });
+            addLog(`AI Busy: Throttling active. Retry in ${err.retryAfter || 24}s`, "warning");
+          } else if (err?.code === "USER_NOT_FOUND") {
+            setActiveSystemState("user_not_found");
+            setStatePayload({
+              username: cleanUsername,
+            });
+            addLog(`GitHub user '@${cleanUsername}' not found.`, "error");
+          } else {
+            setErrorMessage(err?.message || "An error occurred during generation");
+            addLog(`Error [${err?.code || "UNKNOWN"}]: ${err?.message || "Generation error"}`, "error");
+          }
+          return true;
+        }
+        return false;
+      };
 
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n\n");
-        buffer = lines.pop() || "";
+        const blocks = buffer.split(/\r?\n\r?\n/);
+        buffer = blocks.pop() || "";
 
-        for (const line of lines) {
-          if (!line.trim()) continue;
-
-          // Parse SSE event and data lines
-          const eventMatch = line.match(/^event:\s*(.+)$/m);
-          const dataMatch = line.match(/^data:\s*(.+)$/m);
-
-          const eventType = eventMatch ? eventMatch[1].trim() : "message";
-          let dataPayload: {
-            stage?: "idle" | "fetching" | "writing" | "assembling" | "done";
-            message?: string;
-            sections?: unknown[];
-            readmeId?: string;
-            quota?: {
-              used: number;
-              remaining: number;
-              limit: number;
-              resetTimeFormatted?: string;
-            };
-            error?: {
-              code: string;
-              message: string;
-              retryAfter?: number;
-              resetTimeFormatted?: string;
-            };
-          } | null = null;
-          if (dataMatch) {
-            try {
-              dataPayload = JSON.parse(dataMatch[1].trim());
-            } catch (parseErr) {
-              console.warn("Failed to parse SSE payload line:", parseErr);
-            }
-          }
-
-          if (eventType === "stage" && dataPayload) {
-            if (dataPayload.stage) setCurrentStage(dataPayload.stage);
-            if (dataPayload.message) addLog(dataPayload.message, "info");
-          } else if (eventType === "done" && dataPayload) {
-            setCurrentStage("done");
-            addLog(`Assembled ${dataPayload.sections?.length || 5} profile sections! Redirecting to Editor...`, "success");
-
-            // Refresh quota telemetry immediately from done payload or fetch
-            if (dataPayload.quota) {
-              setQuotaInfo({
-                used: dataPayload.quota.used,
-                remaining: dataPayload.quota.remaining,
-                limit: dataPayload.quota.limit,
-                resetsAtFormatted: dataPayload.quota.resetTimeFormatted || "4h 12m",
-                isByok: false,
-              });
-            } else {
-              fetchUsage();
-            }
-
-            // Redirect to editor
-            if (dataPayload.readmeId) {
-              const targetId = dataPayload.readmeId;
-              setTimeout(() => {
-                router.push(`/editor/${targetId}`);
-              }, 800);
-            }
-          } else if (eventType === "error" && dataPayload) {
-            const err = dataPayload.error;
-            setIsGenerating(false);
-
-            if (err?.code === "QUOTA_EXCEEDED") {
-              setActiveSystemState("quota");
-              setStatePayload({
-                resetsAtFormatted: err.resetTimeFormatted || "4h 12m",
-              });
-              addLog(`Quota Exceeded: 0 of 3 generations left today.`, "warning");
-              fetchUsage();
-            } else if (err?.code === "AI_BUSY") {
-              setActiveSystemState("congestion");
-              setStatePayload({
-                retryAfterSeconds: err.retryAfter || 24,
-              });
-              addLog(`AI Busy: Throttling active. Retry in ${err.retryAfter || 24}s`, "warning");
-            } else if (err?.code === "USER_NOT_FOUND") {
-              setActiveSystemState("user_not_found");
-              setStatePayload({
-                username: cleanUsername,
-              });
-              addLog(`GitHub user '@${cleanUsername}' not found.`, "error");
-            } else {
-              setErrorMessage(err?.message || "An error occurred during generation");
-              addLog(`Error [${err?.code || "UNKNOWN"}]: ${err?.message || "Generation error"}`, "error");
-            }
-            return;
-          }
+        for (const block of blocks) {
+          const finished = processBlock(block);
+          if (finished) break;
         }
+        if (isCompleted) break;
+      }
+
+      // Flush remaining stream buffer
+      buffer += decoder.decode();
+      if (!isCompleted && buffer.trim()) {
+        const trailingBlocks = buffer.split(/\r?\n\r?\n/);
+        for (const block of trailingBlocks) {
+          const finished = processBlock(block);
+          if (finished) break;
+        }
+      }
+
+      // If stream ended without a terminal event, cleanly recover
+      if (!isCompleted) {
+        setIsGenerating(false);
+        setErrorMessage("Generation stream closed before assembly was finalized.");
+        addLog("Stream connection closed unexpectedly.", "error");
       }
     } catch (err: unknown) {
       const msg = (err as Error).message || "Connection failed";
       setErrorMessage(msg);
       addLog(`Fatal: ${msg}`, "error");
       setIsGenerating(false);
+    } finally {
+      if (reader) {
+        reader.cancel().catch(() => {});
+      }
     }
   };
 
@@ -412,7 +482,7 @@ export function GeneratorForm() {
       </form>
 
       {/* Live Stepper & Terminal Log Console */}
-      {isGenerating && (
+      {(isGenerating || (logs.length > 0 && !activeSystemState)) && (
         <div className="w-full bg-surface border border-border rounded-md overflow-hidden flex flex-col shadow-xs text-left">
           {/* Stepper Header */}
           <div className="grid grid-cols-1 md:grid-cols-3 border-b border-border bg-surface-raised/40">
@@ -423,7 +493,11 @@ export function GeneratorForm() {
               }`}
             >
               {currentStage === "fetching" ? (
-                <FiLoader className="w-4 h-4 text-text-primary animate-spin shrink-0" />
+                isGenerating ? (
+                  <FiLoader className="w-4 h-4 text-text-primary animate-spin shrink-0" />
+                ) : (
+                  <FiAlertCircle className="w-4 h-4 text-status-error shrink-0" />
+                )
               ) : currentStage !== "idle" ? (
                 <FiCheckCircle className="w-4 h-4 text-status-success shrink-0" />
               ) : (
@@ -444,7 +518,11 @@ export function GeneratorForm() {
               }`}
             >
               {currentStage === "writing" ? (
-                <FiLoader className="w-4 h-4 text-text-primary animate-spin shrink-0" />
+                isGenerating ? (
+                  <FiLoader className="w-4 h-4 text-text-primary animate-spin shrink-0" />
+                ) : (
+                  <FiAlertCircle className="w-4 h-4 text-status-error shrink-0" />
+                )
               ) : currentStage === "assembling" || currentStage === "done" ? (
                 <FiCheckCircle className="w-4 h-4 text-status-success shrink-0" />
               ) : (
@@ -465,7 +543,11 @@ export function GeneratorForm() {
               }`}
             >
               {currentStage === "assembling" ? (
-                <FiLoader className="w-4 h-4 text-text-primary animate-spin shrink-0" />
+                isGenerating ? (
+                  <FiLoader className="w-4 h-4 text-text-primary animate-spin shrink-0" />
+                ) : (
+                  <FiAlertCircle className="w-4 h-4 text-status-error shrink-0" />
+                )
               ) : currentStage === "done" ? (
                 <FiCheckCircle className="w-4 h-4 text-status-success shrink-0" />
               ) : (
