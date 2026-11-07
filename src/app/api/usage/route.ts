@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getSubjectId, extractByokHeaders, getOrCreateOwnerId, OWNER_COOKIE_NAME } from "@/lib/owner";
 import { getUsage } from "@/lib/quota";
 import { getAuthSession } from "@/lib/auth";
+import { getDb } from "@/lib/db/mongo";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,9 +13,18 @@ export async function GET(req: NextRequest) {
   const { ownerId, isNew } = getOrCreateOwnerId(req);
   const byok = extractByokHeaders(req);
 
+  let dbStatus = "connected";
+  try {
+    const db = await getDb();
+    await db.command({ ping: 1 });
+  } catch (err: unknown) {
+    dbStatus = (err as Error).message;
+  }
+
   let responseData;
   if (byok) {
     responseData = {
+      dbStatus,
       unlimited: true,
       isByok: true,
       isAuthenticated: Boolean(authUserId),
@@ -30,6 +40,7 @@ export async function GET(req: NextRequest) {
     const subjectId = getSubjectId(req, authUserId);
     const usage = await getUsage(subjectId);
     responseData = {
+      dbStatus,
       unlimited: true,
       isByok: false,
       isAuthenticated: true,
@@ -45,6 +56,7 @@ export async function GET(req: NextRequest) {
     const subjectId = getSubjectId(req);
     const usage = await getUsage(subjectId);
     responseData = {
+      dbStatus,
       unlimited: false,
       isByok: false,
       isAuthenticated: false,
