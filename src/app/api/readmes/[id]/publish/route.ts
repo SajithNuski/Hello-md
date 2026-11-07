@@ -6,6 +6,8 @@ import { getReadmesCollection, SectionItem } from "@/lib/db/collections";
 import { publishReadmeToGithub } from "@/lib/github/publish";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 const PublishBodySchema = z.object({
   commitMessage: z.string().max(200).optional(),

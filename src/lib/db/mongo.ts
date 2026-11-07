@@ -6,7 +6,7 @@ const rawUri = env.MONGODB_URI;
 // Normalize localhost to 127.0.0.1 on Windows to avoid IPv6 [::1] connection timeout hangs
 const uri = rawUri.replace("://localhost:", "://127.0.0.1:");
 
-const CIRCUIT_BREAKER_COOLDOWN_MS = 30000; // 30 seconds
+const CIRCUIT_BREAKER_COOLDOWN_MS = 15000; // 15 seconds
 
 const g = globalThis as unknown as {
   _mongoClient?: MongoClient;
@@ -23,11 +23,14 @@ export async function getClient(): Promise<MongoClient> {
     throw new Error("MongoDB is offline (circuit breaker active)");
   }
 
+  const isLocal = uri.includes("127.0.0.1") || uri.includes("localhost");
+
   if (!g._mongoClient) {
     g._mongoClient = new MongoClient(uri, {
-      serverSelectionTimeoutMS: 1500,
-      connectTimeoutMS: 1500,
-      directConnection: uri.includes("127.0.0.1"),
+      serverSelectionTimeoutMS: isLocal ? 1500 : 5000,
+      connectTimeoutMS: isLocal ? 1500 : 5000,
+      maxPoolSize: isLocal ? 10 : 5,
+      directConnection: isLocal,
     });
   }
 

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getReadmesCollection, SectionItemSchema } from "@/lib/db/collections";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const PatchReadmeSchema = z.object({
   sections: z.array(SectionItemSchema).optional(),

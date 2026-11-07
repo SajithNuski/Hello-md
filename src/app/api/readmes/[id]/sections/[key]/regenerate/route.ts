@@ -16,6 +16,8 @@ import { checkQuota, consumeQuota } from "@/lib/quota";
 import { getAuthSession } from "@/lib/auth";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const RegenerateBodySchema = z.object({
   tone: z.enum(TONES).optional(),

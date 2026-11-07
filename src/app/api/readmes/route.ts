@@ -30,6 +30,8 @@ import {
 } from "@/lib/techStackConfig";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const GenerateBodySchema = z.object({
   login: z.string().trim().min(1, "GitHub username is required"),
