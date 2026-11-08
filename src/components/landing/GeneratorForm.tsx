@@ -261,6 +261,23 @@ export function GeneratorForm() {
           }
           fetchUsage();
 
+          // Fail-safe client-side cache so the draft is never lost across serverless instances
+          if (typeof window !== "undefined" && dataPayload.readmeId) {
+            try {
+              const draftData = {
+                id: dataPayload.readmeId,
+                login: cleanUsername,
+                tone: tone,
+                theme: "minimal",
+                sections: dataPayload.sections || [],
+                updatedAt: new Date().toISOString(),
+              };
+              localStorage.setItem(`hellomd_draft_${dataPayload.readmeId}`, JSON.stringify(draftData));
+            } catch (storageErr) {
+              console.warn("Failed to cache draft to localStorage:", storageErr);
+            }
+          }
+
           if (dataPayload.readmeId) {
             const targetId = dataPayload.readmeId;
             setTimeout(() => {

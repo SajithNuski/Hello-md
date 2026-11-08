@@ -99,15 +99,35 @@ export default function EditorPage() {
       try {
         setLoading(true);
         const res = await fetch(`/api/readmes/${id}`);
+        let doc: any = null;
         if (!res.ok) {
-          if (res.status === 404) {
-            throw new Error("This draft was not found or was stored in a previous temporary server session. Return to the generator to generate your README.");
+          // Check client-side fail-safe localStorage cache if serverless instance has no shared memory
+          if (typeof window !== "undefined") {
+            const cachedRaw = localStorage.getItem(`hellomd_draft_${id}`);
+            if (cachedRaw) {
+              try {
+                const parsed = JSON.parse(cachedRaw);
+                if (parsed && Array.isArray(parsed.sections) && parsed.sections.length > 0) {
+                  doc = parsed;
+                }
+              } catch {
+                // ignore parse failure
+              }
+            }
           }
-          throw new Error("Could not load README draft");
+
+          if (!doc) {
+            if (res.status === 404) {
+              throw new Error("This draft was not found or was stored in a previous temporary server session. Return to the generator to generate your README.");
+            }
+            throw new Error("Could not load README draft");
+          }
+        } else {
+          const data = await res.json();
+          doc = data?.readme;
         }
-        const data = await res.json();
-        if (mounted && data.readme) {
-          const doc = data.readme;
+
+        if (mounted && doc) {
           setLogin(doc.login || "");
           setTheme(doc.theme || "minimal");
           setTone(doc.tone || "professional");
